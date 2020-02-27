@@ -25,19 +25,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.service.JamService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
-/**
- * @author Juergen Hoeller
- * @author Mark Fisher
- * @author Ken Krebs
- * @author Arjen Poutsma
- */
 @Controller
 public class JamController {
 
@@ -52,34 +50,17 @@ public class JamController {
 	}
 
 	@InitBinder
-	public void setAllowedFields(final WebDataBinder dataBinder) {
+	public void initJamBinder(final WebDataBinder dataBinder) {
+		dataBinder.setValidator(new JamValidator());
 		dataBinder.setDisallowedFields("id");
-	}
-
-	@GetMapping(value = "/jams/new")
-	public String initCreationForm(final Map<String, Object> model) {
-		Jam jam = new Jam();
-		model.put("jam", jam);
-		return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
-	}
-
-	@PostMapping(value = "/jams/new")
-	public String processCreationForm(@Valid final Jam jam, final BindingResult result) {
-		if (result.hasErrors()) {
-			return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
-		} else {
-			this.jamService.saveJam(jam);
-
-			return "redirect:/jams/" + jam.getId();
-		}
 	}
 
 	@GetMapping(value = {
 		"/jams"
 	})
-	public String showVetList(final Map<String, Object> model) {
-		System.out.println(this.jamService.findJams());
+	public String showJamList(final Map<String, Object> model) {
 		model.put("jams", this.jamService.findJams());
+
 		return "jams/jamList";
 	}
 
@@ -90,4 +71,53 @@ public class JamController {
 		return this.jamService.findJams();
 	}
 
+	@GetMapping(value = "/jams/new")
+	public String initCreationForm(final Map<String, Object> model) {
+		Jam jam = new Jam();
+
+		model.put("jam", jam);
+
+		return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
+	}
+
+	@PostMapping(value = "/jams/new")
+	public String processCreationForm(@Valid final Jam jam, final BindingResult result, final ModelMap model) {
+		if (result.hasErrors()) {
+			return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
+		} else {
+			this.jamService.saveJam(jam);
+
+			return "redirect:/jams/" + jam.getId();
+		}
+	}
+
+	@GetMapping("/jams/{jamId}")
+	public ModelAndView showJam(@PathVariable("jamId") final int jamId) {
+		ModelAndView mav = new ModelAndView("jams/jamDetails");
+
+		mav.addObject(this.jamService.findJamById(jamId));
+
+		return mav;
+	}
+
+	@GetMapping(value = "/jams/{jamId}/edit")
+	public String initUpdateJamForm(@PathVariable("jamId") final int jamId, final Model model) {
+		Jam jam = this.jamService.findJamById(jamId);
+
+		model.addAttribute(jam);
+
+		return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
+	}
+
+	@PostMapping(value = "/jams/{jamId}/edit")
+	public String processUpdateOwnerForm(@Valid final Jam jam, final BindingResult result, @PathVariable("jamId") final int jamId) {
+		if (result.hasErrors()) {
+			return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
+		} else {
+			jam.setId(jamId);
+			this.jamService.saveJam(jam);
+
+			return "redirect:/jams/{jamId}";
+		}
+	}
 }

@@ -43,13 +43,18 @@ public class JamService {
 	}
 
 	@Transactional(readOnly = true)
+	public Jam findJamById(final int id) throws DataAccessException {
+		return this.jamRepository.findById(id);
+	}
+
+	@Transactional(readOnly = true)
 	public Collection<Jam> findJams() throws DataAccessException {
 		return this.jamRepository.findAll();
 	}
 
-	@Transactional(readOnly = true)
-	public Collection<Jam> saveJam(final Jam jam) throws DataAccessException {
-		return this.jamRepository.findAll();
+	@Transactional
+	public void saveJam(final Jam jam) throws DataAccessException {
+		this.jamRepository.save(jam);
 	}
 
 }

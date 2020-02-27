@@ -84,7 +84,7 @@ public class Jam extends BaseEntity {
 	@OneToOne(optional = true)
 	private Team				winner;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true) // Cambiar
 	private User				creator;
 
 
@@ -92,11 +92,5 @@ public class Jam extends BaseEntity {
 	public boolean getIsActive() {
 		Calendar calendar = new GregorianCalendar();
 		return this.inscriptionDeadline.after(calendar.getTime());
-	}
-
-	@Override
-	public String toString() {
-		return "Jam [name=" + this.name + ", description=" + this.description + ", difficulty=" + this.difficulty + ", inscriptionDeadline=" + this.inscriptionDeadline + ", minTeamSize=" + this.minTeamSize + ", maxTeamSize=" + this.maxTeamSize
-			+ ", minTeams=" + this.minTeams + ", maxTeams=" + this.maxTeams + ", start=" + this.start + ", end=" + this.end + ", teams=" + this.teams + ", resources=" + this.resources + ", winner=" + this.winner + ", creator=" + this.creator + "]";
 	}
 }

@@ -34,6 +34,8 @@ import org.springframework.samples.petclinic.model.Jam;
  */
 public interface JamRepository {
 
+	Jam findById(int id) throws DataAccessException;
+
 	Collection<Jam> findAll() throws DataAccessException;
 
 	void save(Jam jam) throws DataAccessException;
