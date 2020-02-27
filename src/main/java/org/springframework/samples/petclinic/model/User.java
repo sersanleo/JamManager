@@ -1,3 +1,4 @@
+
 package org.springframework.samples.petclinic.model;
 
 import javax.persistence.Entity;
@@ -9,11 +10,12 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "users")
-public class User{
+public class User {
+
 	@Id
-	String username;
-	
-	String password;
-	
-	boolean enabled;
+	String	username;
+
+	String	password;
+
+	boolean	enabled;
 }

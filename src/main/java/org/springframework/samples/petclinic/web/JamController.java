@@ -16,13 +16,13 @@
 
 package org.springframework.samples.petclinic.web;
 
-import java.util.Collection;
 import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
+import org.springframework.samples.petclinic.model.Jams;
 import org.springframework.samples.petclinic.service.JamService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,8 +67,12 @@ public class JamController {
 	@GetMapping(value = {
 		"/jams.xml"
 	})
-	public @ResponseBody Collection<Jam> showResourcesVetList() {
-		return this.jamService.findJams();
+	public @ResponseBody Jams showResourcesJamList() {
+		Jams jams = new Jams();
+
+		jams.getJamList().addAll(this.jamService.findJams());
+
+		return jams;
 	}
 
 	@GetMapping(value = "/jams/new")
