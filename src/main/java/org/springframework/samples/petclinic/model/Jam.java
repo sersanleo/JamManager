@@ -49,10 +49,6 @@ public class Jam extends BaseEntity {
 
 	@NotNull
 	@Min(1)
-	private Integer				minTeamSize;
-
-	@NotNull
-	@Min(1)
 	private Integer				maxTeamSize;
 
 	@NotNull
@@ -84,7 +80,7 @@ public class Jam extends BaseEntity {
 	@OneToOne(optional = true)
 	private Team				winner;
 
-	@ManyToOne(optional = true) // Cambiar
+	@ManyToOne(optional = false) // Cambiar
 	private User				creator;
 
 

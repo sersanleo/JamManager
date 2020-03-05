@@ -24,6 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.model.Jams;
 import org.springframework.samples.petclinic.service.JamService;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -65,7 +68,7 @@ public class JamController {
 	}
 
 	@GetMapping(value = {
-		"/jams.xml"
+		"/jams/jams.xml"
 	})
 	public @ResponseBody Jams showResourcesJamList() {
 		Jams jams = new Jams();
@@ -89,6 +92,11 @@ public class JamController {
 		if (result.hasErrors()) {
 			return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
 		} else {
+			SecurityContext context = SecurityContextHolder.getContext();
+			org.springframework.security.core.userdetails.User user = (User)context.getAuthentication().getPrincipal();
+			org.springframework.samples.petclinic.model.User creator = new org.springframework.samples.petclinic.model.User();
+			creator.setUsername(user.getUsername());
+			jam.setCreator(creator);
 			this.jamService.saveJam(jam);
 
 			return "redirect:/jams/" + jam.getId();

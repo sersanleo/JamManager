@@ -52,7 +52,6 @@ class JamControllerTests {
 		jam.setDescription("Descripción de prueba");
 		jam.setDifficulty(1);
 		jam.setInscriptionDeadline(new Date(System.currentTimeMillis() + JamControllerTests.DAY_TO_MILLIS * 2));
-		jam.setMinTeamSize(2);
 		jam.setMaxTeamSize(5);
 		jam.setMinTeams(5);
 		jam.setMaxTeams(10);

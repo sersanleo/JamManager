@@ -16,7 +16,6 @@
             <petclinic:inputField label="Description" name="description"/>
             <petclinic:inputField label="Difficulty" name="difficulty"/>
             <petclinic:inputField label="Inscription deadline" name="inscriptionDeadline"/>
-            <petclinic:inputField label="Min. team members" name="minTeamSize"/>
             <petclinic:inputField label="Max. team members" name="maxTeamSize"/>
             <petclinic:inputField label="Min. teams" name="minTeams"/>
             <petclinic:inputField label="Max. teams" name="maxTeams"/>
