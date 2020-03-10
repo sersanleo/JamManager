@@ -7,11 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 
-import org.hibernate.validator.constraints.URL;
+import org.hibernate.validator.constraints.Range;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,21 +18,21 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Delivery extends BaseEntity {
-
-	private static final long	serialVersionUID	= 1L;
-
-	private String				description;
-
-	@NotBlank
-	@URL
-	private String				downloadURL;
+public class Invitation extends BaseEntity {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
 	@Past
-	private Date				creationMoment;
+	private Date			creationDate;
+	
+	@NotNull
+	private InvitationStatus status;
+
+	// Relationships
 
 	@ManyToOne(optional = false)
-	private Team				team;
+	private Team	from;
+
+	@ManyToOne(optional = false)
+	private User	to;
 }

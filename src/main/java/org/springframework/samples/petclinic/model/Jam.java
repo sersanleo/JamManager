@@ -80,13 +80,13 @@ public class Jam extends BaseEntity {
 	@OneToOne(optional = true)
 	private Team				winner;
 
-	@ManyToOne(optional = false) // Cambiar
+	@ManyToOne(optional = false)
 	private User				creator;
 
 
 	@Transient
-	public boolean getIsActive() {
-		Calendar calendar = new GregorianCalendar();
-		return this.inscriptionDeadline.after(calendar.getTime());
+	public JamStatus getStatus() {
+		// COMPLETAR
+		return JamStatus.INSCRIPTION;
 	}
 }

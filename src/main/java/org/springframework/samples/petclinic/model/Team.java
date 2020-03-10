@@ -14,6 +14,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +29,7 @@ public class Team extends BaseEntity {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
+	@Past
 	private Date			creationDate;
 
 	// Relationships
