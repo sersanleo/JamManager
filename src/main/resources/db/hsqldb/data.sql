@@ -1,6 +1,5 @@
--- One admin user, named admin1 with passwor 4dm1n and authority admin
 INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('admin1','4dm1n',TRUE,'example@example.com',34,'','600 000 000');
-INSERT INTO authorities VALUES ('admin1','admin');
+INSERT INTO authorities VALUES ('admin1','jamOrganizator');
 -- One owner user, named owner1 with passwor 0wn3r
 INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('owner1','0wn3r',TRUE,'example@example.com',34,'','600 000 000');
 INSERT INTO authorities VALUES ('owner1','owner');

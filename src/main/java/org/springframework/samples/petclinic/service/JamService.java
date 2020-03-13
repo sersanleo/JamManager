@@ -19,9 +19,8 @@ package org.springframework.samples.petclinic.service;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Jam;
-import org.springframework.samples.petclinic.repository.JamRepository;
+import org.springframework.samples.petclinic.repository.springdatajpa.JamRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,26 +33,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class JamService {
 
+	@Autowired
 	private JamRepository jamRepository;
 
 
-	@Autowired
-	public JamService(final JamRepository jamRepository) {
-		this.jamRepository = jamRepository;
-	}
-
-	@Transactional(readOnly = true)
-	public Jam findJamById(final int id) throws DataAccessException {
+	@Transactional
+	public Jam findJamById(final int id) {
 		return this.jamRepository.findById(id);
 	}
 
-	@Transactional(readOnly = true)
-	public Collection<Jam> findJams() throws DataAccessException {
+	@Transactional
+	public Collection<Jam> findJams() {
 		return this.jamRepository.findAll();
 	}
 
 	@Transactional
-	public void saveJam(final Jam jam) throws DataAccessException {
+	public void saveJam(final Jam jam) {
 		this.jamRepository.save(jam);
 	}
 
