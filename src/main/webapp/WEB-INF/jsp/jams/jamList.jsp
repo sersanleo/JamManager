@@ -4,6 +4,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 
 <petclinic:layout pageName="jams">
 	<h2>Jams</h2>
@@ -26,9 +27,9 @@
 						</spring:url> <a href="${fn:escapeXml(jamUrl)}"><c:out value="${jam.name}" /></a>
 					</td>
 					<td><c:out value="${jam.difficulty}" />/5</td>
-					<td><c:out value="${jam.inscriptionDeadline}" /></td>
-					<td><c:out value="${jam.start}" /></td>
-					<td><c:out value="${jam.end}" /></td>
+					<td><petclinic:localDateTime date="${jam.inscriptionDeadline}" /></td>
+					<td><petclinic:localDateTime date="${jam.start}" /></td>
+					<td><petclinic:localDateTime date="${jam.end}" /></td>
 				</tr>
 			</c:forEach>
 		</tbody>
@@ -41,7 +42,7 @@
 	</table>
 
     <br/> 
-    <sec:authorize access="hasAuthority('admin')">
+    <sec:authorize access="hasAuthority('jamOrganizator')">
 		<a class="btn btn-default" href='<spring:url value="/jams/new" htmlEscape="true"/>'>Add Jam</a>
 	</sec:authorize>
 </petclinic:layout>

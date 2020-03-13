@@ -16,19 +16,16 @@
 
 package org.springframework.samples.petclinic.web;
 
-import java.util.Map;
-
 import javax.validation.Valid;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.model.Jams;
+import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.JamService;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.samples.petclinic.util.UserUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -36,41 +33,33 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@RequestMapping("/jams")
 public class JamController {
 
 	private static final String	VIEWS_JAM_CREATE_OR_UPDATE_FORM	= "jams/createOrUpdateForm";
 
-	private final JamService	jamService;
-
-
 	@Autowired
-	public JamController(final JamService clinicService) {
-		this.jamService = clinicService;
-	}
+	private JamService			jamService;
 
-	@InitBinder
-	public void initJamBinder(final WebDataBinder dataBinder) {
+
+	@InitBinder("jam")
+	public void setJamValidator(final WebDataBinder dataBinder) {
 		dataBinder.setValidator(new JamValidator());
-		dataBinder.setDisallowedFields("id");
 	}
 
-	@GetMapping(value = {
-		"/jams"
-	})
-	public String showJamList(final Map<String, Object> model) {
-		model.put("jams", this.jamService.findJams());
+	@GetMapping()
+	public String listarJams(final ModelMap modelMap) {
+		modelMap.addAttribute("jams", this.jamService.findJams());
 
 		return "jams/jamList";
 	}
 
-	@GetMapping(value = {
-		"/jams/jams.xml"
-	})
-	public @ResponseBody Jams showResourcesJamList() {
+	@GetMapping("/jams.xml")
+	public @ResponseBody Jams listarJamsXml() {
 		Jams jams = new Jams();
 
 		jams.getJamList().addAll(this.jamService.findJams());
@@ -78,24 +67,27 @@ public class JamController {
 		return jams;
 	}
 
-	@GetMapping(value = "/jams/new")
-	public String initCreationForm(final Map<String, Object> model) {
-		Jam jam = new Jam();
+	@GetMapping("/{jamId}")
+	public String mostrarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
+		modelMap.addAttribute("jam", this.jamService.findJamById(jamId));
 
-		model.put("jam", jam);
+		return "jams/jamDetails";
+	}
+
+	@GetMapping("/new")
+	public String crearJam(final ModelMap modelMap) {
+		modelMap.addAttribute("jam", new Jam());
 
 		return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
 	}
 
-	@PostMapping(value = "/jams/new")
-	public String processCreationForm(@Valid final Jam jam, final BindingResult result, final ModelMap model) {
+	@PostMapping("/new")
+	public String salvarJam(@Valid final Jam jam, final BindingResult result, final ModelMap modelMap) {
 		if (result.hasErrors()) {
 			return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
 		} else {
-			SecurityContext context = SecurityContextHolder.getContext();
-			org.springframework.security.core.userdetails.User user = (User)context.getAuthentication().getPrincipal();
-			org.springframework.samples.petclinic.model.User creator = new org.springframework.samples.petclinic.model.User();
-			creator.setUsername(user.getUsername());
+			User creator = new User();
+			creator.setUsername(UserUtils.getCurrentUsername());
 			jam.setCreator(creator);
 			this.jamService.saveJam(jam);
 
@@ -103,31 +95,21 @@ public class JamController {
 		}
 	}
 
-	@GetMapping("/jams/{jamId}")
-	public ModelAndView showJam(@PathVariable("jamId") final int jamId) {
-		ModelAndView mav = new ModelAndView("jams/jamDetails");
-
-		mav.addObject(this.jamService.findJamById(jamId));
-
-		return mav;
-	}
-
-	@GetMapping(value = "/jams/{jamId}/edit")
-	public String initUpdateJamForm(@PathVariable("jamId") final int jamId, final Model model) {
-		Jam jam = this.jamService.findJamById(jamId);
-
-		model.addAttribute(jam);
+	@GetMapping("{jamId}/edit")
+	public String editarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
+		modelMap.addAttribute("jam", this.jamService.findJamById(jamId));
 
 		return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
 	}
 
-	@PostMapping(value = "/jams/{jamId}/edit")
-	public String processUpdateOwnerForm(@Valid final Jam jam, final BindingResult result, @PathVariable("jamId") final int jamId) {
+	@PostMapping("{jamId}/edit")
+	public String salvarCambiosJam(@Valid final Jam jam, final BindingResult result, @PathVariable("jamId") final int jamId, final ModelMap modelMap) {
 		if (result.hasErrors()) {
 			return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
 		} else {
-			jam.setId(jamId);
-			this.jamService.saveJam(jam);
+			Jam jamToUpdate = this.jamService.findJamById(jamId);
+			BeanUtils.copyProperties(jam, jamToUpdate, "id", "creator");
+			this.jamService.saveJam(jamToUpdate);
 
 			return "redirect:/jams/{jamId}";
 		}

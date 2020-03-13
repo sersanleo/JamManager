@@ -1,9 +1,7 @@
 
 package org.springframework.samples.petclinic.model;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -13,8 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -32,6 +28,13 @@ import lombok.Setter;
 @Table(name = "jams")
 public class Jam extends BaseEntity {
 
+	@Override
+	public String toString() {
+		return "Jam [name=" + this.name + ", description=" + this.description + ", difficulty=" + this.difficulty + ", inscriptionDeadline=" + this.inscriptionDeadline + ", maxTeamSize=" + this.maxTeamSize + ", minTeams=" + this.minTeams + ", maxTeams="
+			+ this.maxTeams + ", start=" + this.start + ", end=" + this.end + ", teams=" + this.teams + ", resources=" + this.resources + ", winner=" + this.winner + ", creator=" + this.creator + "]";
+	}
+
+
 	@NotBlank
 	private String				name;
 
@@ -42,10 +45,9 @@ public class Jam extends BaseEntity {
 	@NotNull
 	private Integer				difficulty;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
-	@DateTimeFormat(pattern = "yyyy/MM/dd hh:mm")
-	private Date				inscriptionDeadline;
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	private LocalDateTime		inscriptionDeadline;
 
 	@NotNull
 	@Min(1)
@@ -59,15 +61,13 @@ public class Jam extends BaseEntity {
 	@Min(1)
 	private Integer				maxTeams;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
-	@DateTimeFormat(pattern = "yyyy/MM/dd hh:mm")
-	private Date				start;
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	private LocalDateTime		start;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
-	@DateTimeFormat(pattern = "yyyy/MM/dd hh:mm")
-	private Date				end;
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	private LocalDateTime		end;
 
 	// Relationships
 
