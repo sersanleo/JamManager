@@ -1,8 +1,6 @@
 
 package org.springframework.samples.petclinic.web;
 
-import java.sql.Date;
-
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,12 +49,12 @@ class JamControllerTests {
 		jam.setName("Prueba");
 		jam.setDescription("Descripción de prueba");
 		jam.setDifficulty(1);
-		jam.setInscriptionDeadline(new Date(System.currentTimeMillis() + JamControllerTests.DAY_TO_MILLIS * 2));
+		// jam.setInscriptionDeadline(null);
 		jam.setMaxTeamSize(5);
 		jam.setMinTeams(5);
 		jam.setMaxTeams(10);
-		jam.setStart(new Date(System.currentTimeMillis() + JamControllerTests.DAY_TO_MILLIS * 4));
-		jam.setEnd(new Date(System.currentTimeMillis() + JamControllerTests.DAY_TO_MILLIS * 6));
+		//jam.setStart(new Date(System.currentTimeMillis() + JamControllerTests.DAY_TO_MILLIS * 4));
+		//jam.setEnd(new Date(System.currentTimeMillis() + JamControllerTests.DAY_TO_MILLIS * 6));
 
 		BDDMockito.given(this.jamService.findJamById(JamControllerTests.TEST_JAM_ID)).willReturn(jam);
 		BDDMockito.given(this.jamService.findJams()).willReturn(Lists.newArrayList(jam));

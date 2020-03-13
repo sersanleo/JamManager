@@ -28,6 +28,21 @@ public class JamValidator implements Validator {
 	@Override
 	public void validate(final Object obj, final Errors errors) {
 		Jam jam = (Jam) obj;
+
+		if (jam.getMinTeams() > jam.getMaxTeams()) {
+			String errorMessage = "The maximum number of teams must be greater than the minimum";
+			errors.rejectValue("maxTeams", errorMessage, errorMessage);
+		}
+
+		if (jam.getInscriptionDeadline().isAfter(jam.getStart())) {
+			String errorMessage = "The inscription deadline must be before the start of the event";
+			errors.rejectValue("inscriptionDeadline", errorMessage, errorMessage);
+		}
+
+		if (jam.getStart().isAfter(jam.getEnd())) {
+			String errorMessage = "The start of the event must be before the end of itself";
+			errors.rejectValue("start", errorMessage, errorMessage);
+		}
 	}
 
 	/**

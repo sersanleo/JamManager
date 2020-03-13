@@ -5,10 +5,13 @@
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 
+<sec:authorize access="hasAuthority('jamOrganizator')">
+	<c:set var="isOrganizator" value="true" />
+</sec:authorize>
+
 <petclinic:layout pageName="jams">
 
 	<h2>Jam Information</h2>
-
 
 	<table class="table table-striped">
 		<tr>
@@ -25,7 +28,7 @@
 		</tr>
 		<tr>
 			<th>Inscription deadline</th>
-			<td><c:out value="${jam.inscriptionDeadline}" /></td>
+			<td><petclinic:localDateTime date="${jam.inscriptionDeadline}" /></td>
 		</tr>
 		<tr>
 			<th>Max. team members</th>
@@ -41,32 +44,49 @@
 		</tr>
 		<tr>
 			<th>Start date</th>
-			<td><c:out value="${jam.start}" /></td>
+			<td><petclinic:localDateTime date="${jam.start}" /></td>
 		</tr>
 		<tr>
 			<th>End date</th>
-			<td><c:out value="${jam.end}" /></td>
+			<td><petclinic:localDateTime date="${jam.end}" /></td>
+		</tr>
+		<tr>
+			<th>Created by</th>
+			<td><c:out value="${jam.creator.username}" /></td>
 		</tr>
 	</table>
 
-	<sec:authorize access="hasRole('jamOrganizator')">
+	<c:if test="${ isOrganizator }">
 		<spring:url value="{jamId}/edit" var="editUrl">
 			<spring:param name="jamId" value="${jam.id}" />
 		</spring:url>
 		<a href="${fn:escapeXml(editUrl)}" class="btn btn-default">Edit Jam</a>
-	</sec:authorize>
+	</c:if>
 
 	<br />
 	<br />
 	<br />
-	<h2>Resources</h2>
 
+	<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS }">
+		<b>Resources</b>
+		<table class="table table-striped">
+			<tr>
+				<th>Download URL</th>
+				<th>Description</th>
+			</tr>
+			<c:forEach var="resource" items="${jam.resources}">
+				<tr>
+					<td><c:out value="${resource.downloadUrl}" /></td>
+					<td><c:out value="${resource.description}" /></td>
+				</tr>
+			</c:forEach>
+		</table>
 
-	<sec:authorize access="hasRole('jamOrganizator')">
-		<spring:url value="{jamId}/resources/new" var="addResourceUrl">
-			<spring:param name="jamId" value="${jam.id}" />
-		</spring:url>
-		<a href="${fn:escapeXml(addResourceUrl)}" class="btn btn-default">Add New Resource</a>
-	</sec:authorize>
-
+		<c:if test="${ isOrganizator }">
+			<spring:url value="{jamId}/resources/new" var="addResourceUrl">
+				<spring:param name="jamId" value="${jam.id}" />
+			</spring:url>
+			<a href="${fn:escapeXml(addResourceUrl)}" class="btn btn-default">Add New Resource</a>
+		</c:if>
+	</c:if>
 </petclinic:layout>

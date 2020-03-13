@@ -1,7 +1,7 @@
 
 package org.springframework.samples.petclinic.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -11,8 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -47,10 +45,9 @@ public class Jam extends BaseEntity {
 	@NotNull
 	private Integer				difficulty;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
-	@DateTimeFormat(pattern = "yyyy/MM/dd hh:mm")
-	private Date				inscriptionDeadline;
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	private LocalDateTime		inscriptionDeadline;
 
 	@NotNull
 	@Min(1)
@@ -64,15 +61,13 @@ public class Jam extends BaseEntity {
 	@Min(1)
 	private Integer				maxTeams;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
-	@DateTimeFormat(pattern = "yyyy/MM/dd hh:mm")
-	private Date				start;
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	private LocalDateTime		start;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
-	@DateTimeFormat(pattern = "yyyy/MM/dd hh:mm")
-	private Date				end;
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	private LocalDateTime		end;
 
 	// Relationships
 
