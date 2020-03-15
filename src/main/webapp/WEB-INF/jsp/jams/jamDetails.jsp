@@ -51,6 +51,10 @@
 			<td><petclinic:localDateTime date="${jam.end}" /></td>
 		</tr>
 		<tr>
+			<th>Status</th>
+			<td><c:out value="${jam.status}" /></td>
+		</tr>
+		<tr>
 			<th>Created by</th>
 			<td><c:out value="${jam.creator.username}" /></td>
 		</tr>

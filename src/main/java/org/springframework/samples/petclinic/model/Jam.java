@@ -69,6 +69,9 @@ public class Jam extends BaseEntity {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime		end;
 
+	@NotNull
+	private Boolean				rated;
+
 	// Relationships
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "jam", fetch = FetchType.EAGER)
@@ -86,7 +89,18 @@ public class Jam extends BaseEntity {
 
 	@Transient
 	public JamStatus getStatus() {
-		// COMPLETAR
-		return JamStatus.INSCRIPTION;
+		LocalDateTime now = LocalDateTime.now();
+		if (now.isBefore(this.inscriptionDeadline)) {
+			return JamStatus.INSCRIPTION;
+		} else if (this.teams.size() < this.minTeams) {
+			return JamStatus.CANCELLED;
+		} else if (now.isBefore(this.start)) {
+			return JamStatus.PENDING;
+		} else if (now.isBefore(this.end)) {
+			return JamStatus.IN_PROGRESS;
+		} else if (!this.rated) {
+			return JamStatus.RATING;
+		}
+		return JamStatus.FINISHED;
 	}
 }
