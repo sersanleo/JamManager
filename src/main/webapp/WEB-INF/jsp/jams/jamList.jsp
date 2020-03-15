@@ -14,9 +14,7 @@
 			<tr>
 				<th>Name</th>
 				<th>Difficulty</th>
-				<th>Inscription deadline</th>
-				<th>Start date</th>
-				<th>End date</th>
+				<th>Status</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -27,9 +25,7 @@
 						</spring:url> <a href="${fn:escapeXml(jamUrl)}"><c:out value="${jam.name}" /></a>
 					</td>
 					<td><c:out value="${jam.difficulty}" />/5</td>
-					<td><petclinic:localDateTime date="${jam.inscriptionDeadline}" /></td>
-					<td><petclinic:localDateTime date="${jam.start}" /></td>
-					<td><petclinic:localDateTime date="${jam.end}" /></td>
+					<td><c:out value="${jam.status}" /></td>
 				</tr>
 			</c:forEach>
 		</tbody>
