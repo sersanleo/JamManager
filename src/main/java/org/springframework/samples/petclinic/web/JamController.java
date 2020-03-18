@@ -47,8 +47,8 @@ public class JamController {
 
 
 	@InitBinder("jam")
-	public void setJamValidator(final WebDataBinder dataBinder) {
-		dataBinder.setValidator(new JamValidator());
+	public void addJamValidator(final WebDataBinder dataBinder) {
+		dataBinder.addValidators(new JamValidator());
 	}
 
 	@GetMapping()
@@ -89,6 +89,8 @@ public class JamController {
 			User creator = new User();
 			creator.setUsername(UserUtils.getCurrentUsername());
 			jam.setCreator(creator);
+			jam.setRated(false);
+			
 			this.jamService.saveJam(jam);
 
 			return "redirect:/jams/" + jam.getId();
@@ -108,7 +110,7 @@ public class JamController {
 			return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
 		} else {
 			Jam jamToUpdate = this.jamService.findJamById(jamId);
-			BeanUtils.copyProperties(jam, jamToUpdate, "id", "creator");
+			BeanUtils.copyProperties(jam, jamToUpdate, "id", "rated", "creator");
 			this.jamService.saveJam(jamToUpdate);
 
 			return "redirect:/jams/{jamId}";

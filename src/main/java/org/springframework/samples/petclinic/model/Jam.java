@@ -28,78 +28,72 @@ import lombok.Setter;
 @Table(name = "jams")
 public class Jam extends BaseEntity {
 
-	@Override
-	public String toString() {
-		return "Jam [name=" + this.name + ", description=" + this.description + ", difficulty=" + this.difficulty + ", inscriptionDeadline=" + this.inscriptionDeadline + ", maxTeamSize=" + this.maxTeamSize + ", minTeams=" + this.minTeams + ", maxTeams="
-			+ this.maxTeams + ", start=" + this.start + ", end=" + this.end + ", teams=" + this.teams + ", resources=" + this.resources + ", winner=" + this.winner + ", creator=" + this.creator + "]";
-	}
-
+	@NotBlank
+	private String name;
 
 	@NotBlank
-	private String				name;
+	private String description;
 
-	@NotBlank
-	private String				description;
-
+	@NotNull
 	@Range(min = 1, max = 5)
-	@NotNull
-	private Integer				difficulty;
+	private Integer difficulty;
 
 	@NotNull
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-	private LocalDateTime		inscriptionDeadline;
-
-	@NotNull
-	@Min(1)
-	private Integer				maxTeamSize;
+	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
+	private LocalDateTime inscriptionDeadline;
 
 	@NotNull
 	@Min(1)
-	private Integer				minTeams;
+	private Integer maxTeamSize;
 
 	@NotNull
 	@Min(1)
-	private Integer				maxTeams;
+	private Integer minTeams;
 
 	@NotNull
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-	private LocalDateTime		start;
+	@Min(1)
+	private Integer maxTeams;
 
 	@NotNull
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-	private LocalDateTime		end;
+	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
+	private LocalDateTime start;
 
 	@NotNull
-	private Boolean				rated;
+	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
+	private LocalDateTime end;
+
+	@NotNull
+	private Boolean rated;
 
 	// Relationships
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "jam", fetch = FetchType.EAGER)
-	private Set<Team>			teams;
+	private Set<Team> teams;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "jam", fetch = FetchType.EAGER)
-	private Set<JamResource>	resources;
+	private Set<JamResource> resources;
 
 	@OneToOne(optional = true)
-	private Team				winner;
+	private Team winner;
 
 	@ManyToOne(optional = false)
-	private User				creator;
-
+	private User creator;
 
 	@Transient
 	public JamStatus getStatus() {
-		LocalDateTime now = LocalDateTime.now();
-		if (now.isBefore(this.inscriptionDeadline)) {
-			return JamStatus.INSCRIPTION;
-		} else if (this.teams.size() < this.minTeams) {
-			return JamStatus.CANCELLED;
-		} else if (now.isBefore(this.start)) {
-			return JamStatus.PENDING;
-		} else if (now.isBefore(this.end)) {
-			return JamStatus.IN_PROGRESS;
-		} else if (!this.rated) {
-			return JamStatus.RATING;
+		if (!this.rated) {
+			LocalDateTime now = LocalDateTime.now();
+			if (now.isBefore(this.inscriptionDeadline)) {
+				return JamStatus.INSCRIPTION;
+			} else if (this.teams.size() < this.minTeams) {
+				return JamStatus.CANCELLED;
+			} else if (now.isBefore(this.start)) {
+				return JamStatus.PENDING;
+			} else if (now.isBefore(this.end)) {
+				return JamStatus.IN_PROGRESS;
+			} else if (!this.rated) {
+				return JamStatus.RATING;
+			}
 		}
 		return JamStatus.FINISHED;
 	}

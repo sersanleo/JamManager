@@ -60,7 +60,7 @@
 		</tr>
 	</table>
 
-	<c:if test="${ isOrganizator }">
+	<c:if test="${ isOrganizator && jam.status == JamStatus.INSCRIPTION }">
 		<spring:url value="{jamId}/edit" var="editUrl">
 			<spring:param name="jamId" value="${jam.id}" />
 		</spring:url>
