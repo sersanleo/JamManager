@@ -108,7 +108,7 @@ public class JamController {
 			return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
 		} else {
 			Jam jamToUpdate = this.jamService.findJamById(jamId);
-			BeanUtils.copyProperties(jam, jamToUpdate, "id", "creator");
+			BeanUtils.copyProperties(jamId, jamToUpdate, "id", "creator");
 			this.jamService.saveJam(jamToUpdate);
 
 			return "redirect:/jams/{jamId}";

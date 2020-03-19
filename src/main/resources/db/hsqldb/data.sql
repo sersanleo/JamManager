@@ -64,3 +64,6 @@ INSERT INTO visits(id,pet_id,visit_date,description) VALUES (4, 7, '2013-01-04',
 
 INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_size,min_teams,max_teams,start,end,rated,creator_username)
 VALUES 			(1,'Jam 1','prueba',2,'2020-06-08 12:00',5,5,10,'2020-06-09 12:00','2020-06-10 12:00',FALSE,'admin1');
+
+INSERT INTO jam_resource(id,description,download_url,jams_id)
+VALUES 			(1,'Jam 1','https://www.youtube.com/',1);
