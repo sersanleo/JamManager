@@ -4,10 +4,12 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.model.Jams;
 import org.springframework.samples.petclinic.model.Team;
+import org.springframework.samples.petclinic.model.Teams;
 import org.springframework.samples.petclinic.service.TeamService;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,7 +18,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,93 +31,82 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/teams ")
 public class TeamController {
 	
+	private static final String	VIEWS_TEAM_CREATE_OR_UPDATE_FORM	= "teams/createOrUpdateForm";
+	
+	
 		@Autowired
 		private TeamService teamService;
 	
+		@InitBinder("team")
+		public void addTeamValidator(final WebDataBinder dataBinder) {
+			dataBinder.addValidators(new TeamValidator());
+		}
+
 		@GetMapping()
-		public String listTeams(ModelMap modelMap) {
-			String vista = “teams/listTeams”;
-			Iterable<Team> teams = teamService.findAll();
-			modelMap.addAttribute(“teams”, teams);
-			return vista;
+		public String listarJams(final ModelMap modelMap) {
+			modelMap.addAttribute("teams", this.teamService.findTeams());
+
+			return "teams/teamList";
+		}
+
+		@GetMapping("/teams.xml")
+		public @ResponseBody Teams listarTeamsXml() {
+			Teams teams = new Teams();
+
+			teams.getTeamList().addAll(this.teamService.findTeams());
+
+			return teams;
+		}
+
+		@GetMapping("/{teamId}")
+		public String mostrarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) {
+			modelMap.addAttribute("team", this.teamService.findTeamById(teamId));
+
+			return "teams/teamDetails";
+		}
+
+		@GetMapping("/new")
+		public String crearTeam(final ModelMap modelMap) {
+			modelMap.addAttribute("team", new Team());
+
+			return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
 		}
 
 		
-		
-		
-		@GetMapping(value = {
-			"/jams"
-		})
-		public String showJamList(final Map<String, Object> model) {
-			model.put("jams", this.jamService.findJams());
+//		// AQUI NO SE MU BIEN K PONER PA LOS TEAM
+//		
+//		@PostMapping("/new")
+//		public String salvarTeam(@Valid final Team team, final BindingResult result, final ModelMap modelMap) {
+//			if (result.hasErrors()) {
+//				return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
+//			} else {
+//				User creator = new User();
+//				creator.setUsername(UserUtils.getCurrentUsername());
+//				team.setCreator(creator);
+//				
+//				this.teamService.saveTeam(team);
+//
+//				return "redirect:/teams/" + team.getId();
+//			}
+//		}
 
-			return "jams/jamList";
+		@GetMapping("{teamId}/edit")
+		public String editarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) {
+			modelMap.addAttribute("jam", this.teamService.findTeamById(teamId));
+
+			return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
 		}
 
-		@GetMapping(value = {
-			"/jams/jams.xml"
-		})
-		public @ResponseBody Jams showResourcesJamList() {
-			Jams jams = new Jams();
-
-			jams.getJamList().addAll(this.jamService.findJams());
-
-			return jams;
-		}
-
-		@GetMapping(value = "/jams/new")
-		public String initCreationForm(final Map<String, Object> model) {
-			Jam jam = new Jam();
-
-			model.put("jam", jam);
-
-			return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
-		}
-
-		@PostMapping(value = "/jams/new")
-		public String processCreationForm(@Valid final Jam jam, final BindingResult result, final ModelMap model) {
+		@PostMapping("{teamId}/edit")
+		public String salvarCambiosTeam(@Valid final Team team, final BindingResult result, @PathVariable("teamId") final int teamId, final ModelMap modelMap) {
 			if (result.hasErrors()) {
-				return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
+				return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
 			} else {
-				SecurityContext context = SecurityContextHolder.getContext();
-				org.springframework.security.core.userdetails.User user = (User)context.getAuthentication().getPrincipal();
-				org.springframework.samples.petclinic.model.User creator = new org.springframework.samples.petclinic.model.User();
-				creator.setUsername(user.getUsername());
-				jam.setCreator(creator);
-				this.jamService.saveJam(jam);
+				Team teamToUpdate = this.teamService.findTeamById(teamId);
+				BeanUtils.copyProperties(team, teamToUpdate, "id", "rated", "creator");
+				this.teamService.saveTeam(teamToUpdate);
 
-				return "redirect:/jams/" + jam.getId();
+				return "redirect:/teams/{tamId}";
 			}
 		}
-
-		@GetMapping("/jams/{jamId}")
-		public ModelAndView showJam(@PathVariable("jamId") final int jamId) {
-			ModelAndView mav = new ModelAndView("jams/jamDetails");
-
-			mav.addObject(this.jamService.findJamById(jamId));
-
-			return mav;
-		}
-
-		@GetMapping(value = "/jams/{jamId}/edit")
-		public String initUpdateJamForm(@PathVariable("jamId") final int jamId, final Model model) {
-			Jam jam = this.jamService.findJamById(jamId);
-
-			model.addAttribute(jam);
-
-			return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
-		}
-
-		@PostMapping(value = "/jams/{jamId}/edit")
-		public String processUpdateOwnerForm(@Valid final Jam jam, final BindingResult result, @PathVariable("jamId") final int jamId) {
-			if (result.hasErrors()) {
-				return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
-			} else {
-				jam.setId(jamId);
-				this.jamService.saveJam(jam);
-
-				return "redirect:/jams/{jamId}";
-			}
-		}	
-
-}
+	}

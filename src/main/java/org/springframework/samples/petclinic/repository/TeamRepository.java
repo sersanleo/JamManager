@@ -13,6 +13,6 @@ public interface TeamRepository extends CrudRepository<Team, Integer>  {
 
 	Collection<Team> findAll() throws DataAccessException;
 
-	void save(Team team) throws DataAccessException;
+
 	
 }
