@@ -92,7 +92,7 @@ public class TeamController {
 
 		@GetMapping("{teamId}/edit")
 		public String editarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) {
-			modelMap.addAttribute("jam", this.teamService.findTeamById(teamId));
+			modelMap.addAttribute("team", this.teamService.findTeamById(teamId));
 
 			return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
 		}
