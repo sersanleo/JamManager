@@ -1,9 +1,11 @@
-<%@ page session="false" trimDirectiveWhitespaces="true"%>
+<%@ page session="false" trimDirectiveWhitespaces="true"
+	import="org.springframework.samples.petclinic.model.JamStatus"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags"%>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="sec"
+	uri="http://www.springframework.org/security/tags"%>
 
 <sec:authorize access="hasAuthority('jamOrganizator')">
 	<c:set var="isOrganizator" value="true" />
@@ -64,7 +66,8 @@
 		<spring:url value="{jamId}/edit" var="editUrl">
 			<spring:param name="jamId" value="${jam.id}" />
 		</spring:url>
-		<a href="${fn:escapeXml(editUrl)}" class="btn btn-default">Edit Jam</a>
+		<a href="${fn:escapeXml(editUrl)}" class="btn btn-default">Edit
+			Jam</a>
 	</c:if>
 
 	<br />
@@ -90,7 +93,30 @@
 			<spring:url value="{jamId}/resources/new" var="addResourceUrl">
 				<spring:param name="jamId" value="${jam.id}" />
 			</spring:url>
-			<a href="${fn:escapeXml(addResourceUrl)}" class="btn btn-default">Add New Resource</a>
+			<a href="${fn:escapeXml(addResourceUrl)}" class="btn btn-default">Add
+				New Resource</a>
 		</c:if>
+		<br />
+		<br />
+		<br />
+		<b>Teams</b>
+		<table class="table table-striped">
+			<tr>
+				<th>Name</th>
+			</tr>
+			<c:forEach var="team" items="${jam.teams}">
+				<tr>
+					<td><c:out value="${team.name}" /></td>
+				</tr>
+			</c:forEach>
+		</table>
+	</c:if>
+
+	<c:if test="${ jam.status == JamStatus.INSCRIPTION }">
+		<spring:url value="{jamId}/teams/new" var="addTeamUrl">
+			<spring:param name="jamId" value="${jam.id}" />
+		</spring:url>
+		<a href="${fn:escapeXml(addTeamUrl)}" class="btn btn-default">Join
+			this Jam</a>
 	</c:if>
 </petclinic:layout>
