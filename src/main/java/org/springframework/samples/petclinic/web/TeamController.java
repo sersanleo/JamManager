@@ -1,24 +1,30 @@
 package org.springframework.samples.petclinic.web;
 
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.model.Booking;
+import org.springframework.samples.petclinic.model.Jam;
+import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.model.Teams;
+import org.springframework.samples.petclinic.model.User;
+import org.springframework.samples.petclinic.service.JamService;
 import org.springframework.samples.petclinic.service.TeamService;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.samples.petclinic.util.UserUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/teams")
+@RequestMapping("/jams/{jamId}/teams")
 public class TeamController {
 
 	private static final String VIEWS_TEAM_CREATE_OR_UPDATE_FORM = "teams/createOrUpdateForm";
@@ -34,25 +40,24 @@ public class TeamController {
 	@Autowired
 	private TeamService teamService;
 
+	@Autowired
+	private JamService jamService;
+
 	@InitBinder("team")
 	public void addTeamValidator(final WebDataBinder dataBinder) {
 		dataBinder.addValidators(new TeamValidator());
+		dataBinder.setDisallowedFields("id", "jam", "creationDate");
 	}
 
-	@GetMapping()
-	public String listarJams(final ModelMap modelMap) {
-		modelMap.addAttribute("teams", this.teamService.findTeams());
+	@ModelAttribute("team")
+	public Team cargarTeam(@PathVariable("jamId") final int jamId) {
+		Team team = new Team();
 
-		return "teams/teamList";
-	}
+		Jam jam = this.jamService.findJamById(jamId);
+		team.setJam(jam);
+		team.setCreationDate(LocalDateTime.now());
 
-	@GetMapping("/teams.xml")
-	public @ResponseBody Teams listarTeamsXml() {
-		Teams teams = new Teams();
-
-		teams.getTeamList().addAll(this.teamService.findTeams());
-
-		return teams;
+		return team;
 	}
 
 	@GetMapping("/{teamId}")
@@ -69,19 +74,23 @@ public class TeamController {
 		return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
 	}
 
-//		// AQUI NO SE MU BIEN K PONER PA LOS TEAM
-//		
 	@PostMapping("/new")
-	public String salvarTeam(@Valid final Team team, final BindingResult result, final ModelMap modelMap) {
+	public String salvarTeam(@Valid final Team team, final Jam jam, final BindingResult result,
+			final ModelMap modelMap) {
 		if (result.hasErrors()) {
 			return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
 		} else {
-//				User members = new User();
-//				members.setUsername(UserUtils.getCurrentUsername());
+			User member = new User();
+			member.setUsername(UserUtils.getCurrentUsername());
+
+			Set<User> members = new HashSet();
+			members.add(member);
+
+			team.setMembers(members);
 
 			this.teamService.saveTeam(team);
 
-			return "redirect:/teams/" + team.getId();
+			return "redirect:/jams/{jamId}";
 		}
 	}
 
@@ -99,7 +108,7 @@ public class TeamController {
 			return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
 		} else {
 			Team teamToUpdate = this.teamService.findTeamById(teamId);
-			BeanUtils.copyProperties(team, teamToUpdate, "id");
+			BeanUtils.copyProperties(team, teamToUpdate, "id", "jam", "creationDate");
 			this.teamService.saveTeam(teamToUpdate);
 
 			return "redirect:/teams/{teamId}";
