@@ -6,8 +6,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.samples.petclinic.model.Jam;
-import org.springframework.samples.petclinic.model.Jams;
 import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.model.Teams;
 import org.springframework.samples.petclinic.service.TeamService;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/teams ")
 public class TeamController {
 	
 	private static final String	VIEWS_TEAM_CREATE_OR_UPDATE_FORM	= "teams/createOrUpdateForm";
@@ -75,20 +72,20 @@ public class TeamController {
 		
 //		// AQUI NO SE MU BIEN K PONER PA LOS TEAM
 //		
-//		@PostMapping("/new")
-//		public String salvarTeam(@Valid final Team team, final BindingResult result, final ModelMap modelMap) {
-//			if (result.hasErrors()) {
-//				return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
-//			} else {
-//				User creator = new User();
-//				creator.setUsername(UserUtils.getCurrentUsername());
-//				team.setCreator(creator);
-//				
-//				this.teamService.saveTeam(team);
-//
-//				return "redirect:/teams/" + team.getId();
-//			}
-//		}
+		@PostMapping("/new")
+		public String salvarTeam(@Valid final Team team, final BindingResult result, final ModelMap modelMap) {
+			if (result.hasErrors()) {
+				return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
+			} else {
+//				User members = new User();
+//				members.setUsername(UserUtils.getCurrentUsername());
+
+				
+				this.teamService.saveTeam(team);
+
+				return "redirect:/teams/" + team.getId();
+			}
+		}
 
 		@GetMapping("{teamId}/edit")
 		public String editarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) {
@@ -103,10 +100,10 @@ public class TeamController {
 				return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
 			} else {
 				Team teamToUpdate = this.teamService.findTeamById(teamId);
-				BeanUtils.copyProperties(team, teamToUpdate, "id", "rated", "creator");
+				BeanUtils.copyProperties(team, teamToUpdate, "id");
 				this.teamService.saveTeam(teamToUpdate);
 
-				return "redirect:/teams/{tamId}";
+				return "redirect:/teams/{teamId}";
 			}
 		}
 	}
