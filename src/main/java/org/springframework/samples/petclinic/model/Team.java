@@ -32,7 +32,7 @@ public class Team extends BaseEntity {
 	private String			name;
 
 	@NotNull
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
 	@Past
 	private LocalDateTime	creationDate;
 

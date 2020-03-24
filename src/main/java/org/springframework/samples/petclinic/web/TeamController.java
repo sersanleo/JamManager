@@ -26,84 +26,83 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@RequestMapping("/teams")
 public class TeamController {
-	
-	private static final String	VIEWS_TEAM_CREATE_OR_UPDATE_FORM	= "teams/createOrUpdateForm";
-	
-	
-		@Autowired
-		private TeamService teamService;
-	
-		@InitBinder("team")
-		public void addTeamValidator(final WebDataBinder dataBinder) {
-			dataBinder.addValidators(new TeamValidator());
-		}
 
-		@GetMapping()
-		public String listarJams(final ModelMap modelMap) {
-			modelMap.addAttribute("teams", this.teamService.findTeams());
+	private static final String VIEWS_TEAM_CREATE_OR_UPDATE_FORM = "teams/createOrUpdateForm";
 
-			return "teams/teamList";
-		}
+	@Autowired
+	private TeamService teamService;
 
-		@GetMapping("/teams.xml")
-		public @ResponseBody Teams listarTeamsXml() {
-			Teams teams = new Teams();
+	@InitBinder("team")
+	public void addTeamValidator(final WebDataBinder dataBinder) {
+		dataBinder.addValidators(new TeamValidator());
+	}
 
-			teams.getTeamList().addAll(this.teamService.findTeams());
+	@GetMapping()
+	public String listarJams(final ModelMap modelMap) {
+		modelMap.addAttribute("teams", this.teamService.findTeams());
 
-			return teams;
-		}
+		return "teams/teamList";
+	}
 
-		@GetMapping("/{teamId}")
-		public String mostrarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) {
-			modelMap.addAttribute("team", this.teamService.findTeamById(teamId));
+	@GetMapping("/teams.xml")
+	public @ResponseBody Teams listarTeamsXml() {
+		Teams teams = new Teams();
 
-			return "teams/teamDetails";
-		}
+		teams.getTeamList().addAll(this.teamService.findTeams());
 
-		@GetMapping("/new")
-		public String crearTeam(final ModelMap modelMap) {
-			modelMap.addAttribute("team", new Team());
+		return teams;
+	}
 
-			return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
-		}
+	@GetMapping("/{teamId}")
+	public String mostrarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) {
+		modelMap.addAttribute("team", this.teamService.findTeamById(teamId));
 
-		
+		return "teams/teamDetails";
+	}
+
+	@GetMapping("/new")
+	public String crearTeam(final ModelMap modelMap) {
+		modelMap.addAttribute("team", new Team());
+
+		return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
+	}
+
 //		// AQUI NO SE MU BIEN K PONER PA LOS TEAM
 //		
-		@PostMapping("/new")
-		public String salvarTeam(@Valid final Team team, final BindingResult result, final ModelMap modelMap) {
-			if (result.hasErrors()) {
-				return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
-			} else {
+	@PostMapping("/new")
+	public String salvarTeam(@Valid final Team team, final BindingResult result, final ModelMap modelMap) {
+		if (result.hasErrors()) {
+			return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
+		} else {
 //				User members = new User();
 //				members.setUsername(UserUtils.getCurrentUsername());
 
-				
-				this.teamService.saveTeam(team);
+			this.teamService.saveTeam(team);
 
-				return "redirect:/teams/" + team.getId();
-			}
-		}
-
-		@GetMapping("{teamId}/edit")
-		public String editarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) {
-			modelMap.addAttribute("team", this.teamService.findTeamById(teamId));
-
-			return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
-		}
-
-		@PostMapping("{teamId}/edit")
-		public String salvarCambiosTeam(@Valid final Team team, final BindingResult result, @PathVariable("teamId") final int teamId, final ModelMap modelMap) {
-			if (result.hasErrors()) {
-				return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
-			} else {
-				Team teamToUpdate = this.teamService.findTeamById(teamId);
-				BeanUtils.copyProperties(team, teamToUpdate, "id");
-				this.teamService.saveTeam(teamToUpdate);
-
-				return "redirect:/teams/{teamId}";
-			}
+			return "redirect:/teams/" + team.getId();
 		}
 	}
+
+	@GetMapping("{teamId}/edit")
+	public String editarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) {
+		modelMap.addAttribute("team", this.teamService.findTeamById(teamId));
+
+		return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
+	}
+
+	@PostMapping("{teamId}/edit")
+	public String salvarCambiosTeam(@Valid final Team team, final BindingResult result,
+			@PathVariable("teamId") final int teamId, final ModelMap modelMap) {
+		if (result.hasErrors()) {
+			return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
+		} else {
+			Team teamToUpdate = this.teamService.findTeamById(teamId);
+			BeanUtils.copyProperties(team, teamToUpdate, "id");
+			this.teamService.saveTeam(teamToUpdate);
+
+			return "redirect:/teams/{teamId}";
+		}
+	}
+}

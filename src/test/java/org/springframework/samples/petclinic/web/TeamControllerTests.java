@@ -44,8 +44,6 @@ public class TeamControllerTests {
 	void setup() {
 		Team team = new Team();
 		team.setName("PruebaTeam");
-		team.setCreationDate(new Date(System.currentTimeMillis() + TeamControllerTests.DAY_TO_MILLIS * 2));
-
 
 		BDDMockito.given(this.teamService.findTeamById(TeamControllerTests.TEST_TEAM_ID)).willReturn(team);
 		BDDMockito.given(this.teamService.findTeams()).willReturn(Lists.newArrayList(team));
