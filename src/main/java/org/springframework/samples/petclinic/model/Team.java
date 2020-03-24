@@ -1,7 +1,7 @@
 
 package org.springframework.samples.petclinic.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -17,6 +17,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,10 +31,10 @@ public class Team extends BaseEntity {
 	@NotBlank
 	private String			name;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	@Past
-	private Date			creationDate;
+	private LocalDateTime	creationDate;
 
 	// Relationships
 

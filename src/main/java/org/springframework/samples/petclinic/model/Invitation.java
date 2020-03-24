@@ -1,16 +1,14 @@
 
 package org.springframework.samples.petclinic.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 
-import org.hibernate.validator.constraints.Range;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -20,19 +18,19 @@ import lombok.Setter;
 @Setter
 public class Invitation extends BaseEntity {
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	@Past
-	private Date			creationDate;
-	
+	private LocalDateTime		creationDate;
+
 	@NotNull
-	private InvitationStatus status;
+	private InvitationStatus	status;
 
 	// Relationships
 
 	@ManyToOne(optional = false)
-	private Team	from;
+	private Team				from;
 
 	@ManyToOne(optional = false)
-	private User	to;
+	private User				to;
 }

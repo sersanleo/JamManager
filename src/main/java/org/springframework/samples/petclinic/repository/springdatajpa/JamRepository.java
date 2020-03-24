@@ -16,17 +16,28 @@
 
 package org.springframework.samples.petclinic.repository.springdatajpa;
 
-import org.springframework.data.repository.Repository;
+import java.util.Collection;
+
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.samples.petclinic.model.Jam;
-import org.springframework.samples.petclinic.repository.JamRepository;
-import org.springframework.samples.petclinic.repository.VetRepository;
 
 /**
- * Spring Data JPA specialization of the {@link VetRepository} interface
+ * Repository class for <code>Vet</code> domain objects All method names are compliant
+ * with Spring Data naming conventions so this interface can easily be extended for Spring
+ * Data See here:
+ * http://static.springsource.org/spring-data/jpa/docs/current/reference/html/jpa.repositories.html#jpa.query-methods.query-creation
  *
+ * @author Ken Krebs
+ * @author Juergen Hoeller
+ * @author Sam Brannen
  * @author Michael Isvy
- * @since 15.1.2013
  */
-public interface SpringDataJamRepository extends JamRepository, Repository<Jam, Integer> {
+public interface JamRepository extends CrudRepository<Jam, Integer> {
+
+	Jam findById(int id) throws DataAccessException;
+
+	@Override
+	Collection<Jam> findAll() throws DataAccessException;
 
 }
