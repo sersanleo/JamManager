@@ -49,6 +49,7 @@ public class JamController {
 	@InitBinder("jam")
 	public void addJamValidator(final WebDataBinder dataBinder) {
 		dataBinder.addValidators(new JamValidator());
+		dataBinder.setDisallowedFields("id", "rated", "creator");
 	}
 
 	@GetMapping()
@@ -89,22 +90,21 @@ public class JamController {
 			User creator = new User();
 			creator.setUsername(UserUtils.getCurrentUsername());
 			jam.setCreator(creator);
-			jam.setRated(false);
-			
+
 			this.jamService.saveJam(jam);
 
-			return "redirect:/jams/" + jam.getId();
+			return "redirect:/jams/{jamId}";
 		}
 	}
 
-	@GetMapping("{jamId}/edit")
+	@GetMapping("/{jamId}/edit")
 	public String editarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
 		modelMap.addAttribute("jam", this.jamService.findJamById(jamId));
 
 		return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
 	}
 
-	@PostMapping("{jamId}/edit")
+	@PostMapping("/{jamId}/edit")
 	public String salvarCambiosJam(@Valid final Jam jam, final BindingResult result, @PathVariable("jamId") final int jamId, final ModelMap modelMap) {
 		if (result.hasErrors()) {
 			return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;

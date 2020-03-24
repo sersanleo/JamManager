@@ -16,7 +16,7 @@
         </tr>
         <tr>
             <th>Creation Date</th>
-            <td><c:out value="${team.creationDate}"/></td>
+            <td><petclinic:localDateTime date="${team.creationDate}" /></td>
         </tr>
     </table>
 
