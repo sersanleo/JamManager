@@ -6,6 +6,8 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
@@ -39,4 +41,10 @@ public class User {
 			@AttributeOverride(name = "areaCode", column = @Column(name = "phone_area_code")),
 			@AttributeOverride(name = "number", column = @Column(name = "phone_number")) })
 	Phone phone;
+	
+	@ManyToOne
+	@JoinColumn(name = "team_id")
+	private Team team;
+	
+	
 }

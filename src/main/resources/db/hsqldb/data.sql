@@ -43,6 +43,8 @@ INSERT INTO owners VALUES (8, 'Maria', 'Escobito', '345 Maple St.', 'Madison', '
 INSERT INTO owners VALUES (9, 'David', 'Schroeder', '2749 Blackhawk Trail', 'Madison', '6085559435', 'owner1');
 INSERT INTO owners VALUES (10, 'Carlos', 'Estaban', '2335 Independence La.', 'Waunakee', '6085555487', 'owner1');
 
+
+
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (1, 'Leo', '2010-09-07', 1, 1);
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (2, 'Basil', '2012-08-06', 6, 2);
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (3, 'Rosy', '2011-04-17', 2, 3);
@@ -64,3 +66,16 @@ INSERT INTO visits(id,pet_id,visit_date,description) VALUES (4, 7, '2013-01-04',
 
 INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_size,min_teams,max_teams,start,end,rated,creator_username)
 VALUES 			(1,'Jam 1','prueba',2,'2020-06-08 12:00',5,5,10,'2020-06-09 12:00','2020-06-10 12:00',FALSE,'admin1');
+
+INSERT INTO teams(id,name,creationDate,id_jam)
+VALUES 			(1,'Grupo 1','2020-06-08 12:00',1);
+
+
+INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number, team_id) 
+VALUES ('usuario1','usuario1',TRUE,'example@example.com',34,'','600 000 000', team_id);
+
+INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number, team_id) 
+VALUES ('usuario2','usuario2',TRUE,'example@example.com',34,'','600 000 000', 1);
+
+INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number, team_id)
+VALUES ('usuario3','usuario3',TRUE,'example@example.com',34,'','600 000 000', 1);
