@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class TeamController {
 
 	private static final String	VIEWS_TEAM_CREATE_OR_UPDATE_FORM	= "teams/createOrUpdateForm";
+	private static final String	VIEWS_TEAM_ERROR	= "teams/errorTeam";
 
 	@Autowired
 	private TeamService			teamService;
@@ -77,6 +78,8 @@ public class TeamController {
 
 		if (result.hasErrors()) {
 			return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
+		} else if (jam.getTeams().size() == jam.getMaxTeams()) {
+			return TeamController.VIEWS_TEAM_ERROR;
 		} else {
 			User member = new User();
 			member.setUsername(UserUtils.getCurrentUsername());
