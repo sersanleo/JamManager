@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Invitation;
+import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.repository.InvitationRepository;
 import org.springframework.samples.petclinic.repository.TeamRepository;

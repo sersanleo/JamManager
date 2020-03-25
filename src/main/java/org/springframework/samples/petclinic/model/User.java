@@ -43,7 +43,6 @@ public class User {
 	Phone phone;
 	
 	@ManyToOne
-	@JoinColumn(name = "team_id")
 	private Team team;
 	
 	

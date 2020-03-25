@@ -24,6 +24,11 @@
         <spring:param name="teamId" value="${team.id}"/>
     </spring:url>
     <a href="${fn:escapeXml(editUrl)}" class="btn btn-default">Edit Team</a>
+    
+      <spring:url value="{teamId}/edit" var="editUrl">
+        <spring:param name="teamId" value="${team.id}"/>
+    </spring:url>
+    <a href="${fn:escapeXml(editUrl)}" class="btn btn-default">Edit Team</a>
 
     <br/>
     <br/>

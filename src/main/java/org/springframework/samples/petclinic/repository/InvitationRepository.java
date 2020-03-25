@@ -22,6 +22,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.samples.petclinic.model.Invitation;
 import org.springframework.samples.petclinic.model.Jam;
+import org.springframework.samples.petclinic.model.Team;
 
 /**
  * Repository class for <code>Vet</code> domain objects All method names are compliant
@@ -37,7 +38,6 @@ import org.springframework.samples.petclinic.model.Jam;
 public interface InvitationRepository extends CrudRepository<Invitation, Integer> {
 
 	Invitation findById(int id) throws DataAccessException;
-
 	@Override
 	Collection<Invitation> findAll() throws DataAccessException;
 
