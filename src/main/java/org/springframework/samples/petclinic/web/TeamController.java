@@ -59,10 +59,10 @@ public class TeamController {
 
 	@GetMapping("/new")
 	public String crearTeam(final ModelMap modelMap, @PathVariable("jamId") final int jamId) {
-//		Integer existentTeam = this.teamService.findTeamIdByJamIdAndUsername(jamId, UserUtils.getCurrentUsername());
-//		if (existentTeam != null) {
-//			return "redirect:/jams/{jamId}/teams/" + existentTeam;
-//		}
+		Integer existentTeam = this.teamService.findTeamIdByJamIdAndUsername(jamId, UserUtils.getCurrentUsername());
+		if (existentTeam != null) {
+			return "redirect:/jams/{jamId}/teams/" + existentTeam;
+		}
 
 		modelMap.addAttribute("team", new Team());
 
@@ -71,10 +71,10 @@ public class TeamController {
 
 	@PostMapping("/new")
 	public String salvarTeam(final Jam jam, @Valid final Team team, final BindingResult result, final ModelMap modelMap) {
-//		Integer existentTeam = this.teamService.findTeamIdByJamIdAndUsername(jam.getId(), UserUtils.getCurrentUsername());
-//		if (existentTeam != null) {
-//			return "redirect:/jams/{jamId}/teams/" + existentTeam;
-//		}
+		Integer existentTeam = this.teamService.findTeamIdByJamIdAndUsername(jam.getId(), UserUtils.getCurrentUsername());
+		if (existentTeam != null) {
+			return "redirect:/jams/{jamId}/teams/" + existentTeam;
+		}
 
 		if (result.hasErrors()) {
 			return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
