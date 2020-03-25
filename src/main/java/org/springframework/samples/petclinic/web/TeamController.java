@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class TeamController {
 
 	private static final String	VIEWS_TEAM_CREATE_OR_UPDATE_FORM	= "teams/createOrUpdateForm";
-	private static final String	VIEWS_TEAM_ERROR	= "teams/errorTeam";
+	private static final String	VIEWS_TEAM_ERROR					= "teams/errorTeam";
 
 	@Autowired
 	private TeamService			teamService;
@@ -45,7 +45,7 @@ public class TeamController {
 		dataBinder.setDisallowedFields("id", "jam", "creationDate");
 	}
 
-	@ModelAttribute("jam")
+	@ModelAttribute(name = "jam", binding = false)
 	public Jam cargarJam(@PathVariable("jamId") final int jamId) {
 		return this.jamService.findJamById(jamId);
 	}
