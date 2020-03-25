@@ -1,6 +1,5 @@
-package org.springframework.samples.petclinic.service;
 
-import java.util.Collection;
+package org.springframework.samples.petclinic.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -11,23 +10,27 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TeamService {
-	
-	@Autowired
+
 	private TeamRepository teamRepository;
 
 
-	@Transactional
-	public Team findTeamById(final int id) {
+	@Autowired
+	public TeamService(final TeamRepository teamRepository) {
+		this.teamRepository = teamRepository;
+	}
+
+	@Transactional(readOnly = true)
+	public Team findTeamById(final int id) throws DataAccessException {
 		return this.teamRepository.findById(id);
 	}
 
-	@Transactional
-	public Collection<Team> findTeams() {
-		return this.teamRepository.findAll();
+	@Transactional(readOnly = true)
+	public Integer findTeamIdByJamIdAndUsername(final int jamId, final String username) throws DataAccessException {
+		return this.teamRepository.findTeamIdByJamIdAndUsername(jamId, username);
 	}
 
 	@Transactional
-	public void saveTeam(final Team team) {
+	public void saveTeam(final Team team) throws DataAccessException {
 		this.teamRepository.save(team);
 	}
 

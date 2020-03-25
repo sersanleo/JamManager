@@ -5,10 +5,8 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -29,19 +27,16 @@ import lombok.Setter;
 public class Team extends BaseEntity {
 
 	@NotBlank
-	@JoinColumn(name = "name")
 	private String			name;
 
 	@NotNull
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
 	@Past
-	@Column(name = "creation_date") 
 	private LocalDateTime	creationDate;
 
 	// Relationships
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "jam_id")
 	private Jam				jam;
 
 	@ManyToMany()
@@ -52,4 +47,11 @@ public class Team extends BaseEntity {
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "team", fetch = FetchType.EAGER)
 	private Set<Delivery>	deliveries;
+
+
+	public Team() {
+		super();
+		this.creationDate = LocalDateTime.now().minusNanos(1);
+	}
 }
+

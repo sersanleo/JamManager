@@ -46,9 +46,11 @@ public class JamController {
 	private JamService			jamService;
 
 
+
 	@InitBinder("jam")
-	public void setJamValidator(final WebDataBinder dataBinder) {
-		dataBinder.setValidator(new JamValidator());
+	public void addJamValidator(final WebDataBinder dataBinder) {
+		dataBinder.addValidators(new JamValidator());
+		dataBinder.setDisallowedFields("id", "rated", "creator");
 	}
 
 	@GetMapping()
@@ -59,12 +61,26 @@ public class JamController {
 	}
 
 
+	@GetMapping("/jams.xml")
+	public @ResponseBody Jams listarJamsXml() {
+		Jams jams = new Jams();
+}
+
 	@GetMapping("/{jamId}")
 	public String mostrarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
 		modelMap.addAttribute("jam", this.jamService.findJamById(jamId));
 
 		return "jams/jamDetails";
 	}
+
+
+	@GetMapping("/{jamId}")
+	public String mostrarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
+		modelMap.addAttribute("jam", this.jamService.findJamById(jamId));
+
+		return "jams/jamDetails";
+	}
+
 
 	@GetMapping("/new")
 	public String crearJam(final ModelMap modelMap) {
@@ -81,26 +97,33 @@ public class JamController {
 			User creator = new User();
 			creator.setUsername(UserUtils.getCurrentUsername());
 			jam.setCreator(creator);
+
 			this.jamService.saveJam(jam);
 
-			return "redirect:/jams/" + jam.getId();
+			return "redirect:/jams/{jamId}";
 		}
 	}
 
-	@GetMapping("{jamId}/edit")
+
+	@GetMapping("/{jamId}/edit")
+
 	public String editarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
 		modelMap.addAttribute("jam", this.jamService.findJamById(jamId));
 
 		return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
 	}
 
-	@PostMapping("{jamId}/edit")
+
+	@PostMapping("/{jamId}/edit")
+
 	public String salvarCambiosJam(@Valid final Jam jam, final BindingResult result, @PathVariable("jamId") final int jamId, final ModelMap modelMap) {
 		if (result.hasErrors()) {
 			return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
 		} else {
 			Jam jamToUpdate = this.jamService.findJamById(jamId);
-			BeanUtils.copyProperties(jam, jamToUpdate, "id", "creator");
+
+			BeanUtils.copyProperties(jam, jamToUpdate, "id", "rated", "creator");
+
 			this.jamService.saveJam(jamToUpdate);
 
 			return "redirect:/jams/{jamId}";

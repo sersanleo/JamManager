@@ -22,9 +22,6 @@ public class TeamValidator implements Validator {
 		
 	}
 
-	/**
-	 * This Validator validates *just* Pet instances
-	 */
 	@Override
 	public boolean supports(final Class<?> clazz) {
 		return Team.class.isAssignableFrom(clazz);

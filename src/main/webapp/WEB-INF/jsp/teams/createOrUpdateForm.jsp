@@ -8,12 +8,11 @@
 
 <petclinic:layout pageName="jams">
     <h2>
-        <c:if test="${jam['new']}">New </c:if> Jam 
+        <c:if test="${team['new']}">New </c:if> Team
     </h2>
-    <form:form modelAttribute="jam" class="form-horizontal" id="add-jam-form">
+    <form:form modelAttribute="team" class="form-horizontal" id="add-team-form">
         <div class="form-group has-feedback">
             <petclinic:inputField label="Name" name="name"/>
-            <petclinic:inputField label="Creation date" name="creationDate"/>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">

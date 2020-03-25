@@ -1,3 +1,4 @@
+
 INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('admin1','4dm1n',TRUE,'example@example.com',34,'','600 000 000');
 INSERT INTO authorities(username,authority) VALUES ('admin1','jamOrganizator');
 INSERT INTO authorities(username,authority) VALUES ('admin1','judge');
@@ -7,6 +8,7 @@ INSERT INTO authorities(username,authority) VALUES ('owner1','owner');
 -- One vet user, named vet1 with passwor v3t
 INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('vet1','v3t',TRUE,'example@example.com',34,'','600 000 000');
 INSERT INTO authorities(username,authority) VALUES ('vet1','veterinarian');
+
 
 INSERT INTO vets VALUES (1, 'James', 'Carter');
 INSERT INTO vets VALUES (2, 'Helen', 'Leary');
@@ -31,6 +33,7 @@ INSERT INTO types VALUES (3, 'lizard');
 INSERT INTO types VALUES (4, 'snake');
 INSERT INTO types VALUES (5, 'bird');
 INSERT INTO types VALUES (6, 'hamster');
+
 
 INSERT INTO owners VALUES (1, 'George', 'Franklin', '110 W. Liberty St.', 'Madison', '6085551023', 'owner1');
 INSERT INTO owners VALUES (2, 'Betty', 'Davis', '638 Cardinal Ave.', 'Sun Prairie', '6085551749', 'owner1');
@@ -79,3 +82,4 @@ VALUES ('usuario2','usuario2',TRUE,'example@example.com',34,'','600 000 000', 1)
 
 INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number, team_id)
 VALUES ('usuario3','usuario3',TRUE,'example@example.com',34,'','600 000 000', 1);
+
