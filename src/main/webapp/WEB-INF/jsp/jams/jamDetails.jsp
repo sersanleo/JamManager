@@ -1,4 +1,6 @@
+
 <%@ page session="false" trimDirectiveWhitespaces="true" import="org.springframework.samples.petclinic.model.JamStatus"%>
+
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -39,8 +41,10 @@
 			<td><c:out value="${jam.minTeams}" /></td>
 		</tr>
 		<tr>
+
 			<th>Inscribed teams</th>
 			<td><c:out value="${jam.teams.size()}" />/<c:out value="${jam.maxTeams}" /></td>
+
 		</tr>
 		<tr>
 			<th>Start date</th>
@@ -60,12 +64,15 @@
 		</tr>
 	</table>
 
+
 	<c:if test="${ isOrganizator && jam.status == JamStatus.INSCRIPTION }">
+
 		<spring:url value="{jamId}/edit" var="editUrl">
 			<spring:param name="jamId" value="${jam.id}" />
 		</spring:url>
 		<a href="${fn:escapeXml(editUrl)}" class="btn btn-default">Edit Jam</a>
 	</c:if>
+
 
 	<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS }">
 		<br />
@@ -122,5 +129,6 @@
 			<spring:param name="jamId" value="${jam.id}" />
 		</spring:url>
 		<a href="${fn:escapeXml(addTeamUrl)}" class="btn btn-default">Join this Jam</a>
+
 	</c:if>
 </petclinic:layout>

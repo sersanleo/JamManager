@@ -39,6 +39,11 @@ public class UserService {
 		this.userRepository = userRepository;
 	}
 
+	@Transactional(readOnly = true)
+	public User findUserByUserName(final String userName) throws DataAccessException {
+		return this.userRepository.findByName(userName);
+	}
+	
 	@Transactional
 	public void saveUser(User user) throws DataAccessException {
 		user.setEnabled(true);

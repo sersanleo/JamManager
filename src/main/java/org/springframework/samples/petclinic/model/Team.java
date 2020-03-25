@@ -54,3 +54,4 @@ public class Team extends BaseEntity {
 		this.creationDate = LocalDateTime.now().minusNanos(1);
 	}
 }
+

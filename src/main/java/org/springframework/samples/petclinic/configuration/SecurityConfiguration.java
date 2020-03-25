@@ -34,8 +34,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(final HttpSecurity http) throws Exception {
 		http.authorizeRequests().antMatchers("/resources/**", "/webjars/**", "/h2-console/**").permitAll().antMatchers(HttpMethod.GET, "/", "/oups").permitAll().antMatchers("/users/new").permitAll().antMatchers("/admin/**").hasAnyAuthority("admin")
+
 			.antMatchers("/owners/**").hasAnyAuthority("owner").antMatchers("/vets/**").authenticated().antMatchers("/jams/new", "/jams/*/edit").hasAnyAuthority("jamOrganizator").antMatchers("/jams", "/jams/*").permitAll()
 			.antMatchers("/jams/*/teams/new", "/jams/*/teams/*/edit").authenticated().antMatchers("/jams/*/teams/*").permitAll().anyRequest().denyAll().and().formLogin()
+
 			/* .loginPage("/login") */
 			.failureUrl("/login-error").and().logout().logoutSuccessUrl("/");
 		// Configuración para que funcione la consola de administración
