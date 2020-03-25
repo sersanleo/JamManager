@@ -30,3 +30,6 @@ INSERT INTO types VALUES (6, 'hamster');
 
 INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_size,min_teams,max_teams,start,end,rated,creator_username)
 VALUES 			(1,'Jam 1','prueba',2,'2020-06-08 12:00',5,5,10,'2020-06-09 12:00','2020-06-10 12:00',FALSE,'jamOrganizator1');
+
+INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_size,min_teams,max_teams,start,end,rated,creator_username)
+VALUES 			(2,'Jam 2','prueba2',3,'2020-06-08 12:00',5,1,2,'2020-06-09 12:00','2020-06-10 12:00',FALSE,'jamOrganizator1');
