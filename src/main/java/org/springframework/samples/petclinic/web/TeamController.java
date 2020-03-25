@@ -1,3 +1,4 @@
+
 package org.springframework.samples.petclinic.web;
 
 import java.util.HashSet;
@@ -26,10 +27,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/jams/{jamId}/teams")
+
 public class TeamController {
 
 	private static final String	VIEWS_TEAM_CREATE_OR_UPDATE_FORM	= "teams/createOrUpdateForm";
-	private static final String	VIEWS_TEAM_ERROR					= "teams/errorTeam";
 
 	@Autowired
 	private TeamService			teamService;
@@ -44,7 +45,7 @@ public class TeamController {
 		dataBinder.setDisallowedFields("id", "jam", "creationDate");
 	}
 
-	@ModelAttribute(name = "jam", binding = false)
+	@ModelAttribute("jam")
 	public Jam cargarJam(@PathVariable("jamId") final int jamId) {
 		return this.jamService.findJamById(jamId);
 	}
@@ -77,8 +78,6 @@ public class TeamController {
 
 		if (result.hasErrors()) {
 			return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
-		} else if (jam.getTeams().size() == jam.getMaxTeams()) {
-			return TeamController.VIEWS_TEAM_ERROR;
 		} else {
 			User member = new User();
 			member.setUsername(UserUtils.getCurrentUsername());
