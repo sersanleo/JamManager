@@ -21,6 +21,7 @@ import javax.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
+import org.springframework.samples.petclinic.model.JamStatus;
 import org.springframework.samples.petclinic.model.Jams;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.JamService;
@@ -100,17 +101,25 @@ public class JamController {
 
 	@GetMapping("/{jamId}/edit")
 	public String editarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
-		modelMap.addAttribute("jam", this.jamService.findJamById(jamId));
+		Jam jamToUpdate = this.jamService.findJamById(jamId);
+		if (jamToUpdate.getStatus() != JamStatus.INSCRIPTION) {
+			return "redirect:/jams/{jamId}";
+		}
 
+		modelMap.addAttribute("jam", this.jamService.findJamById(jamId));
 		return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
 	}
 
 	@PostMapping("/{jamId}/edit")
 	public String salvarCambiosJam(@Valid final Jam jam, final BindingResult result, @PathVariable("jamId") final int jamId, final ModelMap modelMap) {
+		Jam jamToUpdate = this.jamService.findJamById(jamId);
+		if (jamToUpdate.getStatus() != JamStatus.INSCRIPTION) {
+			return "redirect:/jams/{jamId}";
+		}
+
 		if (result.hasErrors()) {
 			return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
 		} else {
-			Jam jamToUpdate = this.jamService.findJamById(jamId);
 			BeanUtils.copyProperties(jam, jamToUpdate, "id", "rated", "creator");
 			this.jamService.saveJam(jamToUpdate);
 
