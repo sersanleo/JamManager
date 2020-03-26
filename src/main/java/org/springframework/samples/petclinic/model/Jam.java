@@ -135,4 +135,9 @@ public class Jam extends BaseEntity {
 	public void deleteJamResource(JamResource jamResource) {
 		getJamResourceInternal().remove(jamResource);
 	}
+	
+	@Transient
+	public boolean getIsFull() {
+		return getTeams().size() >= getMaxTeams();
+	}
 }

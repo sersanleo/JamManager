@@ -2,6 +2,8 @@ INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_
 INSERT INTO authorities(username,authority) VALUES ('jamOrganizator1','jamOrganizator');
 INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('judge1','judge1',TRUE,'example@example.com',34,'','600 000 000');
 INSERT INTO authorities(username,authority) VALUES ('judge1','judge');
+INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('member1','member1',TRUE,'example@example.com',34,'','600 000 000');
+INSERT INTO authorities(username,authority) VALUES ('member1','member');
 
 INSERT INTO vets VALUES (1, 'James', 'Carter');
 INSERT INTO vets VALUES (2, 'Helen', 'Leary');
