@@ -56,6 +56,10 @@ public class TeamController {
 
 		return "teams/teamDetails";
 	}
+	
+	
+	
+	// CREAR TEAMS
 
 	@GetMapping("/new")
 	public String crearTeam(final ModelMap modelMap, @PathVariable("jamId") final int jamId) {
@@ -95,6 +99,10 @@ public class TeamController {
 		}
 	}
 
+	
+	
+	// EDITAR TEAMS
+	
 	@GetMapping("/{teamId}/edit")
 	public String editarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) {
 		modelMap.addAttribute("team", this.teamService.findTeamById(teamId));

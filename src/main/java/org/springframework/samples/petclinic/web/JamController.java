@@ -74,6 +74,10 @@ public class JamController {
 
 		return "jams/jamDetails";
 	}
+	
+	
+	
+	// CREAR JAMS
 
 	@GetMapping("/new")
 	public String crearJam(final ModelMap modelMap) {
@@ -96,6 +100,10 @@ public class JamController {
 			return "redirect:/jams/{jamId}";
 		}
 	}
+	
+	
+	
+	// EDITAR JAMS
 
 	@GetMapping("/{jamId}/edit")
 	public String editarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {

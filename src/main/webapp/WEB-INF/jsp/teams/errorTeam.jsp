@@ -7,7 +7,7 @@
 
 <petclinic:layout pageName="jams">
 	<h2>
-		The team cannot be added since the maximum capacity has been obtained in this Jam.
+		The team cannot be added since you are already participating in this Jam.
 	</h2>
     <a href="/jams" class="btn btn-default">Return</a>
 </petclinic:layout>
