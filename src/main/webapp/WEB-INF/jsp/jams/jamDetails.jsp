@@ -83,23 +83,41 @@
 			<tr>
 				<th>Download URL</th>
 				<th>Description</th>
+				<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS }">
+					<th>Edit Resource</th>
+					<th>Delete Resource</th>
+				</c:if>
 			</tr>
-			<c:forEach var="resource" items="${jam.resources}">
+			<c:forEach var="jamResource" items="${jam.jamResources}">
 				<tr>
-					<td><c:out value="${resource.downloadUrl}" /></td>
-					<td><c:out value="${resource.description}" /></td>
+					<td><c:out value="${jamResource.downloadUrl}" /></td>
+					<td><c:out value="${jamResource.description}" /></td>
+
+					<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS }">
+						<td><spring:url value="{jamId}/jamResources/{jamResourceId}/edit" var="editResUrl">
+								<spring:param name="jamId" value="${jam.id}" />
+								<spring:param name="jamResourceId" value="${jamResource.id}" />
+							</spring:url> <a href="${fn:escapeXml(editResUrl)}" class="btn btn-default">Edit Jam Resource</a></td>
+						</td>
+						<td><spring:url value="{jamId}/jamResources/{jamResourceId}/delete" var="deleteResUrl">
+								<spring:param name="jamId" value="${jam.id}" />
+								<spring:param name="jamResourceId" value="${jamResource.id}" />
+							</spring:url> <a href="${fn:escapeXml(deleteResUrl)}" class="btn btn-default">Delete Jam Resource</a></td>
+						</td>
+					</c:if>
+
 				</tr>
 			</c:forEach>
 		</table>
 
 		<c:if test="${ isOrganizator }">
-			<spring:url value="{jamId}/resources/new" var="addResourceUrl">
+			<spring:url value="{jamId}/jamResources/new" var="addResourceUrl">
 				<spring:param name="jamId" value="${jam.id}" />
 			</spring:url>
 			<a href="${fn:escapeXml(addResourceUrl)}" class="btn btn-default">Add New Resource</a>
 		</c:if>
+
 	</c:if>
-	
 	<br />
 	<br />
 	<br />
@@ -124,7 +142,7 @@
 		</c:forEach>
 	</table>
 
-	<c:if test="${ jam.status == JamStatus.INSCRIPTION }">
+	<c:if test="${ jam.status == JamStatus.INSCRIPTION && jam.isFull == false}">
 		<spring:url value="{jamId}/teams/new" var="addTeamUrl">
 			<spring:param name="jamId" value="${jam.id}" />
 		</spring:url>

@@ -70,6 +70,7 @@ public class JamController {
 	@GetMapping("/{jamId}")
 	public String mostrarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
 		modelMap.addAttribute("jam", this.jamService.findJamById(jamId));
+		modelMap.addAttribute("isFull", this.jamService.findJamById(jamId).getIsFull());
 
 		return "jams/jamDetails";
 	}
