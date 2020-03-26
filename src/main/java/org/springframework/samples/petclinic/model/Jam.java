@@ -2,6 +2,11 @@
 package org.springframework.samples.petclinic.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -17,6 +22,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Range;
+import org.springframework.beans.support.MutableSortDefinition;
+import org.springframework.beans.support.PropertyComparator;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Getter;
@@ -27,7 +34,6 @@ import lombok.Setter;
 @Setter
 @Table(name = "jams")
 public class Jam extends BaseEntity {
-
 	@NotBlank
 	private String				name;
 
@@ -71,7 +77,7 @@ public class Jam extends BaseEntity {
 	private Set<Team>			teams;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "jam", fetch = FetchType.EAGER)
-	private Set<JamResource>	resources;
+	private Set<JamResource>	jamResources;
 
 	@OneToOne(optional = true)
 	private Team				winner;
@@ -102,5 +108,32 @@ public class Jam extends BaseEntity {
 			}
 		}
 		return JamStatus.FINISHED;
+	}
+	
+	
+	protected Set<JamResource> getJamResourceInternal(){
+		if (this.jamResources == null) {
+			this.jamResources = new HashSet<>();
+		}
+		return this.jamResources;
+	}
+	
+	protected void setJamResourceInternal(Set<JamResource> jamResource) {
+		this.jamResources = jamResource;
+	}
+	
+	public List<JamResource> getJamResources(){
+		List<JamResource> sortedJamResource = new ArrayList<>(getJamResourceInternal());
+		return Collections.unmodifiableList(sortedJamResource);
+	}
+	
+	public void addJamResource(JamResource jamResource) {
+		getJamResourceInternal().add(jamResource);
+		jamResource.setJam(this);
+	}
+	
+	
+	public void deleteJamResource(JamResource jamResource) {
+		getJamResourceInternal().remove(jamResource);
 	}
 }
