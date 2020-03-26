@@ -25,11 +25,17 @@
     </spring:url>
     <a href="${fn:escapeXml(editUrl)}" class="btn btn-default">Edit Team</a>
     
-      <spring:url value="{teamId}/edit" var="editUrl">
+      <spring:url value="/jams/{jamId}/teams/{teamId}/invitationList" var="listInvitationsUrl">
+        <spring:param name="jamId" value="${jam.id}"/>
         <spring:param name="teamId" value="${team.id}"/>
     </spring:url>
-    <a href="${fn:escapeXml(editUrl)}" class="btn btn-default">Edit Team</a>
+    <a href="${fn:escapeXml(listInvitationsUrl)}" class="btn btn-default">Listar invitations</a>
 
+ 	<spring:url value="/jams/{jamId}/teams/{teamId}/invitations/new" var="newUrl">
+                                    <spring:param name="jamId" value="${jam.id}"/>
+                                    <spring:param name="teamId" value="${team.id}"/>
+                                </spring:url>
+                                <a href="${fn:escapeXml(newUrl)}" class="btn btn-default">Send Invitation</a>
     <br/>
     <br/>
     <br/>

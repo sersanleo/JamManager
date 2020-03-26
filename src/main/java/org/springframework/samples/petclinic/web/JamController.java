@@ -64,6 +64,7 @@ public class JamController {
 	@GetMapping("/jams.xml")
 	public @ResponseBody Jams listarJamsXml() {
 		Jams jams = new Jams();
+		return jams;
 }
 
 	@GetMapping("/{jamId}")
@@ -74,12 +75,7 @@ public class JamController {
 	}
 
 
-	@GetMapping("/{jamId}")
-	public String mostrarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
-		modelMap.addAttribute("jam", this.jamService.findJamById(jamId));
 
-		return "jams/jamDetails";
-	}
 
 
 	@GetMapping("/new")

@@ -36,7 +36,7 @@ import org.springframework.samples.petclinic.model.Team;
  * @author Michael Isvy
  */
 public interface InvitationRepository extends CrudRepository<Invitation, Integer> {
-
+	
 	Invitation findById(int id) throws DataAccessException;
 	@Override
 	Collection<Invitation> findAll() throws DataAccessException;
