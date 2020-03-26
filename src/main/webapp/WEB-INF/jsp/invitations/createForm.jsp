@@ -8,11 +8,11 @@
 
 <petclinic:layout pageName="invitations">
     <h2>
-      	Invitation Request
+      	New Invitation
     </h2>
     <form:form modelAttribute="invitation" class="form-horizontal" id="add-invitation-form">
         <div class="form-group has-feedback">
-            <petclinic:inputField label="Addressee" name="to.username"/>
+            <petclinic:inputField label="Username" name="to.username"/>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
