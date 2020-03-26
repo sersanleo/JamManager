@@ -117,7 +117,7 @@
 		</c:forEach>
 	</table>
 
-	<c:if test="${ jam.status == JamStatus.INSCRIPTION }">
+	<c:if test="${ jam.status == JamStatus.INSCRIPTION && jam.isFull == false}">
 		<spring:url value="{jamId}/teams/new" var="addTeamUrl">
 			<spring:param name="jamId" value="${jam.id}" />
 		</spring:url>

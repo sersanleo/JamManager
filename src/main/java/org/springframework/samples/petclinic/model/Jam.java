@@ -84,6 +84,10 @@ public class Jam extends BaseEntity {
 		super();
 		this.rated = false;
 	}
+	
+	public Boolean getIsFull() {
+		return getMaxTeams() == getTeams().size();
+	}
 
 	@Transient
 	public JamStatus getStatus() {
