@@ -78,8 +78,6 @@ public class TeamController {
 
 		if (result.hasErrors()) {
 			return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
-		} else if (jam.getTeams().size() == jam.getMaxTeams()) {
-			return TeamController.VIEWS_TEAM_ERROR;
 		} else {
 			User member = new User();
 			member.setUsername(UserUtils.getCurrentUsername());
