@@ -42,6 +42,9 @@ public class Team extends BaseEntity {
 	@ManyToMany()
 	private Set<User>		members;
 
+	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "from", fetch = FetchType.EAGER)
+	private Set<Invitation>	invitations;
+
 	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "team", fetch = FetchType.EAGER)
 	private Set<Mark>		marks;
 
@@ -54,4 +57,3 @@ public class Team extends BaseEntity {
 		this.creationDate = LocalDateTime.now().minusNanos(1);
 	}
 }
-

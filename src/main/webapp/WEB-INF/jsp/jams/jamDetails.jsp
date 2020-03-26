@@ -76,8 +76,6 @@
 
 	<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS }">
 		<br />
-		<br />
-		<br />
 		<b>Resources</b>
 		<table class="table table-striped">
 			<tr>
@@ -118,8 +116,6 @@
 		</c:if>
 
 	</c:if>
-	<br />
-	<br />
 	<br />
 	<b>Teams</b>
 	<table class="table table-striped">
