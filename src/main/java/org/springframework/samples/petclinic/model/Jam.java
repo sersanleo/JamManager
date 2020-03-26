@@ -34,26 +34,18 @@ import lombok.Setter;
 @Setter
 @Table(name = "jams")
 public class Jam extends BaseEntity {
-
-	@Override
-	public String toString() {
-		return "Jam [name=" + this.name + ", description=" + this.description + ", difficulty=" + this.difficulty + ", inscriptionDeadline=" + this.inscriptionDeadline + ", maxTeamSize=" + this.maxTeamSize + ", minTeams=" + this.minTeams + ", maxTeams="
-			+ this.maxTeams + ", start=" + this.start + ", end=" + this.end + ", teams=" + this.teams + ", jamResources=" + this.jamResources + ", winner=" + this.winner + ", creator=" + this.creator + "]";
-	}
-
-
 	@NotBlank
 	private String				name;
 
 	@NotBlank
 	private String				description;
 
-	@Range(min = 1, max = 5)
 	@NotNull
+	@Range(min = 1, max = 5)
 	private Integer				difficulty;
 
 	@NotNull
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
 	private LocalDateTime		inscriptionDeadline;
 
 	@NotNull
@@ -69,11 +61,11 @@ public class Jam extends BaseEntity {
 	private Integer				maxTeams;
 
 	@NotNull
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
 	private LocalDateTime		start;
 
 	@NotNull
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
 	private LocalDateTime		end;
 
 	@NotNull
@@ -94,19 +86,26 @@ public class Jam extends BaseEntity {
 	private User				creator;
 
 
+	public Jam() {
+		super();
+		this.rated = false;
+	}
+
 	@Transient
 	public JamStatus getStatus() {
-		LocalDateTime now = LocalDateTime.now();
-		if (now.isBefore(this.inscriptionDeadline)) {
-			return JamStatus.INSCRIPTION;
-		} else if (this.teams.size() < this.minTeams) {
-			return JamStatus.CANCELLED;
-		} else if (now.isBefore(this.start)) {
-			return JamStatus.PENDING;
-		} else if (now.isBefore(this.end)) {
-			return JamStatus.IN_PROGRESS;
-		} else if (!this.rated) {
-			return JamStatus.RATING;
+		if (!this.rated) {
+			LocalDateTime now = LocalDateTime.now();
+			if (now.isBefore(this.inscriptionDeadline)) {
+				return JamStatus.INSCRIPTION;
+			} else if (this.teams.size() < this.minTeams) {
+				return JamStatus.CANCELLED;
+			} else if (now.isBefore(this.start)) {
+				return JamStatus.PENDING;
+			} else if (now.isBefore(this.end)) {
+				return JamStatus.IN_PROGRESS;
+			} else if (!this.rated) {
+				return JamStatus.RATING;
+			}
 		}
 		return JamStatus.FINISHED;
 	}
