@@ -42,7 +42,7 @@ public class Team extends BaseEntity {
 	@ManyToMany()
 	private Set<User>		members;
 
-	@ManyToMany(cascade = CascadeType.REMOVE, mappedBy = "from", fetch = FetchType.EAGER)
+	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "from", fetch = FetchType.EAGER)
 	private Set<Invitation>	invitations;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "team", fetch = FetchType.EAGER)

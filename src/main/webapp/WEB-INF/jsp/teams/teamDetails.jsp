@@ -1,3 +1,4 @@
+<%@ page session="false" trimDirectiveWhitespaces="true" import="org.springframework.samples.petclinic.model.InvitationStatus"%>
 <%@ page session="false" trimDirectiveWhitespaces="true"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
@@ -41,10 +42,12 @@
 			<th>Date</th>
 		</tr>
 		<c:forEach var="invitation" items="${team.invitations}">
+			<c:if test="${invitation.status == InvitationStatus.PENDING}">
 			<tr>
 				<td><c:out value="${invitation.to.username}" /></td>
 				<td><petclinic:localDateTime date="${invitation.creationDate}" /></td>
 			</tr>
+			</c:if>
 		</c:forEach>
 	</table>
 

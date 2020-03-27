@@ -1,3 +1,4 @@
+<%@ page session="false" trimDirectiveWhitespaces="true" import="org.springframework.samples.petclinic.model.InvitationStatus"%>
 <%@ page session="false" trimDirectiveWhitespaces="true"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -23,11 +24,16 @@
 					<td><c:out value="${invitation.from.name}" /></td>
 					<td><c:out value="${invitation.creationDate}" /></td>
 					<td><c:out value="${invitation.status}" /></td>
-					<td><c:out value="${invitation.id}" /></td>
-					<td><spring:url value="/invitations/{invitationId}/delete" var="deleteInvUrl">
+					<c:if test="${invitation.status == InvitationStatus.PENDING }">
+					<td><spring:url value="/invitations/{invitationId}/accept" var="AccUrl">
 						<spring:param name="invitationId" value="${invitation.id}" />
 					</spring:url>
-					<a href="${fn:escapeXml(deleteInvUrl)}" class="btn btn-default">Reject Invitation</a></td>
+					<a href="${AccUrl}" class="btn btn-default">Accept Invitation</a></td>
+					<td><spring:url value="/invitations/{invitationId}/reject" var="RejUrl">
+						<spring:param name="invitationId" value="${invitation.id}" />
+					</spring:url>
+					<a href="${RejUrl}" class="btn btn-default">Reject Invitation</a></td>
+					</c:if>
 				</tr>
 			</c:forEach>
 		</tbody>
