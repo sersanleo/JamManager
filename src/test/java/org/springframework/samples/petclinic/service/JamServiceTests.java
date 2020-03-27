@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.model.User;
+import org.springframework.samples.petclinic.util.EntityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,16 @@ class JamServiceTests {
 
 		jam = this.jamService.findJamById(20);
 		Assertions.assertThat(jam).isEqualTo(null);
+	}
+
+	@Test
+	void shouldFindAllJams() {
+		Collection<Jam> jams = this.jamService.findJams();
+
+		Jam jam = EntityUtils.getById(jams, Jam.class, 1);
+		Assertions.assertThat(jam.getName()).isEqualTo("Inscription Jam");
+		jam = EntityUtils.getById(jams, Jam.class, 5);
+		Assertions.assertThat(jam.getName()).isEqualTo("Finished Jam");
 	}
 
 	@Test
