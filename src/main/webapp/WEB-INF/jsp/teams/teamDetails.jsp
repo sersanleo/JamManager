@@ -1,3 +1,4 @@
+<%@ page session="false" trimDirectiveWhitespaces="true" import="org.springframework.samples.petclinic.model.JamStatus"%>
 <%@ page session="false" trimDirectiveWhitespaces="true"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
@@ -57,5 +58,11 @@
 		<spring:param name="jamId" value="${jam.id}" />
 		<spring:param name="teamId" value="${team.id}" />
 	</spring:url>
-	<a href="${fn:escapeXml(newUrl)}" class="btn btn-default">Send Invitation</a>
+	<c:if test="${ team.jam.status == JamStatus.INSCRIPTION }">
+		<c:forEach var="member" items="${team.members}">
+		<c:if test="${member.username == user.username}">
+			<a href="${fn:escapeXml(newUrl)}" class="btn btn-default">Send Invitation</a>
+		</c:if>
+		</c:forEach>
+	</c:if>
 </petclinic:layout>
