@@ -1,8 +1,8 @@
+
 package org.springframework.samples.petclinic.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -21,8 +21,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Range;
-import org.springframework.beans.support.MutableSortDefinition;
-import org.springframework.beans.support.PropertyComparator;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Getter;
@@ -33,6 +31,7 @@ import lombok.Setter;
 @Setter
 @Table(name = "jams")
 public class Jam extends BaseEntity {
+
 	@NotBlank
 	private String				name;
 
@@ -52,11 +51,11 @@ public class Jam extends BaseEntity {
 	private Integer				maxTeamSize;
 
 	@NotNull
-	@Min(1)
+	@Min(2)
 	private Integer				minTeams;
 
 	@NotNull
-	@Min(1)
+	@Min(2)
 	private Integer				maxTeams;
 
 	@NotNull
@@ -95,7 +94,11 @@ public class Jam extends BaseEntity {
 		if (!this.rated) {
 			LocalDateTime now = LocalDateTime.now();
 			if (now.isBefore(this.inscriptionDeadline)) {
-				return JamStatus.INSCRIPTION;
+				if (this.teams.size() < this.maxTeams) {
+					return JamStatus.INSCRIPTION;
+				} else {
+					return JamStatus.FULL;
+				}
 			} else if (this.teams.size() < this.minTeams) {
 				return JamStatus.CANCELLED;
 			} else if (now.isBefore(this.start)) {
@@ -108,36 +111,34 @@ public class Jam extends BaseEntity {
 		}
 		return JamStatus.FINISHED;
 	}
-	
-	
-	protected Set<JamResource> getJamResourceInternal(){
+
+	protected Set<JamResource> getJamResourceInternal() {
 		if (this.jamResources == null) {
 			this.jamResources = new HashSet<>();
 		}
 		return this.jamResources;
 	}
-	
-	protected void setJamResourceInternal(Set<JamResource> jamResource) {
+
+	protected void setJamResourceInternal(final Set<JamResource> jamResource) {
 		this.jamResources = jamResource;
 	}
-	
-	public List<JamResource> getJamResources(){
-		List<JamResource> sortedJamResource = new ArrayList<>(getJamResourceInternal());
+
+	public List<JamResource> getJamResources() {
+		List<JamResource> sortedJamResource = new ArrayList<>(this.getJamResourceInternal());
 		return Collections.unmodifiableList(sortedJamResource);
 	}
-	
-	public void addJamResource(JamResource jamResource) {
-		getJamResourceInternal().add(jamResource);
+
+	public void addJamResource(final JamResource jamResource) {
+		this.getJamResourceInternal().add(jamResource);
 		jamResource.setJam(this);
 	}
-	
-	
-	public void deleteJamResource(JamResource jamResource) {
-		getJamResourceInternal().remove(jamResource);
+
+	public void deleteJamResource(final JamResource jamResource) {
+		this.getJamResourceInternal().remove(jamResource);
 	}
-	
+
 	@Transient
 	public boolean getIsFull() {
-		return getTeams().size() >= getMaxTeams();
+		return this.getTeams().size() >= this.getMaxTeams();
 	}
 }
