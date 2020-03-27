@@ -32,4 +32,9 @@ public class InvitationService {
 	public void saveInvitation(final Invitation invitation) {
 		this.invitationRepository.save(invitation);
 	}
+
+	@Transactional
+	public void deleteInvitation(final Invitation invitation) {
+		this.invitationRepository.delete(invitation);
+	}
 }

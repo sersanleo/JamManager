@@ -85,8 +85,16 @@ public class InvitationController {
 			invitation.setFrom(this.teamService.findTeamById(teamId));
 
 			this.invitationService.saveInvitation(invitation);
-			return "redirect:/jams/{jamId}/teams/{teamId}/invitationList";
+			return "redirect:/jams/{jamId}/teams/{teamId}";
 		}
+	}
+	
+	@GetMapping(value = "/invitations/{invitationId}/delete")
+	public String processRejectForm(@PathVariable(value = "invitationId") int invitationId, ModelMap model) {
+		Invitation invitation = this.invitationService.findInvitationById(invitationId);
+		model.remove("invitation", invitation);
+		this.invitationService.deleteInvitation(invitation);
+		return "redirect:/invitations";
 	}
 
 }

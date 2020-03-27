@@ -23,6 +23,11 @@
 					<td><c:out value="${invitation.from.name}" /></td>
 					<td><c:out value="${invitation.creationDate}" /></td>
 					<td><c:out value="${invitation.status}" /></td>
+					<td><c:out value="${invitation.id}" /></td>
+					<td><spring:url value="/invitations/{invitationId}/delete" var="deleteInvUrl">
+						<spring:param name="invitationId" value="${invitation.id}" />
+					</spring:url>
+					<a href="${fn:escapeXml(deleteInvUrl)}" class="btn btn-default">Reject Invitation</a></td>
 				</tr>
 			</c:forEach>
 		</tbody>
