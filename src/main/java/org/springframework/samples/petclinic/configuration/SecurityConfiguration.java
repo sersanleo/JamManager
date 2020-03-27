@@ -36,7 +36,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().antMatchers("/resources/**", "/webjars/**", "/h2-console/**").permitAll().antMatchers(HttpMethod.GET, "/", "/oups").permitAll().antMatchers("/users/new").permitAll().antMatchers("/admin/**").hasAnyAuthority("admin")
 			.antMatchers("/owners/**").hasAnyAuthority("owner").antMatchers("/vets/**").authenticated().antMatchers("/jams/new", "/jams/*/edit", "/jams/*/jamResources/**").hasAnyAuthority("jamOrganizator").antMatchers("/jams", "/jams/*").permitAll()
 			.antMatchers("/jams/*/teams/new", "/jams/*/teams/*/edit").authenticated().antMatchers("/jams/*/teams/*").permitAll().antMatchers("/jams/*/teams/*/invitationList").permitAll().antMatchers("/invitations").authenticated()
-			.antMatchers("/jams/{jamId}/teams/{teamId}/invitations/new").permitAll().anyRequest().denyAll().and().formLogin()
+			.antMatchers("/jams/{jamId}/teams/{teamId}/invitations/new").permitAll()
+			.antMatchers("/jams/*/teams/*/invitations/*/delete").permitAll()
+			.antMatchers("/jams/*/teams/*/*/delete").permitAll()
+			.anyRequest().denyAll().and().formLogin()
 			/* .loginPage("/login") */
 			.failureUrl("/login-error").and().logout().logoutSuccessUrl("/");
 		// Configuración para que funcione la consola de administración

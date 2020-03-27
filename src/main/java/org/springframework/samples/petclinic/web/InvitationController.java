@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Invitation;
 import org.springframework.samples.petclinic.model.InvitationStatus;
 import org.springframework.samples.petclinic.model.Invitations;
+import org.springframework.samples.petclinic.model.Jam;
+import org.springframework.samples.petclinic.model.JamResource;
+import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.service.InvitationService;
 import org.springframework.samples.petclinic.service.TeamService;
 import org.springframework.samples.petclinic.service.UserService;
@@ -22,6 +25,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -47,11 +51,12 @@ public class InvitationController {
 		this.teamService = teamService;
 	}
 
-	@InitBinder
-	public void setAlloweFields(final WebDataBinder dataBinder) {
+	@InitBinder("invitation")
+	public void addInvitationValidator(final WebDataBinder dataBinder) {
+		dataBinder.addValidators(new InvitationValidator());
 		dataBinder.setDisallowedFields("id");
 	}
-
+	
 	@GetMapping("/invitations.xml")
 	public @ResponseBody Invitations listarInvitationsXml() {
 		Invitations invitations = new Invitations();
@@ -77,16 +82,33 @@ public class InvitationController {
 
 	@PostMapping(value = "/jams/{jamId}/teams/{teamId}/invitations/new")
 	public String processCreationForm(@Valid final Invitation invitation, final BindingResult result, @PathVariable("teamId") final int teamId) {
+		
+		if (this.userService.findOnlyByUsername(invitation.getTo().getUsername()) == null){
+			result.rejectValue("to", "wrongUser", "This user doesn`t exists.");
+		}
+		
+		if (this.invitationService.findInvitations().stream()
+				.filter(i -> i.getTo().getUsername().equals(invitation.getTo().getUsername()))
+				.anyMatch(i -> i.getStatus().equals(InvitationStatus.PENDING))){
+			result.rejectValue("status", "pendingInvitation", "There's a pending invitation yet");
+		}
+		
 		if (result.hasErrors()) {
 			return "invitations/createForm";
-		} else {
-			//creating owner, user and authorities
-
+		} else{
 			invitation.setFrom(this.teamService.findTeamById(teamId));
-
+			
 			this.invitationService.saveInvitation(invitation);
-			return "redirect:/jams/{jamId}/teams/{teamId}/invitationList";
+			return "redirect:/jams/{jamId}/teams/{teamId}";
 		}
+	}
+	
+	@GetMapping(value = "/jams/{jamId}/teams/{teamId}/invitations/{invitationId}/delete")
+	public String initDeleteForm(@PathVariable("invitationId") int invitationId, ModelMap model) {
+		Invitation invitation= this.invitationService.findInvitationById(invitationId);
+		model.remove("invitation", invitation);
+		this.invitationService.deleteInvitation(invitation);
+		return "redirect:/jams/{jamId}/teams/{teamId}";
 	}
 
 }

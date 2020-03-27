@@ -15,5 +15,6 @@ public interface UserRepository extends  CrudRepository<User, String>{
 	
 	User findOnlyByUsername(String username) throws DataAccessException;
 
-
+	@Override
+	Collection<User> findAll() throws DataAccessException;
 }

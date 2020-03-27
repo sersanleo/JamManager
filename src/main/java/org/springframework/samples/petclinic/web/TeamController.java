@@ -9,10 +9,13 @@ import javax.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
+import org.springframework.samples.petclinic.model.JamResource;
 import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.model.User;
+import org.springframework.samples.petclinic.service.InvitationService;
 import org.springframework.samples.petclinic.service.JamService;
 import org.springframework.samples.petclinic.service.TeamService;
+import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.samples.petclinic.util.UserUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -38,8 +41,17 @@ public class TeamController {
 
 	@Autowired
 	private JamService			jamService;
+	
+	@Autowired
+	private UserService			userService;
 
-
+	@Autowired
+	public TeamController(final UserService userService, final TeamService teamService, final JamService jamService) {
+		this.userService = userService;
+		this.teamService = teamService;
+		this.jamService = jamService;
+	}
+	
 	@InitBinder("team")
 	public void addTeamValidator(final WebDataBinder dataBinder) {
 		dataBinder.addValidators(new TeamValidator());
@@ -111,6 +123,20 @@ public class TeamController {
 			this.teamService.saveTeam(teamToUpdate);
 
 			return "redirect:/jams/{jamId}/teams/{teamId}";
+		}
+	}
+	
+	@GetMapping(value = "/{teamId}/{userId}/delete")
+	public String initDeleteForm(@PathVariable("teamId") int teamId, @PathVariable("userId") String userId, ModelMap model) {
+		User user= this.userService.findOnlyByUsername(userId);
+		Team team = this.teamService.findTeamById(teamId);
+		team.getMembers().remove(user);
+		if (team.getMembers().size() == 0) {
+			this.teamService.deleteTeam(team);
+			return "redirect:/jams/{jamId}";
+		} else {
+			this.teamService.saveTeam(team);
+		return "redirect:/jams/{jamId}";
 		}
 	}
 }
