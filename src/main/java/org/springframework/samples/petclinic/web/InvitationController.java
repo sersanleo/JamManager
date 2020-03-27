@@ -35,7 +35,6 @@ public class InvitationController {
 	private InvitationService	invitationService;
 	@Autowired
 	private TeamService			teamService;
-
 	@Autowired
 	private UserService			userService;
 
@@ -88,12 +87,12 @@ public class InvitationController {
 			return "redirect:/jams/{jamId}/teams/{teamId}";
 		}
 	}
-	
+
 	@GetMapping(value = "/invitations/{invitationId}/delete")
-	public String processRejectForm(@PathVariable(value = "invitationId") int invitationId, ModelMap model) {
+	public String processRejectForm(@PathVariable("invitationId") final int invitationId, final ModelMap model) {
 		Invitation invitation = this.invitationService.findInvitationById(invitationId);
-		model.remove("invitation", invitation);
-		this.invitationService.deleteInvitation(invitation);
+		invitation.setStatus(InvitationStatus.REJECTED);
+		this.invitationService.saveInvitation(invitation);
 		return "redirect:/invitations";
 	}
 

@@ -46,7 +46,6 @@ public class JamController {
 	private JamService			jamService;
 
 
-
 	@InitBinder("jam")
 	public void addJamValidator(final WebDataBinder dataBinder) {
 		dataBinder.addValidators(new JamValidator());
@@ -60,12 +59,11 @@ public class JamController {
 		return "jams/jamList";
 	}
 
-
 	@GetMapping("/jams.xml")
 	public @ResponseBody Jams listarJamsXml() {
 		Jams jams = new Jams();
 		return jams;
-}
+	}
 
 	@GetMapping("/{jamId}")
 	public String mostrarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
@@ -74,10 +72,6 @@ public class JamController {
 
 		return "jams/jamDetails";
 	}
-
-
-
-
 
 	@GetMapping("/new")
 	public String crearJam(final ModelMap modelMap) {
@@ -101,7 +95,6 @@ public class JamController {
 		}
 	}
 
-
 	@GetMapping("/{jamId}/edit")
 
 	public String editarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
@@ -109,7 +102,6 @@ public class JamController {
 
 		return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
 	}
-
 
 	@PostMapping("/{jamId}/edit")
 

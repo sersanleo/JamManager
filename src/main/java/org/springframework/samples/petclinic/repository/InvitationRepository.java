@@ -19,28 +19,12 @@ package org.springframework.samples.petclinic.repository;
 import java.util.Collection;
 
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.samples.petclinic.model.Invitation;
-import org.springframework.samples.petclinic.model.Jam;
-import org.springframework.samples.petclinic.model.Team;
 
-/**
- * Repository class for <code>Vet</code> domain objects All method names are compliant
- * with Spring Data naming conventions so this interface can easily be extended for Spring
- * Data See here:
- * http://static.springsource.org/spring-data/jpa/docs/current/reference/html/jpa.repositories.html#jpa.query-methods.query-creation
- *
- * @author Ken Krebs
- * @author Juergen Hoeller
- * @author Sam Brannen
- * @author Michael Isvy
- */
 public interface InvitationRepository extends CrudRepository<Invitation, Integer> {
-	
+
 	Invitation findById(int id) throws DataAccessException;
 	@Override
 	Collection<Invitation> findAll() throws DataAccessException;
-	
-	void delete(Invitation invitationId) throws DataAccessException;
 }
