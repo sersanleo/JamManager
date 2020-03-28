@@ -24,6 +24,7 @@ import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.model.JamStatus;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.JamService;
+import org.springframework.samples.petclinic.service.TeamService;
 import org.springframework.samples.petclinic.util.UserUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -43,6 +44,8 @@ public class JamController {
 
 	@Autowired
 	private JamService jamService;
+	@Autowired
+	private TeamService teamService;
 
 	@InitBinder("jam")
 	public void addJamValidator(final WebDataBinder dataBinder) {
@@ -61,6 +64,8 @@ public class JamController {
 	public String mostrarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
 		modelMap.addAttribute("jam", this.jamService.findJamById(jamId));
 		modelMap.addAttribute("isFull", this.jamService.findJamById(jamId).getIsFull());
+		modelMap.addAttribute("hasTeam",
+				this.teamService.findIsMemberOfTeamByJamIdAndUsername(jamId, UserUtils.getCurrentUsername()));
 
 		return "jams/jamDetails";
 	}
@@ -90,7 +95,7 @@ public class JamController {
 	@GetMapping("/{jamId}/edit")
 	public String editarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
 		Jam jamToUpdate = this.jamService.findJamById(jamId);
-		if (jamToUpdate.getStatus() != JamStatus.INSCRIPTION) {
+		if (jamToUpdate.getStatus() != JamStatus.INSCRIPTION && jamToUpdate.getStatus() != JamStatus.FULL) {
 			return "redirect:/jams/{jamId}";
 		}
 
@@ -102,7 +107,7 @@ public class JamController {
 	public String salvarCambiosJam(@Valid final Jam jam, final BindingResult result,
 			@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
 		Jam jamToUpdate = this.jamService.findJamById(jamId);
-		if (jamToUpdate.getStatus() != JamStatus.INSCRIPTION) {
+		if (jamToUpdate.getStatus() != JamStatus.INSCRIPTION && jamToUpdate.getStatus() != JamStatus.FULL) {
 			return "redirect:/jams/{jamId}";
 		}
 

@@ -15,15 +15,19 @@ public class InvitationService {
 	@Autowired
 	private InvitationRepository invitationRepository;
 
-
 	@Transactional
 	public Invitation findInvitationById(final int id) {
 		return this.invitationRepository.findById(id);
 	}
 
 	@Transactional
-	public Collection<Invitation> findInvitations() {
-		return this.invitationRepository.findAll();
+	public Collection<Invitation> findPendingInvitationsByUsername(final String username) {
+		return this.invitationRepository.findPendingInvitationsByUsername(username);
+	}
+
+	@Transactional
+	public Collection<Invitation> findPendingInvitationsByJamIdAndUsername(final int jamId, final String username) {
+		return this.invitationRepository.findPendingInvitationsByJamIdAndUsername(jamId, username);
 	}
 
 	@Transactional
@@ -31,7 +35,17 @@ public class InvitationService {
 		this.invitationRepository.save(invitation);
 	}
 
+	@Transactional
 	public void deleteInvitation(final Invitation invitation) {
 		this.invitationRepository.delete(invitation);
+	}
+
+	public void deleteAllPendingInvitationsByJamIdAndUsername(final int jamId, final String username) {
+		// this.invitationRepository.deleteAllPendingInvitationsByJamIdAndUsername(jamId,
+		// username); (no funciona)
+
+		for (Invitation i : this.findPendingInvitationsByJamIdAndUsername(jamId, username)) {
+			this.deleteInvitation(i);
+		}
 	}
 }

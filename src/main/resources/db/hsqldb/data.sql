@@ -43,8 +43,17 @@ INSERT INTO teams(id,name,creation_date,jam_id)
 VALUES 			(1,'Grupo 1','2020-03-08 12:00',1);
 INSERT INTO teams_members(members_username,team_id)
 VALUES 			('member2',1);
-INSERT INTO invitations(creation_date,status,team_id,user_name)
-VALUES          ('2020-03-08 12:00',0,1,'member2');
+INSERT INTO invitations(id,creation_date,status,team_id,to_username)
+VALUES          (1,'2020-03-08 12:00',0,1,'member1');
+INSERT INTO invitations(id,creation_date,status,team_id,to_username)
+VALUES          (2,'2020-03-08 12:00',0,1,'member3');
+
+INSERT INTO teams(id,name,creation_date,jam_id)
+VALUES 			(12,'Grupo 2','2020-03-08 12:00',1);
+INSERT INTO teams_members(members_username,team_id)
+VALUES 			('member3',12);
+INSERT INTO invitations(id,creation_date,status,team_id,to_username)
+VALUES          (3,'2020-03-08 12:00',0,12,'member1');
 
 /* Pending Jam */
 INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_size,min_teams,max_teams,start,end,rated,creator_username)

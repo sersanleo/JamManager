@@ -8,17 +8,21 @@
 <petclinic:layout pageName="jams">
 
 	<h2>Team Information</h2>
-
-
 	<table class="table table-striped">
 		<tr>
 			<th>Name</th>
 			<td><b><c:out value="${team.name}" /></b></td>
 		</tr>
 		<tr>
-			<th>Creation Date</th>
+			<th>Creation date</th>
 			<td><petclinic:localDateTime date="${team.creationDate}" /></td>
 		</tr>
+		<tr>
+			<spring:url value="/jams/{jamId}" var="jamUrl">
+				<spring:param name="jamId" value="${team.jam.id}" />
+			</spring:url>
+			<th>Jam</th>
+			<td><a href="${fn:escapeXml(jamUrl)}"><c:out value="${team.jam.name}" /></a></td>
 	</table>
 
 	<br />
@@ -35,34 +39,36 @@
 		</c:forEach>
 	</table>
 
-	<br />
-	<br />
-	<b>Invitations</b>
-	<table class="table table-striped">
-		<tr>
-			<th>Username</th>
-			<th>Date</th>
-			<th>Status</th>
-		</tr>
-		<c:forEach var="invitation" items="${team.invitations}">
-			<c:if test="${invitation.status == InvitationStatus.PENDING}">
+	<c:if test="${isMember}">
+		<br />
+		<br />
+		<b>Invitations</b>
+		<table class="table table-striped">
 			<tr>
-				<td><c:out value="${invitation.to.username}" /></td>
-				<td><petclinic:localDateTime date="${invitation.creationDate}" /></td>
-				<td><c:out value="${invitation.status}" /></td>
+				<th>Username</th>
+				<th>Date</th>
+				<th>Status</th>
 			</tr>
-			</c:if>
-		</c:forEach>
-	</table>
+			<c:forEach var="invitation" items="${team.invitations}">
+				<c:if test="${invitation.status != InvitationStatus.ACCEPTED}">
+					<tr>
+						<td><c:out value="${invitation.to.username}" /></td>
+						<td><petclinic:localDateTime date="${invitation.creationDate}" /></td>
+						<td><c:out value="${invitation.status}" /></td>
+					</tr>
+				</c:if>
+			</c:forEach>
+		</table>
 
-	<spring:url value="{teamId}/edit" var="editUrl">
-		<spring:param name="teamId" value="${team.id}" />
-	</spring:url>
-	<a href="${fn:escapeXml(editUrl)}" class="btn btn-default">Edit Team</a>
+		<spring:url value="{teamId}/edit" var="editUrl">
+			<spring:param name="teamId" value="${team.id}" />
+		</spring:url>
+		<a href="${fn:escapeXml(editUrl)}" class="btn btn-default">Edit Team</a>
 
-	<spring:url value="/jams/{jamId}/teams/{teamId}/invitations/new" var="newUrl">
-		<spring:param name="jamId" value="${jam.id}" />
-		<spring:param name="teamId" value="${team.id}" />
-	</spring:url>
-	<a href="${fn:escapeXml(newUrl)}" class="btn btn-default">Send Invitation</a>
+		<spring:url value="/jams/{jamId}/teams/{teamId}/invitations/new" var="newUrl">
+			<spring:param name="jamId" value="${jam.id}" />
+			<spring:param name="teamId" value="${team.id}" />
+		</spring:url>
+		<a href="${fn:escapeXml(newUrl)}" class="btn btn-default">Send Invitation</a>
+	</c:if>
 </petclinic:layout>

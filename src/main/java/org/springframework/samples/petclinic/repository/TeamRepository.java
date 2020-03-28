@@ -12,8 +12,11 @@ public interface TeamRepository extends CrudRepository<Team, Integer> {
 
 	Team findById(int id) throws DataAccessException;
 
-	@Query("SELECT t.id FROM Team t WHERE t.jam.id = ?1 AND (SELECT u FROM User u WHERE u.username = ?2) MEMBER OF t.members")
-	Integer findTeamIdByJamIdAndUsername(int jamId, String username) throws DataAccessException;
+	@Query("SELECT COUNT(t)>0 FROM Team t WHERE t.id = ?1 AND (SELECT u FROM User u WHERE u.username = ?2) MEMBER OF t.members")
+	boolean findIsMemberOfTeamByTeamIdAndUsername(int teamId, String username);
+
+	@Query("SELECT COUNT(t)>0 FROM Team t WHERE t.jam.id = ?1 AND (SELECT u FROM User u WHERE u.username = ?2) MEMBER OF t.members")
+	boolean findIsMemberOfTeamByJamIdAndUsername(int jamId, String username) throws DataAccessException;
 
 	@Override
 	Collection<Team> findAll() throws DataAccessException;
