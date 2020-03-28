@@ -51,11 +51,11 @@ public class Jam extends BaseEntity {
 	private Integer				maxTeamSize;
 
 	@NotNull
-	@Min(1)
+	@Min(2)
 	private Integer				minTeams;
 
 	@NotNull
-	@Min(1)
+	@Min(2)
 	private Integer				maxTeams;
 
 	@NotNull
@@ -94,7 +94,11 @@ public class Jam extends BaseEntity {
 		if (!this.rated) {
 			LocalDateTime now = LocalDateTime.now();
 			if (now.isBefore(this.inscriptionDeadline)) {
-				return JamStatus.INSCRIPTION;
+				if (this.teams.size() < this.maxTeams) {
+					return JamStatus.INSCRIPTION;
+				} else {
+					return JamStatus.FULL;
+				}
 			} else if (this.teams.size() < this.minTeams) {
 				return JamStatus.CANCELLED;
 			} else if (now.isBefore(this.start)) {

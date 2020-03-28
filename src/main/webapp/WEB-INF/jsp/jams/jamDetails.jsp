@@ -76,6 +76,8 @@
 
 	<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS }">
 		<br />
+		<br />
+		<br />
 		<b>Resources</b>
 		<table class="table table-striped">
 			<tr>
@@ -114,8 +116,10 @@
 			</spring:url>
 			<a href="${fn:escapeXml(addResourceUrl)}" class="btn btn-default">Add New Resource</a>
 		</c:if>
-
 	</c:if>
+	
+	<br />
+	<br />
 	<br />
 	<b>Teams</b>
 	<table class="table table-striped">

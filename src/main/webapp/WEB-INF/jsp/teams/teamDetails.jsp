@@ -22,6 +22,7 @@
 	</table>
 
 	<br />
+	<br />
 	<b>Members</b>
 	<table class="table table-striped">
 		<tr>
@@ -35,17 +36,20 @@
 	</table>
 
 	<br />
-	<b>Pending invitations</b>
+	<br />
+	<b>Invitations</b>
 	<table class="table table-striped">
 		<tr>
 			<th>Username</th>
 			<th>Date</th>
+			<th>Status</th>
 		</tr>
 		<c:forEach var="invitation" items="${team.invitations}">
 			<c:if test="${invitation.status == InvitationStatus.PENDING}">
 			<tr>
 				<td><c:out value="${invitation.to.username}" /></td>
 				<td><petclinic:localDateTime date="${invitation.creationDate}" /></td>
+				<td><c:out value="${invitation.status}" /></td>
 			</tr>
 			</c:if>
 		</c:forEach>
