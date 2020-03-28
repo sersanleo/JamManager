@@ -22,7 +22,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.model.JamStatus;
-import org.springframework.samples.petclinic.model.Jams;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.JamService;
 import org.springframework.samples.petclinic.util.UserUtils;
@@ -35,7 +34,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/jams")
@@ -57,12 +55,6 @@ public class JamController {
 		modelMap.addAttribute("jams", this.jamService.findJams());
 
 		return "jams/jamList";
-	}
-
-	@GetMapping("/jams.xml")
-	public @ResponseBody Jams listarJamsXml() {
-		Jams jams = new Jams();
-		return jams;
 	}
 
 	@GetMapping("/{jamId}")
@@ -102,7 +94,7 @@ public class JamController {
 			return "redirect:/jams/{jamId}";
 		}
 
-		modelMap.addAttribute("jam", this.jamService.findJamById(jamId));
+		modelMap.addAttribute("jam", jamToUpdate);
 		return JamController.VIEWS_JAM_CREATE_OR_UPDATE_FORM;
 	}
 
