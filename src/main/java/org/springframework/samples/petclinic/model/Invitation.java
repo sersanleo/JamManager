@@ -21,6 +21,12 @@ import lombok.Setter;
 @Table(name = "invitations")
 public class Invitation extends BaseEntity {
 
+	@Override
+	public String toString() {
+		return "Invitation [creationDate=" + this.creationDate + ", status=" + this.status + ", from=" + this.from + ", to=" + this.to + ", id=" + this.id + "]";
+	}
+
+
 	@NotNull
 	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
 	@Past
@@ -38,7 +44,8 @@ public class Invitation extends BaseEntity {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "user_name")
 	private User				to;
-	
+
+
 	public Invitation() {
 		super();
 		this.creationDate = LocalDateTime.now().minusNanos(1);
