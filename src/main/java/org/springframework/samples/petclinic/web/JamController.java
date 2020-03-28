@@ -41,11 +41,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/jams")
 public class JamController {
 
-	private static final String	VIEWS_JAM_CREATE_OR_UPDATE_FORM	= "jams/createOrUpdateForm";
+	private static final String VIEWS_JAM_CREATE_OR_UPDATE_FORM = "jams/createOrUpdateForm";
 
 	@Autowired
-	private JamService			jamService;
-
+	private JamService jamService;
 
 	@InitBinder("jam")
 	public void addJamValidator(final WebDataBinder dataBinder) {
@@ -92,12 +91,11 @@ public class JamController {
 
 			this.jamService.saveJam(jam);
 
-			return "redirect:/jams/{jamId}";
+			return "redirect:/jams/" + jam.getId();
 		}
 	}
 
 	@GetMapping("/{jamId}/edit")
-
 	public String editarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
 		Jam jamToUpdate = this.jamService.findJamById(jamId);
 		if (jamToUpdate.getStatus() != JamStatus.INSCRIPTION) {
@@ -109,8 +107,8 @@ public class JamController {
 	}
 
 	@PostMapping("/{jamId}/edit")
-
-	public String salvarCambiosJam(@Valid final Jam jam, final BindingResult result, @PathVariable("jamId") final int jamId, final ModelMap modelMap) {
+	public String salvarCambiosJam(@Valid final Jam jam, final BindingResult result,
+			@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
 		Jam jamToUpdate = this.jamService.findJamById(jamId);
 		if (jamToUpdate.getStatus() != JamStatus.INSCRIPTION) {
 			return "redirect:/jams/{jamId}";
