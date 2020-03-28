@@ -29,19 +29,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class InvitationController {
 
-	private static final String	VIEWS_INVITATION_TEAM	= "/jams/{jamId}/teams";
+	private static final String VIEWS_INVITATION_TEAM = "/jams/{jamId}/teams";
 
 	@Autowired
-	private InvitationService	invitationService;
+	private InvitationService invitationService;
 	@Autowired
-	private TeamService			teamService;
+	private TeamService teamService;
 
 	@Autowired
-	private UserService			userService;
-
+	private UserService userService;
 
 	@Autowired
-	public InvitationController(final InvitationService invitationService, final UserService userService, final TeamService teamService) {
+	public InvitationController(final InvitationService invitationService, final UserService userService,
+			final TeamService teamService) {
 		this.invitationService = invitationService;
 		this.userService = userService;
 		this.teamService = teamService;
@@ -62,7 +62,9 @@ public class InvitationController {
 	public String listarInvitationsUser(final ModelMap modelMap) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String userName = authentication.getName();
-		Collection<Invitation> invitations = this.invitationService.findInvitations().stream().filter(i -> i.getTo().getUsername().equals(userName) && i.getStatus().equals(InvitationStatus.PENDING)).collect(Collectors.toList());
+		Collection<Invitation> invitations = this.invitationService.findInvitations().stream()
+				.filter(i -> i.getTo().getUsername().equals(userName) && i.getStatus().equals(InvitationStatus.PENDING))
+				.collect(Collectors.toList());
 		modelMap.addAttribute("invitations", invitations);
 
 		return "users/invitationListUser";
@@ -76,16 +78,17 @@ public class InvitationController {
 	}
 
 	@PostMapping(value = "/jams/{jamId}/teams/{teamId}/invitations/new")
-	public String processCreationForm(@Valid final Invitation invitation, final BindingResult result, @PathVariable("teamId") final int teamId) {
+	public String processCreationForm(@Valid final Invitation invitation, final BindingResult result,
+			@PathVariable("teamId") final int teamId) {
 		if (result.hasErrors()) {
 			return "invitations/createForm";
 		} else {
-			//creating owner, user and authorities
+			// creating owner, user and authorities
 
 			invitation.setFrom(this.teamService.findTeamById(teamId));
 
 			this.invitationService.saveInvitation(invitation);
-			return "redirect:/jams/{jamId}/teams/{teamId}/invitationList";
+			return "redirect:/jams/{jamId}/teams/{teamId}";
 		}
 	}
 
