@@ -93,11 +93,7 @@ public class Jam extends BaseEntity {
 		if (!this.rated) {
 			LocalDateTime now = LocalDateTime.now();
 			if (now.isBefore(this.inscriptionDeadline)) {
-				if (!this.getIsFull()) {
-					return JamStatus.INSCRIPTION;
-				} else {
-					return JamStatus.FULL;
-				}
+				return JamStatus.INSCRIPTION;
 			} else if (this.teams.size() < this.minTeams) {
 				return JamStatus.CANCELLED;
 			} else if (now.isBefore(this.start)) {

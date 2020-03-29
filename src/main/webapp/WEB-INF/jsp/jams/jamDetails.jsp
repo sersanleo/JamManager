@@ -41,10 +41,8 @@
 			<td><c:out value="${jam.minTeams}" /></td>
 		</tr>
 		<tr>
-
 			<th>Inscribed teams</th>
 			<td><c:out value="${jam.teams.size()}" />/<c:out value="${jam.maxTeams}" /></td>
-
 		</tr>
 		<tr>
 			<th>Start date</th>
@@ -65,7 +63,7 @@
 	</table>
 
 
-	<c:if test="${ isOrganizator && (jam.status == JamStatus.INSCRIPTION || jam.status == JamStatus.FULL) }">
+	<c:if test="${ isOrganizator && jam.status == JamStatus.INSCRIPTION }">
 
 		<spring:url value="{jamId}/edit" var="editUrl">
 			<spring:param name="jamId" value="${jam.id}" />

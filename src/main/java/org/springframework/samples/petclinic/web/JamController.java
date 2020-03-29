@@ -95,7 +95,7 @@ public class JamController {
 	@GetMapping("/{jamId}/edit")
 	public String editarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
 		Jam jamToUpdate = this.jamService.findJamById(jamId);
-		if (jamToUpdate.getStatus() != JamStatus.INSCRIPTION && jamToUpdate.getStatus() != JamStatus.FULL) {
+		if (jamToUpdate.getStatus() != JamStatus.INSCRIPTION) {
 			return "redirect:/jams/{jamId}";
 		}
 
@@ -107,7 +107,7 @@ public class JamController {
 	public String salvarCambiosJam(@Valid final Jam jam, final BindingResult result,
 			@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
 		Jam jamToUpdate = this.jamService.findJamById(jamId);
-		if (jamToUpdate.getStatus() != JamStatus.INSCRIPTION && jamToUpdate.getStatus() != JamStatus.FULL) {
+		if (jamToUpdate.getStatus() != JamStatus.INSCRIPTION) {
 			return "redirect:/jams/{jamId}";
 		}
 

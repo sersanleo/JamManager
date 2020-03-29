@@ -23,6 +23,7 @@ import org.springframework.samples.petclinic.model.JamResource;
 import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.JamService;
+import org.springframework.samples.petclinic.service.TeamService;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
@@ -39,6 +40,8 @@ class JamControllerTests {
 
 	@MockBean
 	private JamService jamService;
+	@MockBean
+	private TeamService teamService;
 
 	@Autowired
 	private MockMvc mockMvc;
