@@ -1,4 +1,3 @@
-
 package org.springframework.samples.petclinic.web;
 
 import java.time.LocalDateTime;
@@ -40,6 +39,7 @@ class JamControllerTests {
 
 	@MockBean
 	private JamService jamService;
+
 	@MockBean
 	private TeamService teamService;
 

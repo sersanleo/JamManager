@@ -8,6 +8,10 @@ INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_
 INSERT INTO authorities(username,authority) VALUES ('member2','member');
 INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('member3','member3',TRUE,'example@example.com',34,'','600 000 000');
 INSERT INTO authorities(username,authority) VALUES ('member3','member');
+INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('member4','member4',TRUE,'example@example.com',34,'','600 000 000');
+INSERT INTO authorities(username,authority) VALUES ('member4','member');
+INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('member5','member5',TRUE,'example@example.com',34,'','600 000 000');
+INSERT INTO authorities(username,authority) VALUES ('member5','member');
 
 INSERT INTO vets VALUES (1, 'James', 'Carter');
 INSERT INTO vets VALUES (2, 'Helen', 'Leary');
@@ -43,16 +47,16 @@ INSERT INTO teams(id,name,creation_date,jam_id)
 VALUES 			(1,'Grupo 1','2020-03-08 12:00',1);
 INSERT INTO teams_members(members_username,team_id)
 VALUES 			('member2',1);
-INSERT INTO invitations(id,creation_date,status,team_id,to_username)
+INSERT INTO invitations(id,creation_date,status,team_id,user_username)
 VALUES          (1,'2020-03-08 12:00',0,1,'member1');
-INSERT INTO invitations(id,creation_date,status,team_id,to_username)
+INSERT INTO invitations(id,creation_date,status,team_id,user_username)
 VALUES          (2,'2020-03-08 12:00',0,1,'member3');
 
 INSERT INTO teams(id,name,creation_date,jam_id)
 VALUES 			(12,'Grupo 2','2020-03-08 12:00',1);
 INSERT INTO teams_members(members_username,team_id)
 VALUES 			('member3',12);
-INSERT INTO invitations(id,creation_date,status,team_id,to_username)
+INSERT INTO invitations(id,creation_date,status,team_id,user_username)
 VALUES          (3,'2020-03-08 12:00',0,12,'member1');
 
 /* Pending Jam */

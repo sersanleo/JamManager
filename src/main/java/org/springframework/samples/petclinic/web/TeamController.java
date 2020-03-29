@@ -9,10 +9,13 @@ import javax.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
+import org.springframework.samples.petclinic.model.JamResource;
 import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.model.User;
+import org.springframework.samples.petclinic.service.InvitationService;
 import org.springframework.samples.petclinic.service.JamService;
 import org.springframework.samples.petclinic.service.TeamService;
+import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.samples.petclinic.util.UserUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -42,7 +45,6 @@ public class TeamController {
 		dataBinder.addValidators(new TeamValidator());
 		dataBinder.setDisallowedFields("id", "jam", "creationDate");
 	}
-
 	@ModelAttribute(name = "jam", binding = false)
 	public Jam cargarJam(@PathVariable("jamId") final int jamId) {
 		return this.jamService.findJamById(jamId);
@@ -118,6 +120,20 @@ public class TeamController {
 			this.teamService.saveTeam(team);
 
 			return "redirect:/jams/{jamId}/teams/{teamId}";
+		}
+	}
+	
+	@GetMapping(value = "/{teamId}/{userId}/delete")
+	public String initDeleteForm(@PathVariable("teamId") int teamId, @PathVariable("userId") String userId, ModelMap model) {
+		User user= this.userService.findOnlyByUsername(userId);
+		Team team = this.teamService.findTeamById(teamId);
+		team.getMembers().remove(user);
+		if (team.getMembers().size() == 0) {
+			this.teamService.deleteTeam(team);
+			return "redirect:/jams/{jamId}";
+		} else {
+			this.teamService.saveTeam(team);
+		return "redirect:/jams/{jamId}";
 		}
 	}
 }

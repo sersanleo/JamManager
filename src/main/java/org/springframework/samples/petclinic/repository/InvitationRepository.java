@@ -19,25 +19,28 @@ package org.springframework.samples.petclinic.repository;
 import java.util.Collection;
 
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.samples.petclinic.model.Invitation;
+import org.springframework.samples.petclinic.model.Jam;
+import org.springframework.samples.petclinic.model.Team;
+import org.springframework.samples.petclinic.model.User;
 
 public interface InvitationRepository extends CrudRepository<Invitation, Integer> {
 
 	Invitation findById(int id) throws DataAccessException;
+
+	void delete(Invitation invitation) throws DataAccessException;
+	
+Collection<Invitation> findAllByFrom(Team from) throws DataAccessException;
+	
+	Collection<Invitation> findAllByTo(User to) throws DataAccessException;
+	
+	Collection<Invitation> findPendingInvitationByFromAndTo(Team from, User to) throws DataAccessException;
 
 	@Query("SELECT i FROM Invitation i WHERE i.to.username = ?1 AND i.status = org.springframework.samples.petclinic.model.InvitationStatus.PENDING AND i.from.jam.inscriptionDeadline > CURRENT_TIMESTAMP")
 	Collection<Invitation> findPendingInvitationsByUsername(String username) throws DataAccessException;
 
 	@Query("SELECT i FROM Invitation i WHERE i.from.jam.id = ?1 AND i.to.username = ?2 AND i.status = org.springframework.samples.petclinic.model.InvitationStatus.PENDING")
 	Collection<Invitation> findPendingInvitationsByJamIdAndUsername(int jamId, String username);
-
-	@Modifying
-	@Query("DELETE FROM Invitation i WHERE i.from.jam.id = ?1 AND i.to.username = ?2 AND i.status = org.springframework.samples.petclinic.model.InvitationStatus.PENDING")
-	void deleteAllPendingInvitationsByJamIdAndUsername(int jamId, String username) throws DataAccessException; // no
-																												// user
-																												// no
-																												// funciona
 }

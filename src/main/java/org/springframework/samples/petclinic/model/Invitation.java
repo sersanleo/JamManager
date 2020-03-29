@@ -42,9 +42,9 @@ public class Invitation extends BaseEntity {
 	private Team from;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "to_username")
-	private User to;
-
+	@JoinColumn(name = "user_username")
+	private User				to;
+	
 	public Invitation() {
 		super();
 		this.creationDate = LocalDateTime.now().minusNanos(1);

@@ -71,8 +71,8 @@ public class Jam extends BaseEntity {
 
 	// Relationships
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "jam", fetch = FetchType.EAGER)
-	private Set<Team> teams;
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "jam", fetch = FetchType.EAGER)
+	private Set<Team>			teams;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "jam", fetch = FetchType.EAGER)
 	private Set<JamResource> jamResources;
