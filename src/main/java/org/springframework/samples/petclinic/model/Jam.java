@@ -1,8 +1,8 @@
+
 package org.springframework.samples.petclinic.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -21,8 +21,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Range;
-import org.springframework.beans.support.MutableSortDefinition;
-import org.springframework.beans.support.PropertyComparator;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Getter;
@@ -33,42 +31,43 @@ import lombok.Setter;
 @Setter
 @Table(name = "jams")
 public class Jam extends BaseEntity {
-	@NotBlank
-	private String				name;
 
 	@NotBlank
-	private String				description;
+	private String name;
+
+	@NotBlank
+	private String description;
 
 	@NotNull
 	@Range(min = 1, max = 5)
-	private Integer				difficulty;
+	private Integer difficulty;
 
 	@NotNull
 	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
-	private LocalDateTime		inscriptionDeadline;
+	private LocalDateTime inscriptionDeadline;
 
 	@NotNull
 	@Min(1)
-	private Integer				maxTeamSize;
+	private Integer maxTeamSize;
 
 	@NotNull
-	@Min(1)
-	private Integer				minTeams;
+	@Min(2)
+	private Integer minTeams;
 
 	@NotNull
-	@Min(1)
-	private Integer				maxTeams;
+	@Min(2)
+	private Integer maxTeams;
 
 	@NotNull
 	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
-	private LocalDateTime		start;
+	private LocalDateTime start;
 
 	@NotNull
 	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
-	private LocalDateTime		end;
+	private LocalDateTime end;
 
 	@NotNull
-	private Boolean				rated;
+	private Boolean rated;
 
 	// Relationships
 
@@ -76,14 +75,13 @@ public class Jam extends BaseEntity {
 	private Set<Team>			teams;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "jam", fetch = FetchType.EAGER)
-	private Set<JamResource>	jamResources;
+	private Set<JamResource> jamResources;
 
 	@OneToOne(optional = true)
-	private Team				winner;
+	private Team winner;
 
 	@ManyToOne(optional = false)
-	private User				creator;
-
+	private User creator;
 
 	public Jam() {
 		super();
@@ -108,36 +106,34 @@ public class Jam extends BaseEntity {
 		}
 		return JamStatus.FINISHED;
 	}
-	
-	
-	protected Set<JamResource> getJamResourceInternal(){
+
+	protected Set<JamResource> getJamResourceInternal() {
 		if (this.jamResources == null) {
 			this.jamResources = new HashSet<>();
 		}
 		return this.jamResources;
 	}
-	
-	protected void setJamResourceInternal(Set<JamResource> jamResource) {
+
+	protected void setJamResourceInternal(final Set<JamResource> jamResource) {
 		this.jamResources = jamResource;
 	}
-	
-	public List<JamResource> getJamResources(){
-		List<JamResource> sortedJamResource = new ArrayList<>(getJamResourceInternal());
+
+	public List<JamResource> getJamResources() {
+		List<JamResource> sortedJamResource = new ArrayList<>(this.getJamResourceInternal());
 		return Collections.unmodifiableList(sortedJamResource);
 	}
-	
-	public void addJamResource(JamResource jamResource) {
-		getJamResourceInternal().add(jamResource);
+
+	public void addJamResource(final JamResource jamResource) {
+		this.getJamResourceInternal().add(jamResource);
 		jamResource.setJam(this);
 	}
-	
-	
-	public void deleteJamResource(JamResource jamResource) {
-		getJamResourceInternal().remove(jamResource);
+
+	public void deleteJamResource(final JamResource jamResource) {
+		this.getJamResourceInternal().remove(jamResource);
 	}
-	
+
 	@Transient
 	public boolean getIsFull() {
-		return getTeams().size() >= getMaxTeams();
+		return this.getTeams().size() >= this.getMaxTeams();
 	}
 }

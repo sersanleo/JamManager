@@ -32,29 +32,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/jams/{jamId}/teams")
 public class TeamController {
 
-	private static final String	VIEWS_TEAM_CREATE_OR_UPDATE_FORM	= "teams/createOrUpdateForm";
-	private static final String	VIEWS_TEAM_ERROR					= "teams/errorTeam";
-
+	private static final String VIEWS_TEAM_CREATE_OR_UPDATE_FORM = "teams/createOrUpdateForm";
 
 	@Autowired
-	private TeamService			teamService;
+	private TeamService teamService;
 
 	@Autowired
-	private JamService			jamService;
-	
-	@Autowired
-	private UserService			userService;
+	private JamService jamService;
 
-	@Autowired
-	public TeamController(final UserService userService, final TeamService teamService, final JamService jamService) {
-		this.userService = userService;
-		this.teamService = teamService;
-		this.jamService = jamService;
-	}
-	
-	@InitBinder
-	public void setAlloweFields(WebDataBinder dataBinder) {
-		dataBinder.setDisallowedFields("id");
+	@InitBinder("team")
+	public void addTeamValidator(final WebDataBinder dataBinder) {
+		dataBinder.addValidators(new TeamValidator());
+		dataBinder.setDisallowedFields("id", "jam", "creationDate");
 	}
 	@ModelAttribute(name = "jam", binding = false)
 	public Jam cargarJam(@PathVariable("jamId") final int jamId) {
@@ -64,15 +53,16 @@ public class TeamController {
 	@GetMapping("/{teamId}")
 	public String mostrarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) {
 		modelMap.addAttribute("team", this.teamService.findTeamById(teamId));
+		modelMap.addAttribute("isMember",
+				this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername()));
 
 		return "teams/teamDetails";
 	}
 
 	@GetMapping("/new")
-	public String crearTeam(final ModelMap modelMap, @PathVariable("jamId") final int jamId) {
-		Integer existentTeam = this.teamService.findTeamIdByJamIdAndUsername(jamId, UserUtils.getCurrentUsername());
-		if (existentTeam != null) {
-			return "redirect:/jams/{jamId}/teams/" + existentTeam;
+	public String crearTeam(final ModelMap modelMap, @PathVariable("jamId") final int jamId) throws Exception {
+		if (this.teamService.findIsMemberOfTeamByJamIdAndUsername(jamId, UserUtils.getCurrentUsername())) {
+			throw new Exception();
 		}
 
 		modelMap.addAttribute("team", new Team());
@@ -81,10 +71,10 @@ public class TeamController {
 	}
 
 	@PostMapping("/new")
-	public String salvarTeam(final Jam jam, @Valid final Team team, final BindingResult result, final ModelMap modelMap) {
-		Integer existentTeam = this.teamService.findTeamIdByJamIdAndUsername(jam.getId(), UserUtils.getCurrentUsername());
-		if (existentTeam != null) {
-			return "redirect:/jams/{jamId}/teams/" + existentTeam;
+	public String salvarTeam(final Jam jam, @Valid final Team team, final BindingResult result,
+			final ModelMap modelMap) throws Exception {
+		if (this.teamService.findIsMemberOfTeamByJamIdAndUsername(jam.getId(), UserUtils.getCurrentUsername())) {
+			throw new Exception();
 		}
 
 		if (result.hasErrors()) {
@@ -105,20 +95,29 @@ public class TeamController {
 	}
 
 	@GetMapping("/{teamId}/edit")
-	public String editarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) {
+	public String editarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) throws Exception {
+		if (!this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())) {
+			throw new Exception();
+		}
+
 		modelMap.addAttribute("team", this.teamService.findTeamById(teamId));
 
 		return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
 	}
 
 	@PostMapping("/{teamId}/edit")
-	public String salvarCambiosTeam(@Valid final Team team, final BindingResult result, @PathVariable("teamId") final int teamId, final ModelMap modelMap) {
+	public String salvarCambiosTeam(@Valid final Team team, final BindingResult result,
+			@PathVariable("teamId") final int teamId, final ModelMap modelMap) throws Exception {
+		if (!this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())) {
+			throw new Exception();
+		}
+
 		if (result.hasErrors()) {
 			return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
 		} else {
 			Team teamToUpdate = this.teamService.findTeamById(teamId);
-			BeanUtils.copyProperties(team, teamToUpdate, "id", "jam", "creationDate");
-			this.teamService.saveTeam(teamToUpdate);
+			BeanUtils.copyProperties(teamToUpdate, team, "name");
+			this.teamService.saveTeam(team);
 
 			return "redirect:/jams/{jamId}/teams/{teamId}";
 		}

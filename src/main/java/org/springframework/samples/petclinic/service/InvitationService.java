@@ -1,3 +1,4 @@
+
 package org.springframework.samples.petclinic.service;
 
 import java.util.Collection;
@@ -17,14 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class InvitationService {
-	
-	@Autowired
-	private InvitationRepository invitationRepository;
 
 	@Autowired
-	public InvitationService(InvitationRepository invitationRepository) {
-		this.invitationRepository = invitationRepository;
-	}
+	private InvitationRepository invitationRepository;
 
 	@Transactional(readOnly = true)
 	public Invitation findInvitationById(int id)  throws DataAccessException {
@@ -32,8 +28,13 @@ public class InvitationService {
 	}
 
 	@Transactional
-	public Collection<Invitation> findInvitations() {
-		return this.invitationRepository.findAll();
+	public Collection<Invitation> findPendingInvitationsByUsername(final String username) {
+		return this.invitationRepository.findPendingInvitationsByUsername(username);
+	}
+
+	@Transactional
+	public Collection<Invitation> findPendingInvitationsByJamIdAndUsername(final int jamId, final String username) {
+		return this.invitationRepository.findPendingInvitationsByJamIdAndUsername(jamId, username);
 	}
 
 	@Transactional(readOnly = true)
@@ -51,13 +52,21 @@ public class InvitationService {
 		this.invitationRepository.save(invitation);
 	}
 	
-	@Transactional
-	public void deleteInvitation(Invitation invitation) throws DataAccessException{
-		invitationRepository.delete(invitation);
-	}
-	
 	@Transactional (readOnly =true)
 	public Collection<Invitation> findPendingInvitationsByTeamAndUser(Team team, User user) throws DataAccessException{
 		return invitationRepository.findPendingInvitationByFromAndTo(team, user);
+
+	@Transactional
+	public void deleteInvitation(final Invitation invitation) {
+		this.invitationRepository.delete(invitation);
+	}
+
+	public void deleteAllPendingInvitationsByJamIdAndUsername(final int jamId, final String username) {
+		// this.invitationRepository.deleteAllPendingInvitationsByJamIdAndUsername(jamId,
+		// username); (no funciona)
+
+		for (Invitation i : this.findPendingInvitationsByJamIdAndUsername(jamId, username)) {
+			this.deleteInvitation(i);
+		}
 	}
 }

@@ -17,18 +17,30 @@ import lombok.Setter;
 @Setter
 public class Phone implements Serializable {
 
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
 	@NotNull
 	@Range(min = 1, max = 999)
-	private Integer				countryCode;
+	private Integer countryCode;
 
 	@Pattern(regexp = "\\d{1,6}", message = "default.error.conversion")
-	private String				areaCode;
+	private String areaCode;
 
 	@Pattern(regexp = "\\d{1,9}([\\s-]\\d{1,9}){0,4}", message = "default.error.conversion")
-	private String				number;
+	private String number;
 
+	public Phone() {
+		super();
+	}
+
+	public Phone(@NotNull @Range(min = 1, max = 999) final Integer countryCode,
+			@Pattern(regexp = "\\d{1,6}", message = "default.error.conversion") final String areaCode,
+			@Pattern(regexp = "\\d{1,9}([\\s-]\\d{1,9}){0,4}", message = "default.error.conversion") final String number) {
+		super();
+		this.countryCode = countryCode;
+		this.areaCode = areaCode;
+		this.number = number;
+	}
 
 	@Override
 	public String toString() {

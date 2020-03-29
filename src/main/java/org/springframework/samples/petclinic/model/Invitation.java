@@ -21,19 +21,25 @@ import lombok.Setter;
 @Table(name = "invitations")
 public class Invitation extends BaseEntity {
 
+	@Override
+	public String toString() {
+		return "Invitation [creationDate=" + this.creationDate + ", status=" + this.status + ", from=" + this.from
+				+ ", to=" + this.to + ", id=" + this.id + "]";
+	}
+
 	@NotNull
 	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
 	@Past
-	private LocalDateTime		creationDate;
+	private LocalDateTime creationDate;
 
 	@NotNull
-	private InvitationStatus	status;
+	private InvitationStatus status;
 
 	// Relationships
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "team_id")
-	private Team				from;
+	private Team from;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "user_username")

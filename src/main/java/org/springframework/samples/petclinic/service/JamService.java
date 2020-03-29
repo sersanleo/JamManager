@@ -36,7 +36,6 @@ public class JamService {
 	@Autowired
 	private JamRepository jamRepository;
 
-
 	@Transactional
 	public Jam findJamById(final int id) {
 		return this.jamRepository.findById(id);

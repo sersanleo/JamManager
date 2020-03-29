@@ -31,36 +31,34 @@ import lombok.Setter;
 public class Team extends BaseEntity {
 
 	@NotBlank
-	private String			name;
+	private String name;
 
 	@NotNull
 	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
 	@Past
-	private LocalDateTime	creationDate;
+	private LocalDateTime creationDate;
 
 	// Relationships
 
 	@ManyToOne(optional = false)
-	private Jam				jam;
+	private Jam jam;
 
 	@ManyToMany()
-	private Set<User>		members;
+	private Set<User> members;
 
 	@ManyToMany(cascade = CascadeType.REMOVE, mappedBy = "from", fetch = FetchType.EAGER)
-	private Set<Invitation>	invitations;
-
-	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "team", fetch = FetchType.EAGER)
-	private Set<Mark>		marks;
+	private Set<Invitation> invitations;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "team", fetch = FetchType.EAGER)
-	private Set<Delivery>	deliveries;
+	private Set<Mark> marks;
 
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "team", fetch = FetchType.EAGER)
+	private Set<Delivery> deliveries;
 
 	public Team() {
 		super();
 		this.creationDate = LocalDateTime.now().minusNanos(1);
 	}
-	
 
 	protected Set<Invitation> getInvitationInternal(){
 		if (this.invitations == null) {

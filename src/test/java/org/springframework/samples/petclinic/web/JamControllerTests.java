@@ -39,7 +39,7 @@ class JamControllerTests {
 
 	@MockBean
 	private JamService jamService;
-	
+
 	@MockBean
 	private TeamService teamService;
 
@@ -61,7 +61,7 @@ class JamControllerTests {
 		jamOrganizator.setPassword("jamOrganizator1");
 		jamOrganizator.setEnabled(true);
 		jamOrganizator.setEmail("example@example.com");
-		jamOrganizator.setPhone(new Phone());
+		jamOrganizator.setPhone(new Phone(34, "", "600 000 000"));
 
 		Jam inscriptionJam = new Jam();
 		inscriptionJam.setName("Inscription Jam");
@@ -348,5 +348,4 @@ class JamControllerTests {
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 				.andExpect(MockMvcResultMatchers.view().name("redirect:/jams/{jamId}"));
 	}
-
 }
