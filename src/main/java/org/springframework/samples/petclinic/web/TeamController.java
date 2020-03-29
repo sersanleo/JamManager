@@ -36,7 +36,8 @@ public class TeamController {
 
 	@Autowired
 	private TeamService teamService;
-
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private JamService jamService;
 

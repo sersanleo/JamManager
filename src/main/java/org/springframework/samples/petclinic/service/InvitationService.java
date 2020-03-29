@@ -23,7 +23,7 @@ public class InvitationService {
 	private InvitationRepository invitationRepository;
 
 	@Transactional(readOnly = true)
-	public Invitation findInvitationById(int id)  throws DataAccessException {
+	public Invitation findInvitationById(int id) throws DataAccessException {
 		return invitationRepository.findById(id);
 	}
 
@@ -46,15 +46,16 @@ public class InvitationService {
 	public Collection<Invitation> findInvitationsByUser(User user) throws DataAccessException {
 		return this.invitationRepository.findAllByTo(user);
 	}
-	
+
 	@Transactional
 	public void saveInvitation(final Invitation invitation) {
 		this.invitationRepository.save(invitation);
 	}
-	
-	@Transactional (readOnly =true)
-	public Collection<Invitation> findPendingInvitationsByTeamAndUser(Team team, User user) throws DataAccessException{
+
+	@Transactional(readOnly = true)
+	public Collection<Invitation> findPendingInvitationsByTeamAndUser(Team team, User user) throws DataAccessException {
 		return invitationRepository.findPendingInvitationByFromAndTo(team, user);
+	}
 
 	@Transactional
 	public void deleteInvitation(final Invitation invitation) {
@@ -68,5 +69,9 @@ public class InvitationService {
 		for (Invitation i : this.findPendingInvitationsByJamIdAndUsername(jamId, username)) {
 			this.deleteInvitation(i);
 		}
+	}
+
+	public Collection<Invitation> findInvitations() {
+		return this.invitationRepository.findAll();
 	}
 }

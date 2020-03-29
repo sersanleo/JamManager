@@ -27,15 +27,17 @@ import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.model.User;
 
 public interface InvitationRepository extends CrudRepository<Invitation, Integer> {
+	@Override
+	Collection<Invitation> findAll() throws DataAccessException;
 
 	Invitation findById(int id) throws DataAccessException;
 
 	void delete(Invitation invitation) throws DataAccessException;
-	
-Collection<Invitation> findAllByFrom(Team from) throws DataAccessException;
-	
+
+	Collection<Invitation> findAllByFrom(Team from) throws DataAccessException;
+
 	Collection<Invitation> findAllByTo(User to) throws DataAccessException;
-	
+
 	Collection<Invitation> findPendingInvitationByFromAndTo(Team from, User to) throws DataAccessException;
 
 	@Query("SELECT i FROM Invitation i WHERE i.to.username = ?1 AND i.status = org.springframework.samples.petclinic.model.InvitationStatus.PENDING AND i.from.jam.inscriptionDeadline > CURRENT_TIMESTAMP")

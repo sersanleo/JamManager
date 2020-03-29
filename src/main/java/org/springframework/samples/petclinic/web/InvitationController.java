@@ -15,6 +15,7 @@ import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.InvitationService;
 import org.springframework.samples.petclinic.service.TeamService;
+import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.samples.petclinic.util.UserUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -34,6 +35,8 @@ public class InvitationController {
 	private InvitationService invitationService;
 	@Autowired
 	private TeamService teamService;
+	@Autowired
+	private UserService userService;
 
 	@InitBinder("invitation")
 	public void addInvitationValidator(final WebDataBinder dataBinder) {
