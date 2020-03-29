@@ -11,12 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TeamService {
 
-	private TeamRepository teamRepository;
-
 	@Autowired
-	public TeamService(final TeamRepository teamRepository) {
-		this.teamRepository = teamRepository;
-	}
+	private TeamRepository teamRepository;
 
 	@Transactional(readOnly = true)
 	public Team findTeamById(final int id) throws DataAccessException {

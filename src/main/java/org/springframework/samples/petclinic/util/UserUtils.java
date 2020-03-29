@@ -9,7 +9,10 @@ public class UserUtils {
 
 	public static final String getCurrentUsername() {
 		SecurityContext context = SecurityContextHolder.getContext();
-		User user = (User) context.getAuthentication().getPrincipal();
-		return user.getUsername();
+		Object principal = context.getAuthentication().getPrincipal();
+		if (principal instanceof User) {
+			return ((User) context.getAuthentication().getPrincipal()).getUsername();
+		}
+		return null;
 	}
 }
