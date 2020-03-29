@@ -51,4 +51,9 @@ public class JamService {
 		this.jamRepository.save(jam);
 	}
 
+	@Transactional
+	public void deleteJam(final Jam jam) {
+		this.jamRepository.delete(jam);
+	}
+
 }

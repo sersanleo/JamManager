@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
 import org.springframework.samples.petclinic.datatypes.Phone;
 import org.springframework.samples.petclinic.model.Invitation;
@@ -30,7 +30,6 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.context.annotation.FilterType;
 
 @WebMvcTest(controllers = InvitationController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebSecurityConfigurer.class), excludeAutoConfiguration = SecurityConfiguration.class)
 class InvitationControllerTests {
@@ -103,10 +102,8 @@ class InvitationControllerTests {
 		invitation.setCreationDate(LocalDateTime.now().minusNanos(1));
 		invitation.setStatus(InvitationStatus.PENDING);
 
-		BDDMockito.given(this.invitationService.findInvitationById(TEST_INVITATION_ID)).willReturn(invitation);
-		BDDMockito.given(this.userService.findOnlyByUsername("to")).willReturn(to);
-		BDDMockito.given(this.userService.findOnlyByUsername("creator")).willReturn(creator);
-		BDDMockito.given(this.userService.findOnlyByUsername("user1")).willReturn(user1);
+		BDDMockito.given(this.invitationService.findInvitationById(InvitationControllerTests.TEST_INVITATION_ID))
+				.willReturn(invitation);
 		BDDMockito.given(this.jamService.findJamById(1)).willReturn(jam);
 		BDDMockito.given(this.teamService.findTeamById(1)).willReturn(from);
 	}
@@ -169,7 +166,8 @@ class InvitationControllerTests {
 	@Test
 	void testSuccesfulInvitationRemove() throws Exception {
 		this.mockMvc
-				.perform(MockMvcRequestBuilders.get("/jams/{jamId}/teams/{teamId}/invitations/{invitationId}/delete")
+				.perform(MockMvcRequestBuilders
+						.get("/jams/{jamId}/teams/{teamId}/invitations/{invitationId}/delete")
 						.with(SecurityMockMvcRequestPostProcessors.csrf()))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection());
 	}

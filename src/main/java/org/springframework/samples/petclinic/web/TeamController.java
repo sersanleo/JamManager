@@ -9,10 +9,8 @@ import javax.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
-import org.springframework.samples.petclinic.model.JamResource;
 import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.model.User;
-import org.springframework.samples.petclinic.service.InvitationService;
 import org.springframework.samples.petclinic.service.JamService;
 import org.springframework.samples.petclinic.service.TeamService;
 import org.springframework.samples.petclinic.service.UserService;
@@ -91,7 +89,6 @@ public class TeamController {
 			team.setJam(jam);
 
 			this.teamService.saveTeam(team);
-			// AÑADIR QUE SE RECHACEN LAS INVITACIONES DE OTROS EQUIPOS PARA ESTA JAM
 
 			return "redirect:/jams/{jamId}/teams/" + team.getId();
 		}
@@ -127,9 +124,10 @@ public class TeamController {
 	}
 
 	@GetMapping(value = "/{teamId}/members/{username}/delete")
-	public String initDeleteForm(@PathVariable("teamId") int teamId, @PathVariable("username") String username,
-			ModelMap model) {
-		User user = this.userService.findOnlyByUsername(username);
+	public String initDeleteForm(@PathVariable("teamId") final int teamId,
+			@PathVariable("username") final String username,
+			final ModelMap model) {
+		User user = this.userService.findByUsername(username);
 		Team team = this.teamService.findTeamById(teamId);
 		team.getMembers().remove(user);
 		if (team.getMembers().size() == 0) {

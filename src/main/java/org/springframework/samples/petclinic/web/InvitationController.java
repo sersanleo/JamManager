@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Invitation;
 import org.springframework.samples.petclinic.model.InvitationStatus;
 import org.springframework.samples.petclinic.model.Invitations;
-import org.springframework.samples.petclinic.model.Jam;
-import org.springframework.samples.petclinic.model.JamResource;
 import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.InvitationService;
@@ -23,7 +21,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -43,7 +40,7 @@ public class InvitationController {
 		dataBinder.addValidators(new InvitationValidator());
 		dataBinder.setDisallowedFields("id");
 	}
-	
+
 	@GetMapping("/invitations.xml")
 	public @ResponseBody Invitations listarInvitationsXml() {
 		Invitations invitations = new Invitations();
@@ -76,31 +73,34 @@ public class InvitationController {
 			throw new Exception();
 		}
 
-  		if (this.userService.findOnlyByUsername(invitation.getTo().getUsername()) == null){
-			result.rejectValue("to.username", "wrongUser", "This user doesn`t exists.");
+		Team team = this.teamService.findTeamById(teamId);
+		String toUsername = invitation.getTo().getUsername();
+		User toUser = this.userService.findByUsername(toUsername);
+
+		if (toUser == null) {
+			result.rejectValue("to.username", "wrongUser", "This user doesn't exist");
+		} else {
+			if (this.invitationService.findHasPendingInvitationsByTeamIdAndUsername(teamId, toUsername)) {
+				result.rejectValue("to.username", "pendingInvitation", "There's a pending invitation yet");
+			}
+			if (this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, toUsername)) {
+				result.rejectValue("to.username", "memberInvitation", "This user is a member of the team");
+			}
 		}
-		
-		if (!this.invitationService.findPendingInvitationsByTeamAndUser(this.teamService.findTeamById(teamId), invitation.getTo()).isEmpty()){
-			result.rejectValue("to.username", "pendingInvitation", "There's a pending invitation yet");
-		}
-		
-		if (this.teamService.findTeamById(teamId).getMembers().contains(this.userService.findOnlyByUsername(invitation.getTo().getUsername()))){
-			result.rejectValue("to.username", "memberInvitation", "This user is member of the team");
-		}
-  
+
 		if (result.hasErrors()) {
 			return "invitations/createForm";
 		} else {
-			invitation.setFrom(this.teamService.findTeamById(teamId));
-			
+			invitation.setFrom(team);
 			this.invitationService.saveInvitation(invitation);
+
 			return "redirect:/jams/{jamId}/teams/{teamId}";
 		}
 	}
-	
+
 	@GetMapping(value = "/jams/{jamId}/teams/{teamId}/invitations/{invitationId}/delete")
-	public String initDeleteForm(@PathVariable("invitationId") int invitationId, ModelMap model) {
-		Invitation invitation= this.invitationService.findInvitationById(invitationId);
+	public String initDeleteForm(@PathVariable("invitationId") final int invitationId, final ModelMap model) {
+		Invitation invitation = this.invitationService.findInvitationById(invitationId);
 		model.remove("invitation", invitation);
 		this.invitationService.deleteInvitation(invitation);
 		return "redirect:/jams/{jamId}/teams/{teamId}";
