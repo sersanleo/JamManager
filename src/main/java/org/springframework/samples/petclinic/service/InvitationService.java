@@ -8,6 +8,7 @@ import org.springframework.samples.petclinic.model.Invitation;
 import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.model.JamResource;
 import org.springframework.samples.petclinic.model.Team;
+import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.repository.InvitationRepository;
 import org.springframework.samples.petclinic.repository.JamResourceRepository;
 import org.springframework.samples.petclinic.repository.TeamRepository;
@@ -35,6 +36,16 @@ public class InvitationService {
 		return this.invitationRepository.findAll();
 	}
 
+	@Transactional(readOnly = true)
+	public Collection<Invitation> findInvitationsByTeam(Team team) throws DataAccessException {
+		return this.invitationRepository.findAllByFrom(team);
+	}
+
+	@Transactional(readOnly = true)
+	public Collection<Invitation> findInvitationsByUser(User user) throws DataAccessException {
+		return this.invitationRepository.findAllByTo(user);
+	}
+	
 	@Transactional
 	public void saveInvitation(final Invitation invitation) {
 		this.invitationRepository.save(invitation);
@@ -43,5 +54,10 @@ public class InvitationService {
 	@Transactional
 	public void deleteInvitation(Invitation invitation) throws DataAccessException{
 		invitationRepository.delete(invitation);
+	}
+	
+	@Transactional (readOnly =true)
+	public Collection<Invitation> findPendingInvitationsByTeamAndUser(Team team, User user) throws DataAccessException{
+		return invitationRepository.findPendingInvitationByFromAndTo(team, user);
 	}
 }

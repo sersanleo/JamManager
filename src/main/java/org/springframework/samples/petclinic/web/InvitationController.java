@@ -67,7 +67,7 @@ public class InvitationController {
 	public String listarInvitationsUser(final ModelMap modelMap) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String userName = authentication.getName();
-		Collection<Invitation> invitations = this.invitationService.findInvitations().stream().filter(i -> i.getTo().getUsername().equals(userName) && i.getStatus().equals(InvitationStatus.PENDING)).collect(Collectors.toList());
+		Collection<Invitation> invitations = this.invitationService.findInvitationsByUser(this.userService.findOnlyByUsername(userName));
 		modelMap.addAttribute("invitations", invitations);
 
 		return "users/invitationListUser";
@@ -87,10 +87,12 @@ public class InvitationController {
 			result.rejectValue("to", "wrongUser", "This user doesn`t exists.");
 		}
 		
-		if (this.invitationService.findInvitations().stream()
-				.filter(i -> i.getTo().getUsername().equals(invitation.getTo().getUsername()))
-				.anyMatch(i -> i.getStatus().equals(InvitationStatus.PENDING))){
+		if (!this.invitationService.findPendingInvitationsByTeamAndUser(this.teamService.findTeamById(teamId), invitation.getTo()).isEmpty()){
 			result.rejectValue("status", "pendingInvitation", "There's a pending invitation yet");
+		}
+		
+		if (this.teamService.findTeamById(teamId).getMembers().contains(this.userService.findOnlyByUsername(invitation.getTo().getUsername()))){
+			result.rejectValue("to", "memberInvitation", "This user is member of the team");
 		}
 		
 		if (result.hasErrors()) {

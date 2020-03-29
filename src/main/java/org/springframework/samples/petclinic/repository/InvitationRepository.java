@@ -19,10 +19,12 @@ package org.springframework.samples.petclinic.repository;
 import java.util.Collection;
 
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.samples.petclinic.model.Invitation;
 import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.model.Team;
+import org.springframework.samples.petclinic.model.User;
 
 /**
  * Repository class for <code>Vet</code> domain objects All method names are compliant
@@ -42,4 +44,10 @@ public interface InvitationRepository extends CrudRepository<Invitation, Integer
 	Collection<Invitation> findAll() throws DataAccessException;
 
 	void delete(Invitation invitation) throws DataAccessException;
+	
+Collection<Invitation> findAllByFrom(Team from) throws DataAccessException;
+	
+	Collection<Invitation> findAllByTo(User to) throws DataAccessException;
+	
+	Collection<Invitation> findPendingInvitationByFromAndTo(Team from, User to) throws DataAccessException;
 }

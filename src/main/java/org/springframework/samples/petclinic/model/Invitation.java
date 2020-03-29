@@ -36,7 +36,7 @@ public class Invitation extends BaseEntity {
 	private Team				from;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "user_name")
+	@JoinColumn(name = "user_username")
 	private User				to;
 	
 	public Invitation() {

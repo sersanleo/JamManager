@@ -52,12 +52,10 @@ public class TeamController {
 		this.jamService = jamService;
 	}
 	
-	@InitBinder("team")
-	public void addTeamValidator(final WebDataBinder dataBinder) {
-		dataBinder.addValidators(new TeamValidator());
-		dataBinder.setDisallowedFields("id", "jam", "creationDate");
+	@InitBinder
+	public void setAlloweFields(WebDataBinder dataBinder) {
+		dataBinder.setDisallowedFields("id");
 	}
-
 	@ModelAttribute(name = "jam", binding = false)
 	public Jam cargarJam(@PathVariable("jamId") final int jamId) {
 		return this.jamService.findJamById(jamId);

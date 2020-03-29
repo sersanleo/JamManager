@@ -8,6 +8,10 @@ INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_
 INSERT INTO authorities(username,authority) VALUES ('member2','member');
 INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('member3','member3',TRUE,'example@example.com',34,'','600 000 000');
 INSERT INTO authorities(username,authority) VALUES ('member3','member');
+INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('member4','member4',TRUE,'example@example.com',34,'','600 000 000');
+INSERT INTO authorities(username,authority) VALUES ('member4','member');
+INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('member5','member5',TRUE,'example@example.com',34,'','600 000 000');
+INSERT INTO authorities(username,authority) VALUES ('member5','member');
 
 INSERT INTO vets VALUES (1, 'James', 'Carter');
 INSERT INTO vets VALUES (2, 'Helen', 'Leary');
@@ -49,3 +53,9 @@ VALUES 			('member2',1);
 /* Jam 2 */
 INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_size,min_teams,max_teams,start,end,rated,creator_username)
 VALUES 			(2,'Jam 2','prueba2',3,'2020-06-08 12:00',5,1,2,'2020-06-09 12:00','2020-06-10 12:00',FALSE,'jamOrganizator1');
+
+/* Invitations */
+INSERT INTO invitations(id, creation_date, status, team_id, user_username)
+VALUES 			(1,'2020-06-08 12:00',1,1, 'member3');
+INSERT INTO invitations(id, creation_date, status, team_id, user_username)
+VALUES 			(2,'2020-06-08 12:00',1,1, 'member4');
