@@ -36,16 +36,16 @@ import org.springframework.context.annotation.FilterType;
 class InvitationControllerTests {
 
 	private static final int TEST_INVITATION_ID = 1;
-	
+
 	@MockBean
 	private InvitationService invitationService;
-	
+
 	@MockBean
 	private UserService userService;
-	
+
 	@MockBean
 	private TeamService teamService;
-	
+
 	@MockBean
 	private JamService jamService;
 
@@ -60,23 +60,21 @@ class InvitationControllerTests {
 		to.setEnabled(true);
 		to.setEmail("to@to.com");
 		to.setPhone(new Phone());
-		
 
-		
 		User user1 = new User();
 		user1.setUsername("sample1");
 		user1.setPassword("sample1");
 		user1.setEnabled(true);
 		user1.setEmail("sample1@sample.com");
 		user1.setPhone(new Phone());
-		
+
 		User creator = new User();
 		creator.setUsername("creator");
 		creator.setPassword("creator");
 		creator.setEnabled(true);
 		creator.setEmail("creator@creator.com");
 		creator.setPhone(new Phone());
-		
+
 		Jam jam = new Jam();
 		jam.setName("Inscription Jam");
 		jam.setDescription("This is a test Jam.");
@@ -88,8 +86,7 @@ class InvitationControllerTests {
 		jam.setStart(LocalDateTime.now().plusDays(3));
 		jam.setEnd(LocalDateTime.now().plusDays(4));
 		jam.setJamResources(new HashSet<JamResource>());
-		
-		
+
 		Team from = new Team();
 		from.setJam(jam);
 		from.setName("team1");
@@ -99,18 +96,14 @@ class InvitationControllerTests {
 		Set<Team> teams = new HashSet<>();
 		teams.add(from);
 		jam.setTeams(teams);
-		
-		
+
 		Invitation invitation = new Invitation();
 		invitation.setFrom(from);
 		invitation.setTo(to);
 		invitation.setCreationDate(LocalDateTime.now().minusNanos(1));
 		invitation.setStatus(InvitationStatus.PENDING);
-		
-		
 
 		BDDMockito.given(this.invitationService.findInvitationById(TEST_INVITATION_ID)).willReturn(invitation);
-		BDDMockito.given(this.invitationService.findInvitations()).willReturn(Lists.newArrayList(invitation));
 		BDDMockito.given(this.userService.findOnlyByUsername("to")).willReturn(to);
 		BDDMockito.given(this.userService.findOnlyByUsername("creator")).willReturn(creator);
 		BDDMockito.given(this.userService.findOnlyByUsername("user1")).willReturn(user1);
@@ -121,60 +114,63 @@ class InvitationControllerTests {
 	@WithMockUser(value = "spring")
 	@Test
 	void testListUserInvitations() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/invitations")).andExpect(MockMvcResultMatchers.status().isOk())
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/invitations"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("users/invitationListUser"))
 				.andExpect(MockMvcResultMatchers.model().attributeExists("invitations"));
 	}
-	
+
 	@WithMockUser(value = "spring")
 	@Test
 	void testInitInvitationCreationForm() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/jams/1/teams/1/invitations/new")).andExpect(MockMvcResultMatchers.status().isOk())
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/jams/1/teams/1/invitations/new"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("invitations/createForm"))
 				.andExpect(MockMvcResultMatchers.model().attributeExists("invitation"));
 	}
-	
+
 	@WithMockUser(value = "spring")
 	@Test
 	void testSuccesfulInvitationCreation() throws Exception {
-		
-		this.mockMvc.perform(
-				MockMvcRequestBuilders.post("/jams/1/teams/1/invitations/new").with(SecurityMockMvcRequestPostProcessors.csrf())
-						.param("to.username", "creator"))
-						.andExpect(MockMvcResultMatchers.status().is3xxRedirection());
+
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.post("/jams/1/teams/1/invitations/new")
+						.with(SecurityMockMvcRequestPostProcessors.csrf()).param("to.username", "creator"))
+				.andExpect(MockMvcResultMatchers.status().is3xxRedirection());
 	}
-	
+
 	@WithMockUser(value = "spring")
 	@Test
 	void testFailedUsernameInexistentInvitationCreation() throws Exception {
-		this.mockMvc.perform(
-				MockMvcRequestBuilders.post("/jams/1/teams/1/invitations/new").with(SecurityMockMvcRequestPostProcessors.csrf())
-				.param("to.username", ""))
-		.andExpect(MockMvcResultMatchers.status().isOk())
-		.andExpect(MockMvcResultMatchers.model().attributeHasErrors("invitation"))
-		.andExpect(MockMvcResultMatchers.model().attributeErrorCount("invitation", 1))
-		.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("invitation", "to"))
-		.andExpect(MockMvcResultMatchers.view().name("invitations/createForm"));
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.post("/jams/1/teams/1/invitations/new")
+						.with(SecurityMockMvcRequestPostProcessors.csrf()).param("to.username", ""))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.model().attributeHasErrors("invitation"))
+				.andExpect(MockMvcResultMatchers.model().attributeErrorCount("invitation", 1))
+				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("invitation", "to"))
+				.andExpect(MockMvcResultMatchers.view().name("invitations/createForm"));
 	}
-	
+
 	@WithMockUser(value = "spring")
 	@Test
 	void testFailedUsernameInTeamInvitationCreation() throws Exception {
-		this.mockMvc.perform(
-				MockMvcRequestBuilders.post("/jams/1/teams/1/invitations/new").with(SecurityMockMvcRequestPostProcessors.csrf())
-				.param("to.username", "user1"))
-		.andExpect(MockMvcResultMatchers.status().isOk())
-		.andExpect(MockMvcResultMatchers.model().attributeHasErrors("invitation"))
-		.andExpect(MockMvcResultMatchers.model().attributeErrorCount("invitation", 1))
-		.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("invitation", "to"))
-		.andExpect(MockMvcResultMatchers.view().name("invitations/createForm"));
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.post("/jams/1/teams/1/invitations/new")
+						.with(SecurityMockMvcRequestPostProcessors.csrf()).param("to.username", "user1"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.model().attributeHasErrors("invitation"))
+				.andExpect(MockMvcResultMatchers.model().attributeErrorCount("invitation", 1))
+				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("invitation", "to"))
+				.andExpect(MockMvcResultMatchers.view().name("invitations/createForm"));
 	}
-	
+
 	@WithMockUser(value = "spring")
 	@Test
 	void testSuccesfulInvitationRemove() throws Exception {
-		this.mockMvc.perform(
-				MockMvcRequestBuilders.get("/jams/{jamId}/teams/{teamId}/invitations/{invitationId}/delete").with(SecurityMockMvcRequestPostProcessors.csrf()))
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/jams/{jamId}/teams/{teamId}/invitations/{invitationId}/delete")
+						.with(SecurityMockMvcRequestPostProcessors.csrf()))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection());
 	}
 }

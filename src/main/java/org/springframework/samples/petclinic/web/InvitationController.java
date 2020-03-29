@@ -77,15 +77,15 @@ public class InvitationController {
 		}
 
   		if (this.userService.findOnlyByUsername(invitation.getTo().getUsername()) == null){
-			result.rejectValue("to", "wrongUser", "This user doesn`t exists.");
+			result.rejectValue("to.username", "wrongUser", "This user doesn`t exists.");
 		}
 		
 		if (!this.invitationService.findPendingInvitationsByTeamAndUser(this.teamService.findTeamById(teamId), invitation.getTo()).isEmpty()){
-			result.rejectValue("status", "pendingInvitation", "There's a pending invitation yet");
+			result.rejectValue("to.username", "pendingInvitation", "There's a pending invitation yet");
 		}
 		
 		if (this.teamService.findTeamById(teamId).getMembers().contains(this.userService.findOnlyByUsername(invitation.getTo().getUsername()))){
-			result.rejectValue("to", "memberInvitation", "This user is member of the team");
+			result.rejectValue("to.username", "memberInvitation", "This user is member of the team");
 		}
   
 		if (result.hasErrors()) {

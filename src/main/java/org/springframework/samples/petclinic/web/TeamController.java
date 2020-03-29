@@ -46,6 +46,7 @@ public class TeamController {
 		dataBinder.addValidators(new TeamValidator());
 		dataBinder.setDisallowedFields("id", "jam", "creationDate");
 	}
+
 	@ModelAttribute(name = "jam", binding = false)
 	public Jam cargarJam(@PathVariable("jamId") final int jamId) {
 		return this.jamService.findJamById(jamId);
@@ -72,8 +73,8 @@ public class TeamController {
 	}
 
 	@PostMapping("/new")
-	public String salvarTeam(final Jam jam, @Valid final Team team, final BindingResult result,
-			final ModelMap modelMap) throws Exception {
+	public String salvarTeam(final Jam jam, @Valid final Team team, final BindingResult result, final ModelMap modelMap)
+			throws Exception {
 		if (this.teamService.findIsMemberOfTeamByJamIdAndUsername(jam.getId(), UserUtils.getCurrentUsername())) {
 			throw new Exception();
 		}
@@ -90,8 +91,9 @@ public class TeamController {
 			team.setJam(jam);
 
 			this.teamService.saveTeam(team);
+			// AÑADIR QUE SE RECHACEN LAS INVITACIONES DE OTROS EQUIPOS PARA ESTA JAM
 
-			return "redirect:/jams/{jamId}";
+			return "redirect:/jams/{jamId}/teams/" + team.getId();
 		}
 	}
 
@@ -123,18 +125,18 @@ public class TeamController {
 			return "redirect:/jams/{jamId}/teams/{teamId}";
 		}
 	}
-	
-	@GetMapping(value = "/{teamId}/{userId}/delete")
-	public String initDeleteForm(@PathVariable("teamId") int teamId, @PathVariable("userId") String userId, ModelMap model) {
-		User user= this.userService.findOnlyByUsername(userId);
+
+	@GetMapping(value = "/{teamId}/members/{username}/delete")
+	public String initDeleteForm(@PathVariable("teamId") int teamId, @PathVariable("username") String username,
+			ModelMap model) {
+		User user = this.userService.findOnlyByUsername(username);
 		Team team = this.teamService.findTeamById(teamId);
 		team.getMembers().remove(user);
 		if (team.getMembers().size() == 0) {
 			this.teamService.deleteTeam(team);
-			return "redirect:/jams/{jamId}";
 		} else {
 			this.teamService.saveTeam(team);
-		return "redirect:/jams/{jamId}";
 		}
+		return "redirect:/jams/{jamId}";
 	}
 }

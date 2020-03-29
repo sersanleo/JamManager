@@ -13,14 +13,13 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 class InvitationTests {
-	
-	
+
 	private Validator createValidator() {
 		LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
 		localValidatorFactoryBean.afterPropertiesSet();
 		return localValidatorFactoryBean;
 	}
-	
+
 	@Test
 	void shouldValidateWhenEverythingIsOk() {
 		Invitation invitation = new Invitation();
@@ -29,13 +28,13 @@ class InvitationTests {
 		invitation.setFrom(new Team());
 		invitation.setStatus(InvitationStatus.PENDING);
 		invitation.setTo(new User());
-		
+
 		Validator validator = this.createValidator();
 		Set<ConstraintViolation<Invitation>> constraintViolations = validator.validate(invitation);
 
 		Assertions.assertThat(constraintViolations.size()).isEqualTo(0);
 	}
-	
+
 	@Test
 	void shouldNotValidateWhenEverythingIsNull() {
 		Invitation invitation = new Invitation();
@@ -44,12 +43,11 @@ class InvitationTests {
 		invitation.setFrom(null);
 		invitation.setStatus(null);
 		invitation.setTo(null);
-		
+
 		Validator validator = this.createValidator();
 		Set<ConstraintViolation<Invitation>> constraintViolations = validator.validate(invitation);
 
 		Assertions.assertThat(constraintViolations.size()).isEqualTo(2);
 	}
 
-	
 }

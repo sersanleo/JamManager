@@ -70,8 +70,4 @@ public class InvitationService {
 			this.deleteInvitation(i);
 		}
 	}
-
-	public Collection<Invitation> findInvitations() {
-		return this.invitationRepository.findAll();
-	}
 }

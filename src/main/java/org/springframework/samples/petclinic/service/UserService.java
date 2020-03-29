@@ -27,12 +27,6 @@ import org.springframework.samples.petclinic.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Mostly used as a facade for all Petclinic controllers Also a placeholder
- * for @Transactional and @Cacheable annotations
- *
- * @author Michael Isvy
- */
 @Service
 public class UserService {
 
@@ -57,8 +51,6 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public User findOnlyByUsername(String username) throws DataAccessException{
 		return userRepository.findOnlyByUsername(username);
-		
-		
 	}
 	
 	@Transactional
