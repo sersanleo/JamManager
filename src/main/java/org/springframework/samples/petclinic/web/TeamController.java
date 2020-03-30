@@ -64,6 +64,8 @@ public class TeamController {
 
 	@GetMapping("/new")
 	public String crearTeam(final ModelMap modelMap, final Jam jam) throws Exception {
+		System.out.println(jam.getId());
+		System.out.println(UserUtils.getCurrentUsername() + "LOCA");
 		if (jam == null || jam.getStatus() != JamStatus.INSCRIPTION
 				|| this.teamService.findIsMemberOfTeamByJamIdAndUsername(jam.getId(), UserUtils.getCurrentUsername())) {
 			throw new Exception();

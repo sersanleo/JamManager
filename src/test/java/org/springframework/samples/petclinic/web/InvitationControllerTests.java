@@ -32,7 +32,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @WebMvcTest(controllers = InvitationController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebSecurityConfigurer.class), excludeAutoConfiguration = SecurityConfiguration.class)
 class InvitationControllerTests {
-
 	private static final int TEST_JAM_ID = 1;
 	private static final int TEST_TEAM_ID = 1;
 	private static final int TEST_INVITATION_ID = 1;
@@ -114,6 +113,9 @@ class InvitationControllerTests {
 				"spring")).willReturn(true);
 		BDDMockito.given(this.teamService.findIsMemberOfTeamByTeamIdAndUsername(InvitationControllerTests.TEST_TEAM_ID,
 				"memberUser")).willReturn(true);
+		BDDMockito.given(this.teamService.findIsMemberOfTeamByTeamIdAndUsername(InvitationControllerTests.TEST_TEAM_ID,
+				"nonMemberUser")).willReturn(false);
+
 		BDDMockito.given(this.invitationService.findHasPendingInvitationsByTeamIdAndUsername(
 				InvitationControllerTests.TEST_TEAM_ID,
 				"pendingUser")).willReturn(true);
