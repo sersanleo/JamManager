@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -27,6 +28,7 @@ import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -198,5 +200,25 @@ class InvitationControllerTests {
 						.get("/jams/{jamId}/teams/{teamId}/invitations/{invitationId}/delete", 1, 1, 1)
 						.with(SecurityMockMvcRequestPostProcessors.csrf()))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection());
+	}
+	
+	@WithMockUser(value = "spring")
+	@Test
+	void testSuccesfulInvitationAccept() throws Exception {
+		this.mockMvc
+				.perform(MockMvcRequestBuilders
+						.get("/invitations/{invitationId}/accept", 1)
+						.with(SecurityMockMvcRequestPostProcessors.csrf()))
+				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+	}
+	
+	@WithMockUser(value = "spring")
+	@Test
+	void testSuccesfulInvitationReject() throws Exception {
+		this.mockMvc
+				.perform(MockMvcRequestBuilders
+						.get("/invitations/{invitationId}/reject", 1)
+						.with(SecurityMockMvcRequestPostProcessors.csrf()))
+				.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 	}
 }
