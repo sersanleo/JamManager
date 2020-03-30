@@ -60,7 +60,8 @@ public class InvitationController {
 	public String initCreationForm(@PathVariable("teamId") final int teamId, final Map<String, Object> model)
 			throws Exception {
 		Team team = this.teamService.findTeamById(teamId);
-		if (!this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())
+		if (team == null
+				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())
 				|| team.getJam().getStatus() != JamStatus.INSCRIPTION) {
 			throw new Exception();
 		}
@@ -73,15 +74,14 @@ public class InvitationController {
 	public String processCreationForm(@Valid final Invitation invitation, final BindingResult result,
 			@PathVariable("teamId") final int teamId) throws Exception {
 		Team team = this.teamService.findTeamById(teamId);
-		if (!this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())
+		if (team == null
+				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())
 				|| team.getJam().getStatus() != JamStatus.INSCRIPTION) {
 			throw new Exception();
 		}
 
 		String toUsername = invitation.getTo().getUsername();
 		User toUser = this.userService.findByUsername(toUsername);
-
-		System.out.println(team);
 
 		if (toUser == null) {
 			result.rejectValue("to.username", "wrongUser", "This user doesn't exist");
@@ -107,13 +107,13 @@ public class InvitationController {
 	}
 
 	@GetMapping(value = "/jams/{jamId}/teams/{teamId}/invitations/{invitationId}/delete")
-	public String initDeleteForm(@PathVariable("invitationId") final int invitationId, final ModelMap model,
-			@PathVariable("teamId") final int teamId) throws Exception {
-		Team team = this.teamService.findTeamById(teamId);
+	public String initDeleteForm(@PathVariable("invitationId") final int invitationId, final ModelMap model)
+			throws Exception {
 		Invitation invitation = this.invitationService.findInvitationById(invitationId);
+		Team team = invitation.getFrom();
 
 		if (invitation == null || invitation.getStatus() != InvitationStatus.PENDING
-				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())
+				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(team.getId(), UserUtils.getCurrentUsername())
 				|| team.getJam().getStatus() != JamStatus.INSCRIPTION) {
 			throw new Exception();
 		}
