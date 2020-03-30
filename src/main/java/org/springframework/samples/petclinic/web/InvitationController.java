@@ -89,6 +89,8 @@ public class InvitationController {
 			}
 			if (this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, toUsername)) {
 				result.rejectValue("to.username", "isMember", "This user is a member of the team");
+			} else if (this.teamService.findIsMemberOfTeamByJamIdAndUsername(team.getJam().getId(), toUsername)) {
+				result.rejectValue("to.username", "isParticipating", "This user is already participating in this jam");
 			}
 		}
 
@@ -103,13 +105,13 @@ public class InvitationController {
 	}
 
 	@GetMapping(value = "/jams/{jamId}/teams/{teamId}/invitations/{invitationId}/delete")
-	public String initDeleteForm(@PathVariable("invitationId") final int invitationId, final ModelMap model,
-			@PathVariable("teamId") final int teamId) throws Exception {
-		Team team = this.teamService.findTeamById(teamId);
+	public String initDeleteForm(@PathVariable("invitationId") final int invitationId, final ModelMap model)
+			throws Exception {
 		Invitation invitation = this.invitationService.findInvitationById(invitationId);
+		Team team = invitation.getFrom();
 
 		if (invitation == null || invitation.getStatus() != InvitationStatus.PENDING
-				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())
+				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(team.getId(), UserUtils.getCurrentUsername())
 				|| team.getJam().getStatus() != JamStatus.INSCRIPTION) {
 			throw new Exception();
 		}

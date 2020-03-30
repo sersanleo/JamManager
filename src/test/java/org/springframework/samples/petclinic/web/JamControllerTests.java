@@ -345,7 +345,24 @@ class JamControllerTests {
 	@Test
 	void testFailedInitJamUpdateForm() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/jams/{jamId}/edit", JamControllerTests.TEST_CANCELLED_JAM_ID))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name("exception"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testSuccessfulDeleteJam() throws Exception {
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/jams/{jamId}/delete", JamControllerTests.TEST_INSCRIPTION_JAM_ID))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-				.andExpect(MockMvcResultMatchers.view().name("redirect:/jams/{jamId}"));
+				.andExpect(MockMvcResultMatchers.view().name("redirect:/jams"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testFailedDeleteJam() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/jams/{jamId}/edit", JamControllerTests.TEST_CANCELLED_JAM_ID))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
 }

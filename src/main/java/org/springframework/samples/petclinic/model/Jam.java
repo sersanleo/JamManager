@@ -72,7 +72,7 @@ public class Jam extends BaseEntity {
 	// Relationships
 
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "jam", fetch = FetchType.EAGER)
-	private Set<Team>			teams;
+	private Set<Team> teams;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "jam", fetch = FetchType.EAGER)
 	private Set<JamResource> jamResources;
@@ -135,5 +135,17 @@ public class Jam extends BaseEntity {
 	@Transient
 	public boolean getIsFull() {
 		return this.getTeams().size() >= this.getMaxTeams();
+	}
+
+	@Override
+	public String toString() {
+		return "Jam [name=" + this.name + ", description=" + this.description + ", difficulty=" + this.difficulty
+				+ ", inscriptionDeadline=" + this.inscriptionDeadline + ", maxTeamSize=" + this.maxTeamSize
+				+ ", minTeams="
+				+ this.minTeams + ", maxTeams=" + this.maxTeams + ", start=" + this.start + ", end=" + this.end
+				+ ", rated=" + this.rated
+				+ ", teams=" + this.teams + ", jamResources=" + this.jamResources + ", winner=" + this.winner
+				+ ", creator=" + this.creator
+				+ ", id=" + this.id + "]";
 	}
 }
