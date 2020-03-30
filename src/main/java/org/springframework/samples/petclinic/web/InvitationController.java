@@ -81,6 +81,8 @@ public class InvitationController {
 		String toUsername = invitation.getTo().getUsername();
 		User toUser = this.userService.findByUsername(toUsername);
 
+		System.out.println(team);
+
 		if (toUser == null) {
 			result.rejectValue("to.username", "wrongUser", "This user doesn't exist");
 		} else {
@@ -89,6 +91,8 @@ public class InvitationController {
 			}
 			if (this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, toUsername)) {
 				result.rejectValue("to.username", "isMember", "This user is a member of the team");
+			} else if (this.teamService.findIsMemberOfTeamByJamIdAndUsername(team.getJam().getId(), toUsername)) {
+				result.rejectValue("to.username", "isParticipating", "This user is already participating in this jam");
 			}
 		}
 
