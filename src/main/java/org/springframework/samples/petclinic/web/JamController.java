@@ -93,10 +93,10 @@ public class JamController {
 	}
 
 	@GetMapping("/{jamId}/edit")
-	public String editarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
+	public String editarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) throws Exception {
 		Jam jamToUpdate = this.jamService.findJamById(jamId);
 		if (jamToUpdate.getStatus() != JamStatus.INSCRIPTION) {
-			return "redirect:/jams/{jamId}";
+			throw new Exception();
 		}
 
 		modelMap.addAttribute("jam", jamToUpdate);
@@ -105,10 +105,10 @@ public class JamController {
 
 	@PostMapping("/{jamId}/edit")
 	public String salvarCambiosJam(@Valid final Jam jam, final BindingResult result,
-			@PathVariable("jamId") final int jamId, final ModelMap modelMap) {
+			@PathVariable("jamId") final int jamId, final ModelMap modelMap) throws Exception {
 		Jam jamToUpdate = this.jamService.findJamById(jamId);
 		if (jamToUpdate.getStatus() != JamStatus.INSCRIPTION) {
-			return "redirect:/jams/{jamId}";
+			throw new Exception();
 		}
 
 		if (result.hasErrors()) {
@@ -120,5 +120,17 @@ public class JamController {
 
 			return "redirect:/jams/{jamId}";
 		}
+	}
+
+	@GetMapping("/{jamId}/delete")
+	public String borrarJam(@PathVariable("jamId") final int jamId, final ModelMap modelMap) throws Exception {
+		Jam jam = this.jamService.findJamById(jamId);
+		if (jam.getStatus() != JamStatus.INSCRIPTION) {
+			throw new Exception();
+		}
+
+		this.jamService.deleteJam(jam);
+
+		return "redirect:/jams";
 	}
 }

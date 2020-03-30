@@ -69,6 +69,11 @@
 			<spring:param name="jamId" value="${jam.id}" />
 		</spring:url>
 		<a href="${fn:escapeXml(editUrl)}" class="btn btn-default">Edit Jam</a>
+
+		<spring:url value="{jamId}/delete" var="deleteUrl">
+			<spring:param name="jamId" value="${jam.id}" />
+		</spring:url>
+		<a href="${fn:escapeXml(deleteUrl)}" class="btn btn-default">Delete Jam</a>
 	</c:if>
 
 
