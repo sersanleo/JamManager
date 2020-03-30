@@ -21,7 +21,6 @@ class JamServiceTests {
 	@Autowired
 	protected JamService jamService;
 
-
 	@Test
 	void shouldFindJamById() {
 		Jam jam = this.jamService.findJamById(1);
@@ -81,6 +80,15 @@ class JamServiceTests {
 
 		jam = this.jamService.findJamById(1);
 		Assertions.assertThat(jam.getName()).isEqualTo(newName);
+	}
+
+	@Test
+	@Transactional
+	void shouldDeleteJam() {
+		Jam jam = this.jamService.findJamById(1);
+		Assertions.assertThat(jam).isNotNull();
+		this.jamService.deleteJam(jam);
+		Assertions.assertThat(this.jamService.findJamById(1)).isNull();
 	}
 
 }

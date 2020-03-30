@@ -33,56 +33,55 @@ import lombok.Setter;
 public class Jam extends BaseEntity {
 
 	@NotBlank
-	private String				name;
+	private String name;
 
 	@NotBlank
-	private String				description;
+	private String description;
 
 	@NotNull
 	@Range(min = 1, max = 5)
-	private Integer				difficulty;
+	private Integer difficulty;
 
 	@NotNull
 	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
-	private LocalDateTime		inscriptionDeadline;
+	private LocalDateTime inscriptionDeadline;
 
 	@NotNull
 	@Min(1)
-	private Integer				maxTeamSize;
+	private Integer maxTeamSize;
 
 	@NotNull
 	@Min(2)
-	private Integer				minTeams;
+	private Integer minTeams;
 
 	@NotNull
 	@Min(2)
-	private Integer				maxTeams;
+	private Integer maxTeams;
 
 	@NotNull
 	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
-	private LocalDateTime		start;
+	private LocalDateTime start;
 
 	@NotNull
 	@DateTimeFormat(pattern = "yyyy-M-d HH:mm")
-	private LocalDateTime		end;
+	private LocalDateTime end;
 
 	@NotNull
-	private Boolean				rated;
+	private Boolean rated;
 
 	// Relationships
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "jam", fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "jam", fetch = FetchType.EAGER)
 	private Set<Team>			teams;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "jam", fetch = FetchType.EAGER)
-	private Set<JamResource>	jamResources;
+	private Set<JamResource> jamResources;
 
 	@OneToOne(optional = true)
-	private Team				winner;
+	private Team winner;
 
 	@ManyToOne(optional = false)
-	private User				creator;
-
+	private User creator;
 
 	public Jam() {
 		super();
@@ -94,11 +93,7 @@ public class Jam extends BaseEntity {
 		if (!this.rated) {
 			LocalDateTime now = LocalDateTime.now();
 			if (now.isBefore(this.inscriptionDeadline)) {
-				if (this.teams.size() < this.maxTeams) {
-					return JamStatus.INSCRIPTION;
-				} else {
-					return JamStatus.FULL;
-				}
+				return JamStatus.INSCRIPTION;
 			} else if (this.teams.size() < this.minTeams) {
 				return JamStatus.CANCELLED;
 			} else if (now.isBefore(this.start)) {
