@@ -110,11 +110,14 @@ public class TeamController {
 
 	@GetMapping("/{teamId}/edit")
 	public String editarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) throws Exception {
-		if (!this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())) {
+		Team team = this.teamService.findTeamById(teamId);
+
+		if (team == null
+				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())) {
 			throw new Exception();
 		}
 
-		modelMap.addAttribute("team", this.teamService.findTeamById(teamId));
+		modelMap.addAttribute("team", team);
 
 		return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
 	}
@@ -122,14 +125,16 @@ public class TeamController {
 	@PostMapping("/{teamId}/edit")
 	public String salvarCambiosTeam(@Valid final Team team, final BindingResult result,
 			@PathVariable("teamId") final int teamId, final ModelMap modelMap) throws Exception {
-		if (!this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())) {
+		Team teamToUpdate = this.teamService.findTeamById(teamId);
+
+		if (teamToUpdate == null
+				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())) {
 			throw new Exception();
 		}
 
 		if (result.hasErrors()) {
 			return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
 		} else {
-			Team teamToUpdate = this.teamService.findTeamById(teamId);
 			BeanUtils.copyProperties(teamToUpdate, team, "name");
 			this.teamService.saveTeam(team);
 
@@ -138,13 +143,15 @@ public class TeamController {
 	}
 
 	@GetMapping(value = "/{teamId}/members/{username}/delete")
-	public String initDeleteForm(@PathVariable("teamId") final int teamId,
-			@PathVariable("username") final String username, final ModelMap model, final Jam jam) throws Exception {
+	public String initDeleteMemberForm(@PathVariable("teamId") final int teamId,
+			@PathVariable("username") final String username, final ModelMap model) throws Exception {
 		Team team = this.teamService.findTeamById(teamId);
 
-		if (jam == null || jam.getStatus() != JamStatus.INSCRIPTION
+		if (team == null || team.getJam().getStatus() != JamStatus.INSCRIPTION
 				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(team.getId(),
-						UserUtils.getCurrentUsername())) {
+						UserUtils.getCurrentUsername())
+				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(team.getId(),
+						username)) {
 			throw new Exception();
 		}
 
