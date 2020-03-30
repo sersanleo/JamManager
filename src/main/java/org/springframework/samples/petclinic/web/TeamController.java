@@ -54,8 +54,13 @@ public class TeamController {
 	}
 
 	@GetMapping("/{teamId}")
-	public String mostrarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) {
-		modelMap.addAttribute("team", this.teamService.findTeamById(teamId));
+	public String mostrarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) throws Exception {
+		Team team = this.teamService.findTeamById(teamId);
+		if (team == null) {
+			throw new Exception();
+		}
+
+		modelMap.addAttribute("team", team);
 		modelMap.addAttribute("isMember",
 				this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername()));
 
