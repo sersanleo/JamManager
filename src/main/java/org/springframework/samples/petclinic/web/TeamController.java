@@ -17,6 +17,8 @@ import org.springframework.samples.petclinic.service.JamService;
 import org.springframework.samples.petclinic.service.TeamService;
 import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.samples.petclinic.util.UserUtils;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -31,8 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/jams/{jamId}/teams")
 public class TeamController {
-
-	private static final String VIEWS_TEAM_CREATE_OR_UPDATE_FORM = "teams/createOrUpdateForm";
+	private static final String	VIEWS_TEAM_CREATE_OR_UPDATE_FORM = "teams/createOrUpdateForm";
 
 	@Autowired
 	private TeamService teamService;
@@ -55,6 +56,8 @@ public class TeamController {
 
 	@GetMapping("/{teamId}")
 	public String mostrarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) {
+		String nombre = SecurityContextHolder.getContext().getAuthentication().getName();
+		User userName = this.userService.findOnlyByUsername(nombre);
 		modelMap.addAttribute("team", this.teamService.findTeamById(teamId));
 		modelMap.addAttribute("isMember",
 				this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername()));
