@@ -41,10 +41,8 @@
 			<td><c:out value="${jam.minTeams}" /></td>
 		</tr>
 		<tr>
-
 			<th>Inscribed teams</th>
 			<td><c:out value="${jam.teams.size()}" />/<c:out value="${jam.maxTeams}" /></td>
-
 		</tr>
 		<tr>
 			<th>Start date</th>
@@ -74,16 +72,18 @@
 	</c:if>
 
 
-	<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS }">
+	<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS  }">
+		<br />
+		<br />
 		<br />
 		<b>Resources</b>
 		<table class="table table-striped">
 			<tr>
 				<th>Download URL</th>
 				<th>Description</th>
-				<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS }">
-					<th>Edit Resource</th>
-					<th>Delete Resource</th>
+				<c:if test="${ isOrganizator }">
+					<th></th>
+					<th></th>
 				</c:if>
 			</tr>
 			<c:forEach var="jamResource" items="${jam.jamResources}">
@@ -91,7 +91,7 @@
 					<td><c:out value="${jamResource.downloadUrl}" /></td>
 					<td><c:out value="${jamResource.description}" /></td>
 
-					<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS }">
+					<c:if test="${ isOrganizator }">
 						<td><spring:url value="{jamId}/jamResources/{jamResourceId}/edit" var="editResUrl">
 								<spring:param name="jamId" value="${jam.id}" />
 								<spring:param name="jamResourceId" value="${jamResource.id}" />
@@ -114,8 +114,10 @@
 			</spring:url>
 			<a href="${fn:escapeXml(addResourceUrl)}" class="btn btn-default">Add New Resource</a>
 		</c:if>
-
 	</c:if>
+
+	<br />
+	<br />
 	<br />
 	<b>Teams</b>
 	<table class="table table-striped">
@@ -138,7 +140,7 @@
 		</c:forEach>
 	</table>
 
-	<c:if test="${ jam.status == JamStatus.INSCRIPTION && jam.isFull == false}">
+	<c:if test="${ jam.status == JamStatus.INSCRIPTION && jam.isFull == false && !hasTeam}">
 		<spring:url value="{jamId}/teams/new" var="addTeamUrl">
 			<spring:param name="jamId" value="${jam.id}" />
 		</spring:url>

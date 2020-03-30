@@ -1,9 +1,7 @@
 
 package org.springframework.samples.petclinic.web;
 
-import java.util.Collection;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -11,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Invitation;
 import org.springframework.samples.petclinic.model.InvitationStatus;
 import org.springframework.samples.petclinic.model.Invitations;
+import org.springframework.samples.petclinic.model.JamStatus;
+import org.springframework.samples.petclinic.model.Team;
+import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.InvitationService;
 import org.springframework.samples.petclinic.service.TeamService;
 import org.springframework.samples.petclinic.service.UserService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.samples.petclinic.util.UserUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -29,26 +29,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class InvitationController {
 
-	private static final String	VIEWS_INVITATION_TEAM	= "/jams/{jamId}/teams";
-
 	@Autowired
-	private InvitationService	invitationService;
+	private InvitationService invitationService;
 	@Autowired
-	private TeamService			teamService;
-
+	private TeamService teamService;
 	@Autowired
-	private UserService			userService;
+	private UserService userService;
 
-
-	@Autowired
-	public InvitationController(final InvitationService invitationService, final UserService userService, final TeamService teamService) {
-		this.invitationService = invitationService;
-		this.userService = userService;
-		this.teamService = teamService;
-	}
-
-	@InitBinder
-	public void setAlloweFields(final WebDataBinder dataBinder) {
+	@InitBinder("invitation")
+	public void addInvitationValidator(final WebDataBinder dataBinder) {
+		dataBinder.addValidators(new InvitationValidator());
 		dataBinder.setDisallowedFields("id");
 	}
 
@@ -60,33 +50,119 @@ public class InvitationController {
 
 	@GetMapping("/invitations")
 	public String listarInvitationsUser(final ModelMap modelMap) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String userName = authentication.getName();
-		Collection<Invitation> invitations = this.invitationService.findInvitations().stream().filter(i -> i.getTo().getUsername().equals(userName) && i.getStatus().equals(InvitationStatus.PENDING)).collect(Collectors.toList());
-		modelMap.addAttribute("invitations", invitations);
+		modelMap.addAttribute("invitations",
+				this.invitationService.findPendingInvitationsByUsername(UserUtils.getCurrentUsername()));
 
-		return "users/invitationListUser";
+		return "invitations/invitationList";
 	}
 
 	@GetMapping(value = "/jams/{jamId}/teams/{teamId}/invitations/new")
-	public String initCreationForm(final Map<String, Object> model) {
-		Invitation invitation = new Invitation();
-		model.put("invitation", invitation);
+	public String initCreationForm(@PathVariable("teamId") final int teamId, final Map<String, Object> model)
+			throws Exception {
+		Team team = this.teamService.findTeamById(teamId);
+		if (!this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())
+				|| team.getJam().getStatus() != JamStatus.INSCRIPTION) {
+			throw new Exception();
+		}
+
+		model.put("invitation", new Invitation());
 		return "invitations/createForm";
 	}
 
 	@PostMapping(value = "/jams/{jamId}/teams/{teamId}/invitations/new")
-	public String processCreationForm(@Valid final Invitation invitation, final BindingResult result, @PathVariable("teamId") final int teamId) {
+	public String processCreationForm(@Valid final Invitation invitation, final BindingResult result,
+			@PathVariable("teamId") final int teamId) throws Exception {
+		Team team = this.teamService.findTeamById(teamId);
+		if (!this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())
+				|| team.getJam().getStatus() != JamStatus.INSCRIPTION) {
+			throw new Exception();
+		}
+
+		String toUsername = invitation.getTo().getUsername();
+		User toUser = this.userService.findByUsername(toUsername);
+
+		if (toUser == null) {
+			result.rejectValue("to.username", "wrongUser", "This user doesn't exist");
+		} else {
+			if (this.invitationService.findHasPendingInvitationsByTeamIdAndUsername(teamId, toUsername)) {
+				result.rejectValue("to.username", "pendingInvitation", "There's a pending invitation yet");
+			}
+			if (this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, toUsername)) {
+				result.rejectValue("to.username", "isMember", "This user is a member of the team");
+			}
+		}
+
 		if (result.hasErrors()) {
 			return "invitations/createForm";
 		} else {
-			//creating owner, user and authorities
-
-			invitation.setFrom(this.teamService.findTeamById(teamId));
-
+			invitation.setFrom(team);
 			this.invitationService.saveInvitation(invitation);
-			return "redirect:/jams/{jamId}/teams/{teamId}/invitationList";
+
+			return "redirect:/jams/{jamId}/teams/{teamId}";
 		}
+	}
+
+	@GetMapping(value = "/jams/{jamId}/teams/{teamId}/invitations/{invitationId}/delete")
+	public String initDeleteForm(@PathVariable("invitationId") final int invitationId, final ModelMap model,
+			@PathVariable("teamId") final int teamId) throws Exception {
+		Team team = this.teamService.findTeamById(teamId);
+		Invitation invitation = this.invitationService.findInvitationById(invitationId);
+
+		if (invitation == null || invitation.getStatus() != InvitationStatus.PENDING
+				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())
+				|| team.getJam().getStatus() != JamStatus.INSCRIPTION) {
+			throw new Exception();
+		}
+
+		this.invitationService.deleteInvitation(invitation);
+
+		return "redirect:/jams/{jamId}/teams/{teamId}";
+	}
+
+	@GetMapping(value = "/invitations/{invitationId}/accept")
+	public String processAccept(@PathVariable("invitationId") final int invitationId, final ModelMap model)
+			throws Exception {
+		Invitation invitation = this.invitationService.findInvitationById(invitationId);
+		String currentUsername = UserUtils.getCurrentUsername();
+
+		if (invitation == null || invitation.getStatus() != InvitationStatus.PENDING
+				|| !invitation.getTo().getUsername().equals(currentUsername)
+				|| invitation.getFrom().getJam().getStatus() != JamStatus.INSCRIPTION) {
+			throw new Exception();
+		}
+
+		invitation.setStatus(InvitationStatus.ACCEPTED);
+		this.invitationService.saveInvitation(invitation);
+
+		// Borrar todas las solicitudes pendientes que ya no podrá aceptar
+		this.invitationService.deleteAllPendingInvitationsByJamIdAndUsername(invitation.getFrom().getJam().getId(),
+				invitation.getTo().getUsername());
+
+		// Actualizar miembros del equipo
+		Team team = invitation.getFrom();
+		User usuario = new User();
+		usuario.setUsername(currentUsername);
+		team.getMembers().add(usuario);
+		this.teamService.saveTeam(team);
+
+		return "redirect:/jams/" + invitation.getFrom().getJam().getId() + "/teams/" + invitation.getFrom().getId();
+	}
+
+	@GetMapping(value = "/invitations/{invitationId}/reject")
+	public String processReject(@PathVariable("invitationId") final int invitationId, final ModelMap model)
+			throws Exception {
+		Invitation invitation = this.invitationService.findInvitationById(invitationId);
+		String currentUsername = UserUtils.getCurrentUsername();
+
+		if (invitation == null || invitation.getStatus() != InvitationStatus.PENDING
+				|| !invitation.getTo().getUsername().equals(currentUsername)
+				|| invitation.getFrom().getJam().getStatus() != JamStatus.INSCRIPTION) {
+			throw new Exception();
+		}
+
+		invitation.setStatus(InvitationStatus.REJECTED);
+		this.invitationService.saveInvitation(invitation);
+		return "redirect:/invitations";
 	}
 
 }
