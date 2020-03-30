@@ -15,7 +15,6 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
 import org.springframework.samples.petclinic.datatypes.Phone;
 import org.springframework.samples.petclinic.model.Invitation;
-import org.springframework.samples.petclinic.model.InvitationStatus;
 import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.model.JamResource;
 import org.springframework.samples.petclinic.model.Team;
@@ -34,6 +33,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @WebMvcTest(controllers = InvitationController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebSecurityConfigurer.class), excludeAutoConfiguration = SecurityConfiguration.class)
 class InvitationControllerTests {
 
+	private static final int TEST_JAM_ID = 1;
+	private static final int TEST_TEAM_ID = 1;
 	private static final int TEST_INVITATION_ID = 1;
 
 	@MockBean
@@ -53,26 +54,26 @@ class InvitationControllerTests {
 
 	@BeforeEach
 	private void beforeEach() {
-		User to = new User();
-		to.setUsername("to");
-		to.setPassword("to");
-		to.setEnabled(true);
-		to.setEmail("to@to.com");
-		to.setPhone(new Phone());
+		User memberUser = new User();
+		memberUser.setUsername("memberUser");
+		memberUser.setPassword("memberUser");
+		memberUser.setEnabled(true);
+		memberUser.setEmail("example@example.com");
+		memberUser.setPhone(new Phone());
 
-		User user1 = new User();
-		user1.setUsername("sample1");
-		user1.setPassword("sample1");
-		user1.setEnabled(true);
-		user1.setEmail("sample1@sample.com");
-		user1.setPhone(new Phone());
+		User nonMemberUser = new User();
+		nonMemberUser.setUsername("nonMemberUser");
+		nonMemberUser.setPassword("nonMemberUser");
+		nonMemberUser.setEnabled(true);
+		nonMemberUser.setEmail("example@example.com");
+		nonMemberUser.setPhone(new Phone());
 
-		User creator = new User();
-		creator.setUsername("creator");
-		creator.setPassword("creator");
-		creator.setEnabled(true);
-		creator.setEmail("creator@creator.com");
-		creator.setPhone(new Phone());
+		User pendingUser = new User();
+		nonMemberUser.setUsername("pendingUser");
+		nonMemberUser.setPassword("pendingUser");
+		nonMemberUser.setEnabled(true);
+		nonMemberUser.setEmail("example@example.com");
+		nonMemberUser.setPhone(new Phone());
 
 		Jam jam = new Jam();
 		jam.setName("Inscription Jam");
@@ -86,26 +87,36 @@ class InvitationControllerTests {
 		jam.setEnd(LocalDateTime.now().plusDays(4));
 		jam.setJamResources(new HashSet<JamResource>());
 
-		Team from = new Team();
-		from.setJam(jam);
-		from.setName("team1");
+		Team team = new Team();
+		team.setJam(jam);
+		team.setName("team1");
 		Set<User> members = new HashSet<>();
-		members.add(user1);
-		from.setMembers(members);
+		members.add(memberUser);
+		team.setMembers(members);
 		Set<Team> teams = new HashSet<>();
-		teams.add(from);
+		teams.add(team);
 		jam.setTeams(teams);
 
 		Invitation invitation = new Invitation();
-		invitation.setFrom(from);
-		invitation.setTo(to);
-		invitation.setCreationDate(LocalDateTime.now().minusNanos(1));
-		invitation.setStatus(InvitationStatus.PENDING);
+		invitation.setFrom(team);
+		invitation.setTo(pendingUser);
 
 		BDDMockito.given(this.invitationService.findInvitationById(InvitationControllerTests.TEST_INVITATION_ID))
 				.willReturn(invitation);
-		BDDMockito.given(this.jamService.findJamById(1)).willReturn(jam);
-		BDDMockito.given(this.teamService.findTeamById(1)).willReturn(from);
+		BDDMockito.given(this.jamService.findJamById(InvitationControllerTests.TEST_JAM_ID)).willReturn(jam);
+		BDDMockito.given(this.teamService.findTeamById(InvitationControllerTests.TEST_TEAM_ID)).willReturn(team);
+
+		BDDMockito.given(this.userService.findByUsername("memberUser")).willReturn(memberUser);
+		BDDMockito.given(this.userService.findByUsername("nonMemberUser")).willReturn(nonMemberUser);
+		BDDMockito.given(this.userService.findByUsername("pendingUser")).willReturn(pendingUser);
+
+		BDDMockito.given(this.teamService.findIsMemberOfTeamByTeamIdAndUsername(InvitationControllerTests.TEST_TEAM_ID,
+				"spring")).willReturn(true);
+		BDDMockito.given(this.teamService.findIsMemberOfTeamByTeamIdAndUsername(InvitationControllerTests.TEST_TEAM_ID,
+				"memberUser")).willReturn(true);
+		BDDMockito.given(this.invitationService.findHasPendingInvitationsByTeamIdAndUsername(
+				InvitationControllerTests.TEST_TEAM_ID,
+				"pendingUser")).willReturn(true);
 	}
 
 	@WithMockUser(value = "spring")
@@ -113,7 +124,7 @@ class InvitationControllerTests {
 	void testListUserInvitations() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/invitations"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.view().name("users/invitationListUser"))
+				.andExpect(MockMvcResultMatchers.view().name("invitations/invitationList"))
 				.andExpect(MockMvcResultMatchers.model().attributeExists("invitations"));
 	}
 
@@ -129,10 +140,9 @@ class InvitationControllerTests {
 	@WithMockUser(value = "spring")
 	@Test
 	void testSuccesfulInvitationCreation() throws Exception {
-
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.post("/jams/1/teams/1/invitations/new")
-						.with(SecurityMockMvcRequestPostProcessors.csrf()).param("to.username", "creator"))
+						.with(SecurityMockMvcRequestPostProcessors.csrf()).param("to.username", "nonMemberUser"))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection());
 	}
 
@@ -141,12 +151,13 @@ class InvitationControllerTests {
 	void testFailedUsernameInexistentInvitationCreation() throws Exception {
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.post("/jams/1/teams/1/invitations/new")
-						.with(SecurityMockMvcRequestPostProcessors.csrf()).param("to.username", ""))
+						.with(SecurityMockMvcRequestPostProcessors.csrf()).param("to.username", "nonExistentUser"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.model().attributeHasErrors("invitation"))
 				.andExpect(MockMvcResultMatchers.model().attributeErrorCount("invitation", 1))
-				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("invitation", "to"))
+				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("invitation", "to.username"))
 				.andExpect(MockMvcResultMatchers.view().name("invitations/createForm"));
+		System.out.println(MockMvcResultMatchers.view());
 	}
 
 	@WithMockUser(value = "spring")
@@ -154,11 +165,28 @@ class InvitationControllerTests {
 	void testFailedUsernameInTeamInvitationCreation() throws Exception {
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.post("/jams/1/teams/1/invitations/new")
-						.with(SecurityMockMvcRequestPostProcessors.csrf()).param("to.username", "user1"))
+						.with(SecurityMockMvcRequestPostProcessors.csrf()).param("to.username", "memberUser"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.model().attributeHasErrors("invitation"))
 				.andExpect(MockMvcResultMatchers.model().attributeErrorCount("invitation", 1))
-				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("invitation", "to"))
+				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("invitation", "to.username"))
+				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("invitation", "to.username",
+						"isMember"))
+				.andExpect(MockMvcResultMatchers.view().name("invitations/createForm"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testFailedPendingInvitationInvitationCreation() throws Exception {
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.post("/jams/1/teams/1/invitations/new")
+						.with(SecurityMockMvcRequestPostProcessors.csrf()).param("to.username", "pendingUser"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.model().attributeHasErrors("invitation"))
+				.andExpect(MockMvcResultMatchers.model().attributeErrorCount("invitation", 1))
+				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("invitation", "to.username"))
+				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("invitation", "to.username",
+						"pendingInvitation"))
 				.andExpect(MockMvcResultMatchers.view().name("invitations/createForm"));
 	}
 
@@ -167,7 +195,7 @@ class InvitationControllerTests {
 	void testSuccesfulInvitationRemove() throws Exception {
 		this.mockMvc
 				.perform(MockMvcRequestBuilders
-						.get("/jams/{jamId}/teams/{teamId}/invitations/{invitationId}/delete")
+						.get("/jams/{jamId}/teams/{teamId}/invitations/{invitationId}/delete", 1, 1, 1)
 						.with(SecurityMockMvcRequestPostProcessors.csrf()))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection());
 	}

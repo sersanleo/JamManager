@@ -62,6 +62,8 @@ INSERT INTO teams_members(members_username,team_id)
 VALUES 			('member3',12);
 INSERT INTO invitations(id,creation_date,status,team_id,user_username)
 VALUES          (5,'2020-03-08 12:00',0,12,'member1');
+INSERT INTO invitations(id, creation_date, status, team_id, user_username)
+VALUES 			(6,'2020-03-08 12:00',0,12, 'member4');
 
 /* Pending Jam */
 INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_size,min_teams,max_teams,start,end,rated,creator_username)

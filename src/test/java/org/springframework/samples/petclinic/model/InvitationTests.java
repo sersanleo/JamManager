@@ -8,8 +8,6 @@ import javax.validation.Validator;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 class InvitationTests {
@@ -48,6 +46,21 @@ class InvitationTests {
 		Set<ConstraintViolation<Invitation>> constraintViolations = validator.validate(invitation);
 
 		Assertions.assertThat(constraintViolations.size()).isEqualTo(2);
+	}
+
+	@Test
+	void shouldNotValidateWhenCreationDateIsInTheFuture() {
+		Invitation invitation = new Invitation();
+
+		invitation.setCreationDate(LocalDateTime.now().plusDays(1));
+		invitation.setFrom(new Team());
+		invitation.setStatus(InvitationStatus.PENDING);
+		invitation.setTo(new User());
+
+		Validator validator = this.createValidator();
+		Set<ConstraintViolation<Invitation>> constraintViolations = validator.validate(invitation);
+
+		Assertions.assertThat(constraintViolations.size()).isEqualTo(1);
 	}
 
 }

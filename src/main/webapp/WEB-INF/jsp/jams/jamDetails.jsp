@@ -81,9 +81,9 @@
 			<tr>
 				<th>Download URL</th>
 				<th>Description</th>
-				<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS }">
-					<th>Edit Resource</th>
-					<th>Delete Resource</th>
+				<c:if test="${ isOrganizator }">
+					<th></th>
+					<th></th>
 				</c:if>
 			</tr>
 			<c:forEach var="jamResource" items="${jam.jamResources}">
@@ -91,7 +91,7 @@
 					<td><c:out value="${jamResource.downloadUrl}" /></td>
 					<td><c:out value="${jamResource.description}" /></td>
 
-					<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS }">
+					<c:if test="${ isOrganizator }">
 						<td><spring:url value="{jamId}/jamResources/{jamResourceId}/edit" var="editResUrl">
 								<spring:param name="jamId" value="${jam.id}" />
 								<spring:param name="jamResourceId" value="${jamResource.id}" />

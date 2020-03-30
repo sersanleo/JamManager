@@ -9,8 +9,10 @@ import javax.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
+import org.springframework.samples.petclinic.model.JamStatus;
 import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.model.User;
+import org.springframework.samples.petclinic.service.InvitationService;
 import org.springframework.samples.petclinic.service.JamService;
 import org.springframework.samples.petclinic.service.TeamService;
 import org.springframework.samples.petclinic.service.UserService;
@@ -38,10 +40,11 @@ public class TeamController {
 	private UserService userService;
 	@Autowired
 	private JamService jamService;
+	@Autowired
+	private InvitationService invitationService;
 
 	@InitBinder("team")
-	public void addTeamValidator(final WebDataBinder dataBinder) {
-		dataBinder.addValidators(new TeamValidator());
+	public void initTeamBinder(final WebDataBinder dataBinder) {
 		dataBinder.setDisallowedFields("id", "jam", "creationDate");
 	}
 
@@ -60,8 +63,9 @@ public class TeamController {
 	}
 
 	@GetMapping("/new")
-	public String crearTeam(final ModelMap modelMap, @PathVariable("jamId") final int jamId) throws Exception {
-		if (this.teamService.findIsMemberOfTeamByJamIdAndUsername(jamId, UserUtils.getCurrentUsername())) {
+	public String crearTeam(final ModelMap modelMap, final Jam jam) throws Exception {
+		if (jam == null || jam.getStatus() != JamStatus.INSCRIPTION
+				|| this.teamService.findIsMemberOfTeamByJamIdAndUsername(jam.getId(), UserUtils.getCurrentUsername())) {
 			throw new Exception();
 		}
 
@@ -71,17 +75,20 @@ public class TeamController {
 	}
 
 	@PostMapping("/new")
-	public String salvarTeam(final Jam jam, @Valid final Team team, final BindingResult result, final ModelMap modelMap)
+	public String salvarTeam(@Valid final Team team, final BindingResult result, final Jam jam, final ModelMap modelMap)
 			throws Exception {
-		if (this.teamService.findIsMemberOfTeamByJamIdAndUsername(jam.getId(), UserUtils.getCurrentUsername())) {
+		String username = UserUtils.getCurrentUsername();
+		if (jam == null || jam.getStatus() != JamStatus.INSCRIPTION
+				|| this.teamService.findIsMemberOfTeamByJamIdAndUsername(jam.getId(), username)) {
 			throw new Exception();
 		}
 
 		if (result.hasErrors()) {
 			return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
 		} else {
+
 			User member = new User();
-			member.setUsername(UserUtils.getCurrentUsername());
+			member.setUsername(username);
 			Set<User> members = new HashSet<User>();
 			members.add(member);
 			team.setMembers(members);
@@ -89,6 +96,8 @@ public class TeamController {
 			team.setJam(jam);
 
 			this.teamService.saveTeam(team);
+
+			this.invitationService.deleteAllPendingInvitationsByJamIdAndUsername(jam.getId(), username);
 
 			return "redirect:/jams/{jamId}/teams/" + team.getId();
 		}
@@ -125,16 +134,27 @@ public class TeamController {
 
 	@GetMapping(value = "/{teamId}/members/{username}/delete")
 	public String initDeleteForm(@PathVariable("teamId") final int teamId,
-			@PathVariable("username") final String username,
-			final ModelMap model) {
-		User user = this.userService.findByUsername(username);
+			@PathVariable("username") final String username, final ModelMap model, final Jam jam) throws Exception {
 		Team team = this.teamService.findTeamById(teamId);
+
+		if (jam == null || jam.getStatus() != JamStatus.INSCRIPTION
+				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(team.getId(),
+						UserUtils.getCurrentUsername())) {
+			throw new Exception();
+		}
+
+		User user = this.userService.findByUsername(username);
+
 		team.getMembers().remove(user);
+
 		if (team.getMembers().size() == 0) {
 			this.teamService.deleteTeam(team);
+
+			return "redirect:/jams/{jamId}";
 		} else {
 			this.teamService.saveTeam(team);
+
+			return "redirect:/jams/{jamId}/teams/{teamId}";
 		}
-		return "redirect:/jams/{jamId}";
 	}
 }
