@@ -1,15 +1,18 @@
 package org.springframework.samples.petclinic.model;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 public class TeamTests {
@@ -18,6 +21,11 @@ public class TeamTests {
 		LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
 		localValidatorFactoryBean.afterPropertiesSet();
 		return localValidatorFactoryBean;
+	}
+
+	@BeforeEach
+	private void beforeEach() {
+		LocaleContextHolder.setLocale(Locale.ENGLISH);
 	}
 
 	@ParameterizedTest

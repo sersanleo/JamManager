@@ -9,6 +9,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -31,12 +32,20 @@ class JamTests {
 		return new JamValidator();
 	}
 
+	@BeforeEach
+	private void beforeEach() {
+		LocaleContextHolder.setLocale(Locale.ENGLISH);
+	}
+
 	@ParameterizedTest
 	@CsvSource({
-		"'Jam Test 1','test',5,'2025-06-03T12:00:00.0000000',5,2,5,'2025-07-03T12:00:00.0000000','2025-08-03T12:00:00.0000000'", "'Jam Test 2','test',2,'2025-06-03T12:00:00.0000000',1,3,3,'2025-07-03T12:00:00.0000000','2025-08-03T12:00:00.0000000'"
+			"'Jam Test 1','test',5,'2025-06-03T12:00:00.0000000',5,2,5,'2025-07-03T12:00:00.0000000','2025-08-03T12:00:00.0000000'",
+			"'Jam Test 2','test',2,'2025-06-03T12:00:00.0000000',1,3,3,'2025-07-03T12:00:00.0000000','2025-08-03T12:00:00.0000000'"
 	})
-	void shouldValidateWhenEverythingIsOk(final String name, final String description, final Integer difficulty, final LocalDateTime inscriptionDeadline, final Integer maxTeamSize, final Integer minTeams, final Integer maxTeams, final LocalDateTime start,
-		final LocalDateTime end) {
+	void shouldValidateWhenEverythingIsOk(final String name, final String description, final Integer difficulty,
+			final LocalDateTime inscriptionDeadline, final Integer maxTeamSize, final Integer minTeams,
+			final Integer maxTeams, final LocalDateTime start,
+			final LocalDateTime end) {
 		Jam jam = new Jam();
 		jam.setName(name);
 		jam.setDescription(description);
@@ -95,11 +104,9 @@ class JamTests {
 
 	@ParameterizedTest
 	@ValueSource(ints = {
-		-1, 0, 6
+			-1, 0, 6
 	})
 	void shouldNotValidateDifficultyOutOfRange(final int difficulty) {
-		LocaleContextHolder.setLocale(Locale.ENGLISH);
-
 		Jam jam = new Jam();
 		jam.setName("test");
 		jam.setDescription("test");
@@ -122,11 +129,9 @@ class JamTests {
 
 	@ParameterizedTest
 	@ValueSource(ints = {
-		-1, 0
+			-1, 0
 	})
 	void shouldNotValidateMaxTeamSizeOutOfRange(final int maxTeamSize) {
-		LocaleContextHolder.setLocale(Locale.ENGLISH);
-
 		Jam jam = new Jam();
 		jam.setName("test");
 		jam.setDescription("test");
@@ -149,11 +154,9 @@ class JamTests {
 
 	@ParameterizedTest
 	@ValueSource(ints = {
-		-1, 0, 1
+			-1, 0, 1
 	})
 	void shouldNotValidateMinTeamsOutOfRange(final int minTeams) {
-		LocaleContextHolder.setLocale(Locale.ENGLISH);
-
 		Jam jam = new Jam();
 		jam.setName("test");
 		jam.setDescription("test");
@@ -176,11 +179,9 @@ class JamTests {
 
 	@ParameterizedTest
 	@ValueSource(ints = {
-		-1, 0, 1
+			-1, 0, 1
 	})
 	void shouldNotValidateMaxTeamsOutOfRange(final int maxTeams) {
-		LocaleContextHolder.setLocale(Locale.ENGLISH);
-
 		Jam jam = new Jam();
 		jam.setName("test");
 		jam.setDescription("test");
@@ -221,7 +222,8 @@ class JamTests {
 
 		Assertions.assertThat(errors.getErrorCount()).isEqualTo(1);
 		Assertions.assertThat(errors.getFieldErrorCount("minTeams")).isEqualTo(1);
-		Assertions.assertThat(errors.getFieldError("minTeams").getCode()).isEqualTo("The minimum number of teams must be lower than the maximum");
+		Assertions.assertThat(errors.getFieldError("minTeams").getCode())
+				.isEqualTo("The minimum number of teams must be lower than the maximum");
 	}
 
 	@Test
@@ -244,7 +246,8 @@ class JamTests {
 
 		Assertions.assertThat(errors.getErrorCount()).isEqualTo(1);
 		Assertions.assertThat(errors.getFieldErrorCount("inscriptionDeadline")).isEqualTo(1);
-		Assertions.assertThat(errors.getFieldError("inscriptionDeadline").getCode()).isEqualTo("The inscription deadline must be before the start of the event");
+		Assertions.assertThat(errors.getFieldError("inscriptionDeadline").getCode())
+				.isEqualTo("The inscription deadline must be before the start of the event");
 	}
 
 	@Test
@@ -267,7 +270,8 @@ class JamTests {
 
 		Assertions.assertThat(errors.getErrorCount()).isEqualTo(1);
 		Assertions.assertThat(errors.getFieldErrorCount("start")).isEqualTo(1);
-		Assertions.assertThat(errors.getFieldError("start").getCode()).isEqualTo("The start of the event must be before the end of itself");
+		Assertions.assertThat(errors.getFieldError("start").getCode())
+				.isEqualTo("The start of the event must be before the end of itself");
 	}
 
 	@Test
@@ -290,7 +294,8 @@ class JamTests {
 
 		Assertions.assertThat(errors.getErrorCount()).isEqualTo(1);
 		Assertions.assertThat(errors.getFieldErrorCount("inscriptionDeadline")).isEqualTo(1);
-		Assertions.assertThat(errors.getFieldError("inscriptionDeadline").getCode()).isEqualTo("The inscription deadline must be in the future");
+		Assertions.assertThat(errors.getFieldError("inscriptionDeadline").getCode())
+				.isEqualTo("The inscription deadline must be in the future");
 	}
 
 	@Test
