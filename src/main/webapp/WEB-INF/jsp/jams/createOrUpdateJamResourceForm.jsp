@@ -11,7 +11,7 @@
 	<form:form modelAttribute="jamResource" class="form-horizontal">
 		<div class="form-group has-feedback">
 			<petclinic:inputField label="Description" name="description" />
-			<petclinic:inputField label="Download URL" name="downloadUrl" />
+			<petclinic:inputURLField label="Download URL" name="downloadUrl" />
 		</div>
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">

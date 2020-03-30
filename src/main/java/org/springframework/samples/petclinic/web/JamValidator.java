@@ -26,20 +26,21 @@ public class JamValidator implements Validator {
 
 	private static final String REQUIRED = "required";
 
+
 	@Override
 	public void validate(final Object obj, final Errors errors) {
 		Jam jam = (Jam) obj;
 
 		LocalDateTime now = LocalDateTime.now();
 
-		if (!errors.hasFieldErrors("minTeams") && !errors.hasFieldErrors("maxTeams")
-				&& jam.getMinTeams() > jam.getMaxTeams()) {
-			String errorMessage = "The maximum number of teams must be greater than the minimum";
-			errors.rejectValue("maxTeams", errorMessage, errorMessage);
+		if (!errors.hasFieldErrors("minTeams") && !errors.hasFieldErrors("maxTeams") && jam.getMinTeams() > jam.getMaxTeams()) {
+
+			String errorMessage = "The minimum number of teams must be lower than the maximum";
+			errors.rejectValue("minTeams", errorMessage, errorMessage);
 		}
 
-		if (!errors.hasFieldErrors("inscriptionDeadline") && !errors.hasFieldErrors("start")
-				&& jam.getInscriptionDeadline().isAfter(jam.getStart())) {
+		if (!errors.hasFieldErrors("inscriptionDeadline") && !errors.hasFieldErrors("start") && jam.getInscriptionDeadline().isAfter(jam.getStart())) {
+
 			String errorMessage = "The inscription deadline must be before the start of the event";
 			errors.rejectValue("inscriptionDeadline", errorMessage, errorMessage);
 		}
@@ -63,6 +64,7 @@ public class JamValidator implements Validator {
 			String errorMessage = "The end must be in the future";
 			errors.rejectValue("end", errorMessage, errorMessage);
 		}
+
 	}
 
 	/**

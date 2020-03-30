@@ -36,7 +36,6 @@ public class JamService {
 	@Autowired
 	private JamRepository jamRepository;
 
-
 	@Transactional
 	public Jam findJamById(final int id) {
 		return this.jamRepository.findById(id);
@@ -50,6 +49,11 @@ public class JamService {
 	@Transactional
 	public void saveJam(final Jam jam) {
 		this.jamRepository.save(jam);
+	}
+
+	@Transactional
+	public void deleteJam(final Jam jam) {
+		this.jamRepository.delete(jam);
 	}
 
 }

@@ -1,4 +1,6 @@
+
 <%@ page session="false" trimDirectiveWhitespaces="true" import="org.springframework.samples.petclinic.model.JamStatus"%>
+
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -60,14 +62,17 @@
 		</tr>
 	</table>
 
+
 	<c:if test="${ isOrganizator && jam.status == JamStatus.INSCRIPTION }">
+
 		<spring:url value="{jamId}/edit" var="editUrl">
 			<spring:param name="jamId" value="${jam.id}" />
 		</spring:url>
 		<a href="${fn:escapeXml(editUrl)}" class="btn btn-default">Edit Jam</a>
 	</c:if>
 
-	<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS }">
+
+	<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS  }">
 		<br />
 		<br />
 		<br />
@@ -76,9 +81,9 @@
 			<tr>
 				<th>Download URL</th>
 				<th>Description</th>
-				<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS }">
-					<th>Edit Resource</th>
-					<th>Delete Resource</th>
+				<c:if test="${ isOrganizator }">
+					<th></th>
+					<th></th>
 				</c:if>
 			</tr>
 			<c:forEach var="jamResource" items="${jam.jamResources}">
@@ -86,7 +91,7 @@
 					<td><c:out value="${jamResource.downloadUrl}" /></td>
 					<td><c:out value="${jamResource.description}" /></td>
 
-					<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS }">
+					<c:if test="${ isOrganizator }">
 						<td><spring:url value="{jamId}/jamResources/{jamResourceId}/edit" var="editResUrl">
 								<spring:param name="jamId" value="${jam.id}" />
 								<spring:param name="jamResourceId" value="${jamResource.id}" />
@@ -109,8 +114,8 @@
 			</spring:url>
 			<a href="${fn:escapeXml(addResourceUrl)}" class="btn btn-default">Add New Resource</a>
 		</c:if>
-
 	</c:if>
+
 	<br />
 	<br />
 	<br />
@@ -135,10 +140,11 @@
 		</c:forEach>
 	</table>
 
-	<c:if test="${ jam.status == JamStatus.INSCRIPTION && jam.isFull == false}">
+	<c:if test="${ jam.status == JamStatus.INSCRIPTION && jam.isFull == false && !hasTeam}">
 		<spring:url value="{jamId}/teams/new" var="addTeamUrl">
 			<spring:param name="jamId" value="${jam.id}" />
 		</spring:url>
 		<a href="${fn:escapeXml(addTeamUrl)}" class="btn btn-default">Join this Jam</a>
+
 	</c:if>
 </petclinic:layout>

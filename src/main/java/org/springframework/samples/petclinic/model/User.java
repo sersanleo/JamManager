@@ -22,21 +22,21 @@ import lombok.Data;
 public class User {
 
 	@Id
-	String username;
+	String	username;
 
 	@NotBlank
-	String password;
+	String	password;
 
-	boolean enabled;
+	boolean	enabled;
 
 	@Email
 	@NotBlank
-	String email;
+	String	email;
 
 	@NotNull
 	@Valid
-	@AttributeOverrides({ @AttributeOverride(name = "countryCode", column = @Column(name = "phone_country_code")),
-			@AttributeOverride(name = "areaCode", column = @Column(name = "phone_area_code")),
-			@AttributeOverride(name = "number", column = @Column(name = "phone_number")) })
-	Phone phone;
+	@AttributeOverrides({
+		@AttributeOverride(name = "countryCode", column = @Column(name = "phone_country_code")), @AttributeOverride(name = "areaCode", column = @Column(name = "phone_area_code")), @AttributeOverride(name = "number", column = @Column(name = "phone_number"))
+	})
+	Phone	phone;
 }
