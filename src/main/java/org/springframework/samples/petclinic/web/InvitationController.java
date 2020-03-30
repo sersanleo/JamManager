@@ -60,8 +60,7 @@ public class InvitationController {
 	public String initCreationForm(@PathVariable("teamId") final int teamId, final Map<String, Object> model)
 			throws Exception {
 		Team team = this.teamService.findTeamById(teamId);
-		if (team == null
-				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())
+		if (!this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())
 				|| team.getJam().getStatus() != JamStatus.INSCRIPTION) {
 			throw new Exception();
 		}
@@ -74,8 +73,7 @@ public class InvitationController {
 	public String processCreationForm(@Valid final Invitation invitation, final BindingResult result,
 			@PathVariable("teamId") final int teamId) throws Exception {
 		Team team = this.teamService.findTeamById(teamId);
-		if (team == null
-				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())
+		if (!this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())
 				|| team.getJam().getStatus() != JamStatus.INSCRIPTION) {
 			throw new Exception();
 		}
