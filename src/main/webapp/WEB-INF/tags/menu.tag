@@ -26,20 +26,19 @@
 					<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 					<span>Jams</span>
 				</petclinic:menuItem>
+				
+				<sec:authorize access="hasAuthority('member')">
+					<petclinic:menuItem active="${name eq 'invitations'}" url="/invitations" title="invitations">
+						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+						<span>My Invitations</span>
+					</petclinic:menuItem>
+				</sec:authorize>
 
 				<petclinic:menuItem active="${name eq 'error'}" url="/oups" title="trigger a RuntimeException to see how it is handled">
 					<span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
 					<span>Error</span>
 				</petclinic:menuItem>
-
-				<petclinic:menuItem active="${name eq 'invitations'}" url="/invitations" title="invitations">
-					<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-					<span>My Invitations</span>
-				</petclinic:menuItem>
 			</ul>
-
-
-
 
 			<ul class="nav navbar-nav navbar-right">
 				<sec:authorize access="!isAuthenticated()">

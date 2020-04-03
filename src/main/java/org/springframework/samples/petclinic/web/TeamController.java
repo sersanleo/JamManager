@@ -146,10 +146,11 @@ public class TeamController {
 	public String initDeleteMemberForm(@PathVariable("teamId") final int teamId,
 			@PathVariable("username") final String username, final ModelMap model) throws Exception {
 		Team team = this.teamService.findTeamById(teamId);
+		String currentUsername = UserUtils.getCurrentUsername();
 
 		if (team == null || team.getJam().getStatus() != JamStatus.INSCRIPTION
 				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(team.getId(),
-						UserUtils.getCurrentUsername())
+						currentUsername)
 				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(team.getId(),
 						username)) {
 			throw new Exception();
@@ -159,13 +160,11 @@ public class TeamController {
 
 		team.getMembers().remove(user);
 
-		if (team.getMembers().size() == 0) {
-			this.teamService.deleteTeam(team);
+		this.teamService.saveTeam(team);
 
+		if (currentUsername.equals(username)) {
 			return "redirect:/jams/{jamId}";
 		} else {
-			this.teamService.saveTeam(team);
-
 			return "redirect:/jams/{jamId}/teams/{teamId}";
 		}
 	}

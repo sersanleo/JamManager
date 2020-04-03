@@ -88,6 +88,19 @@ public class TeamServiceTests {
 
 	@Test
 	@Transactional
+	void shouldDeleteTeamWhenSavingEmptyTeam() throws Exception {
+		Team team = this.teamService.findTeamById(1);
+		Assertions.assertThat(team).isNotNull();
+
+		team.getMembers().clear();
+		this.teamService.saveTeam(team);
+
+		team = this.teamService.findTeamById(1);
+		Assertions.assertThat(team).isNull();
+	}
+
+	@Test
+	@Transactional
 	void shouldDeleteTeam() throws Exception {
 		Team team = this.teamService.findTeamById(2);
 		Assertions.assertThat(team).isNotNull();

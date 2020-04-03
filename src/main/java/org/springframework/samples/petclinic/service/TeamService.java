@@ -3,7 +3,6 @@ package org.springframework.samples.petclinic.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.samples.petclinic.model.JamResource;
 import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.repository.TeamRepository;
 import org.springframework.stereotype.Service;
@@ -27,18 +26,23 @@ public class TeamService {
 	}
 
 	@Transactional(readOnly = true)
-	public boolean findIsMemberOfTeamByTeamIdAndUsername(final int teamId, final String username) throws DataAccessException {
+	public boolean findIsMemberOfTeamByTeamIdAndUsername(final int teamId, final String username)
+			throws DataAccessException {
 		return this.teamRepository.findIsMemberOfTeamByTeamIdAndUsername(teamId, username);
 	}
 
 	@Transactional
 	public void saveTeam(final Team team) throws DataAccessException {
-		this.teamRepository.save(team);
+		if (team.getMembers().size() > 0) {
+			this.teamRepository.save(team);
+		} else {
+			this.deleteTeam(team);
+		}
 	}
-	
+
 	@Transactional
-	public void deleteTeam(Team team) throws DataAccessException{
-		teamRepository.delete(team);
+	public void deleteTeam(final Team team) throws DataAccessException {
+		this.teamRepository.delete(team);
 	}
 
 }

@@ -8,7 +8,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Invitation;
 import org.springframework.samples.petclinic.model.InvitationStatus;
-import org.springframework.samples.petclinic.model.Invitations;
 import org.springframework.samples.petclinic.model.JamStatus;
 import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.model.User;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class InvitationController {
@@ -37,15 +35,8 @@ public class InvitationController {
 	private UserService userService;
 
 	@InitBinder("invitation")
-	public void addInvitationValidator(final WebDataBinder dataBinder) {
-		dataBinder.addValidators(new InvitationValidator());
+	public void setInvitationBinder(final WebDataBinder dataBinder) {
 		dataBinder.setDisallowedFields("id");
-	}
-
-	@GetMapping("/invitations.xml")
-	public @ResponseBody Invitations listarInvitationsXml() {
-		Invitations invitations = new Invitations();
-		return invitations;
 	}
 
 	@GetMapping("/invitations")
@@ -83,18 +74,19 @@ public class InvitationController {
 
 		if (toUser == null) {
 			result.rejectValue("to.username", "wrongUser", "This user doesn't exist");
-		} else {
-			if (this.invitationService.findHasPendingInvitationsByTeamIdAndUsername(teamId, toUsername)) {
-				result.rejectValue("to.username", "pendingInvitation", "There's a pending invitation yet");
-			}
-			if (this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, toUsername)) {
-				result.rejectValue("to.username", "isMember", "This user is a member of the team");
-			} else if (this.teamService.findIsMemberOfTeamByJamIdAndUsername(team.getJam().getId(), toUsername)) {
-				result.rejectValue("to.username", "isParticipating", "This user is already participating in this jam");
-			}
+		} else if (this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, toUsername)) {
+			result.rejectValue("to.username", "isMember", "This user is a member of the team");
+		} else if (this.teamService.findIsMemberOfTeamByJamIdAndUsername(team.getJam().getId(), toUsername)) {
+			result.rejectValue("to.username", "isParticipating", "This user is already participating in this jam");
+		} else if (this.invitationService.findHasPendingInvitationsByTeamIdAndUsername(teamId, toUsername)) {
+			result.rejectValue("to.username", "pendingInvitation", "There's a pending invitation yet");
+		} else if (false) {
+			// COMPROBAR QUE TIENE LA AUTHORITY MEMBER. NO HE BUSCADO AUN COMO HACERLO
 		}
 
-		if (result.hasErrors()) {
+		if (result.hasErrors())
+
+		{
 			return "invitations/createForm";
 		} else {
 			invitation.setFrom(team);

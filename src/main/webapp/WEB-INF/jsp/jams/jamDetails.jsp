@@ -10,6 +10,9 @@
 <sec:authorize access="hasAuthority('jamOrganizator')">
 	<c:set var="isOrganizator" value="true" />
 </sec:authorize>
+<sec:authorize access="hasAuthority('member')">
+	<c:set var="isMember" value="true" />
+</sec:authorize>
 
 <petclinic:layout pageName="jams">
 
@@ -145,7 +148,7 @@
 		</c:forEach>
 	</table>
 
-	<c:if test="${ jam.status == JamStatus.INSCRIPTION && jam.isFull == false && !hasTeam}">
+	<c:if test="${ jam.status == JamStatus.INSCRIPTION && jam.isFull == false && !hasTeam && isMember}">
 		<spring:url value="{jamId}/teams/new" var="addTeamUrl">
 			<spring:param name="jamId" value="${jam.id}" />
 		</spring:url>
