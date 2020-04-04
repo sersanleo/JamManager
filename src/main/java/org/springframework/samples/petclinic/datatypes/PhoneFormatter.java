@@ -32,7 +32,7 @@ public class PhoneFormatter implements Formatter<Phone> {
 		areaCodeRegex = "\\d{1,6}";
 		numberRegex = "\\d{1,9}([\\s-]\\d{1,9}){0,4}";
 		phoneRegex = String.format("^\\s*(?<CC>%1$s)(\\s+\\((?<AC>%2$s)\\)\\s+|\\s+)(?<N>%3$s)\\s*$", countryCodeRegex, areaCodeRegex, numberRegex);
-
+		
 		pattern = Pattern.compile(phoneRegex, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 		matcher = pattern.matcher(text);
 

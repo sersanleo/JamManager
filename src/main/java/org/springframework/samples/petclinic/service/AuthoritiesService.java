@@ -39,6 +39,11 @@ public class AuthoritiesService {
 		this.authoritiesRepository = authoritiesRepository;
 	}
 
+	@Transactional(readOnly=true)
+	public boolean findHasAuthorityByUsername(String username, String authority) throws DataAccessException {
+		return authoritiesRepository.findHasAuthorityByUsername(username, authority);
+	}
+
 	@Transactional
 	public void saveAuthorities(Authorities authorities) throws DataAccessException {
 		authoritiesRepository.save(authorities);
@@ -51,6 +56,4 @@ public class AuthoritiesService {
 		authority.setAuthority(role);
 		authoritiesRepository.save(authority);
 	}
-
-
 }

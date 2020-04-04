@@ -39,4 +39,8 @@ public class User {
 		@AttributeOverride(name = "countryCode", column = @Column(name = "phone_country_code")), @AttributeOverride(name = "areaCode", column = @Column(name = "phone_area_code")), @AttributeOverride(name = "number", column = @Column(name = "phone_number"))
 	})
 	Phone	phone;
+	
+	public boolean isNew() {
+		return true;
+	}
 }

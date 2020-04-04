@@ -21,7 +21,9 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.OwnerService;
+import org.springframework.samples.petclinic.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -32,14 +34,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class UserController {
 
-	private static final String VIEWS_MEMBER_CREATE_FORM = "users/createMemberForm";
-
-	private final OwnerService ownerService;
+	private static final String VIEWS_USER_CREATE_FORM = "users/createUserForm";
 
 	@Autowired
-	public UserController(final OwnerService clinicService) {
-		this.ownerService = clinicService;
-	}
+	private UserService userService;
 
 	@InitBinder
 	public void setAllowedFields(final WebDataBinder dataBinder) {
@@ -48,18 +46,16 @@ public class UserController {
 
 	@GetMapping(value = "/users/new")
 	public String initCreationForm(final Map<String, Object> model) {
-		Owner owner = new Owner();
-		model.put("owner", owner);
-		return UserController.VIEWS_MEMBER_CREATE_FORM;
+		model.put("user", new User());
+		return UserController.VIEWS_USER_CREATE_FORM;
 	}
 
 	@PostMapping(value = "/users/new")
-	public String processCreationForm(@Valid final Owner owner, final BindingResult result) {
+	public String processCreationForm(@Valid final User user, final BindingResult result) {
 		if (result.hasErrors()) {
-			return UserController.VIEWS_MEMBER_CREATE_FORM;
+			return UserController.VIEWS_USER_CREATE_FORM;
 		} else {
-			// creating owner, user, and authority
-			this.ownerService.saveOwner(owner);
+			this.userService.saveUser(user);
 			return "redirect:/";
 		}
 	}

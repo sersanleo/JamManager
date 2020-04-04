@@ -11,6 +11,7 @@ import org.springframework.samples.petclinic.model.InvitationStatus;
 import org.springframework.samples.petclinic.model.JamStatus;
 import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.model.User;
+import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.InvitationService;
 import org.springframework.samples.petclinic.service.TeamService;
 import org.springframework.samples.petclinic.service.UserService;
@@ -33,6 +34,8 @@ public class InvitationController {
 	private TeamService teamService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private AuthoritiesService authoritiesService;
 
 	@InitBinder("invitation")
 	public void setInvitationBinder(final WebDataBinder dataBinder) {
@@ -80,13 +83,11 @@ public class InvitationController {
 			result.rejectValue("to.username", "isParticipating", "This user is already participating in this jam");
 		} else if (this.invitationService.findHasPendingInvitationsByTeamIdAndUsername(teamId, toUsername)) {
 			result.rejectValue("to.username", "pendingInvitation", "There's a pending invitation yet");
-		} else if (false) {
-			// COMPROBAR QUE TIENE LA AUTHORITY MEMBER. NO HE BUSCADO AUN COMO HACERLO
+		} else if (!this.authoritiesService.findHasAuthorityByUsername(toUsername, "member")) {
+			result.rejectValue("to.username", "notMember", "This is not a member");
 		}
 
-		if (result.hasErrors())
-
-		{
+		if (result.hasErrors()) {
 			return "invitations/createForm";
 		} else {
 			invitation.setFrom(team);

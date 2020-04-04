@@ -19,6 +19,7 @@ import org.springframework.samples.petclinic.model.InvitationStatus;
 import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.model.User;
+import org.springframework.samples.petclinic.service.AuthoritiesService;
 import org.springframework.samples.petclinic.service.InvitationService;
 import org.springframework.samples.petclinic.service.TeamService;
 import org.springframework.samples.petclinic.service.UserService;
@@ -42,6 +43,8 @@ class InvitationControllerTests {
 	private TeamService teamService;
 	@MockBean
 	private UserService userService;
+	@MockBean
+	private AuthoritiesService authoritiesService;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -85,7 +88,7 @@ class InvitationControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testFailedInitInvitationCreationFormByNonMember() throws Exception {
+	void testFailedInitInvitationCreationFormByNonMemberOfTheTeam() throws Exception {
 		Team team = new Team();
 		team.setId(InvitationControllerTests.TEST_TEAM_ID);
 		Jam jam = new Jam();
@@ -149,6 +152,7 @@ class InvitationControllerTests {
 				"testUser")).thenReturn(false);
 		Mockito.when(this.teamService.findIsMemberOfTeamByJamIdAndUsername(InvitationControllerTests.TEST_JAM_ID,
 				"testUser")).thenReturn(false);
+		Mockito.when(this.authoritiesService.findHasAuthorityByUsername("testUser", "member")).thenReturn(true);
 
 		this.mockMvc
 				.perform(MockMvcRequestBuilders
@@ -182,6 +186,7 @@ class InvitationControllerTests {
 				"testUser")).thenReturn(false);
 		Mockito.when(this.teamService.findIsMemberOfTeamByJamIdAndUsername(InvitationControllerTests.TEST_JAM_ID,
 				"testUser")).thenReturn(false);
+		Mockito.when(this.authoritiesService.findHasAuthorityByUsername("testUser", "member")).thenReturn(true);
 
 		this.mockMvc
 				.perform(MockMvcRequestBuilders
@@ -216,6 +221,7 @@ class InvitationControllerTests {
 				"testUser")).thenReturn(false);
 		Mockito.when(this.teamService.findIsMemberOfTeamByJamIdAndUsername(InvitationControllerTests.TEST_JAM_ID,
 				"testUser")).thenReturn(false);
+		Mockito.when(this.authoritiesService.findHasAuthorityByUsername("testUser", "member")).thenReturn(true);
 
 		this.mockMvc
 				.perform(MockMvcRequestBuilders
@@ -248,6 +254,7 @@ class InvitationControllerTests {
 				"testUser")).thenReturn(false);
 		Mockito.when(this.teamService.findIsMemberOfTeamByJamIdAndUsername(InvitationControllerTests.TEST_JAM_ID,
 				"testUser")).thenReturn(false);
+		Mockito.when(this.authoritiesService.findHasAuthorityByUsername("testUser", "member")).thenReturn(true);
 
 		this.mockMvc
 				.perform(MockMvcRequestBuilders
@@ -287,6 +294,7 @@ class InvitationControllerTests {
 				"testUser")).thenReturn(true);
 		Mockito.when(this.teamService.findIsMemberOfTeamByJamIdAndUsername(InvitationControllerTests.TEST_JAM_ID,
 				"testUser")).thenReturn(false);
+		Mockito.when(this.authoritiesService.findHasAuthorityByUsername("testUser", "member")).thenReturn(true);
 
 		this.mockMvc
 				.perform(MockMvcRequestBuilders
@@ -326,6 +334,7 @@ class InvitationControllerTests {
 				"testUser")).thenReturn(false);
 		Mockito.when(this.teamService.findIsMemberOfTeamByJamIdAndUsername(InvitationControllerTests.TEST_JAM_ID,
 				"testUser")).thenReturn(true);
+		Mockito.when(this.authoritiesService.findHasAuthorityByUsername("testUser", "member")).thenReturn(true);
 
 		this.mockMvc
 				.perform(MockMvcRequestBuilders
@@ -365,6 +374,7 @@ class InvitationControllerTests {
 				"testUser")).thenReturn(false);
 		Mockito.when(this.teamService.findIsMemberOfTeamByJamIdAndUsername(InvitationControllerTests.TEST_JAM_ID,
 				"testUser")).thenReturn(false);
+		Mockito.when(this.authoritiesService.findHasAuthorityByUsername("testUser", "member")).thenReturn(true);
 
 		this.mockMvc
 				.perform(MockMvcRequestBuilders
@@ -377,6 +387,46 @@ class InvitationControllerTests {
 				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("invitation", "to.username"))
 				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("invitation", "to.username",
 						"pendingInvitation"))
+				.andExpect(MockMvcResultMatchers.view().name("invitations/createForm"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testFailedInvitationCreationNotMemberAuthority() throws Exception {
+		Team team = new Team();
+		team.setId(InvitationControllerTests.TEST_TEAM_ID);
+		Jam jam = new Jam();
+		jam.setId(InvitationControllerTests.TEST_JAM_ID);
+		jam.setInscriptionDeadline(LocalDateTime.now().plusDays(1));
+		team.setJam(jam);
+		User user = new User();
+		user.setUsername("testUser");
+
+		Mockito.when(this.teamService.findTeamById(InvitationControllerTests.TEST_TEAM_ID)).thenReturn(team);
+		Mockito.when(this.teamService.findIsMemberOfTeamByTeamIdAndUsername(InvitationControllerTests.TEST_TEAM_ID,
+				"spring")).thenReturn(true);
+
+		Mockito.when(this.userService.findByUsername("testUser")).thenReturn(user);
+		Mockito.when(this.invitationService
+				.findHasPendingInvitationsByTeamIdAndUsername(InvitationControllerTests.TEST_TEAM_ID, "testUser"))
+				.thenReturn(false);
+		Mockito.when(this.teamService.findIsMemberOfTeamByTeamIdAndUsername(InvitationControllerTests.TEST_TEAM_ID,
+				"testUser")).thenReturn(false);
+		Mockito.when(this.teamService.findIsMemberOfTeamByJamIdAndUsername(InvitationControllerTests.TEST_JAM_ID,
+				"testUser")).thenReturn(false);
+		Mockito.when(this.authoritiesService.findHasAuthorityByUsername("testUser", "member")).thenReturn(false);
+
+		this.mockMvc
+				.perform(MockMvcRequestBuilders
+						.post("/jams/{jamId}/teams/{teamId}/invitations/new", InvitationControllerTests.TEST_JAM_ID,
+								InvitationControllerTests.TEST_TEAM_ID)
+						.with(SecurityMockMvcRequestPostProcessors.csrf()).param("to.username", "testUser"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.model().attributeHasErrors("invitation"))
+				.andExpect(MockMvcResultMatchers.model().attributeErrorCount("invitation", 1))
+				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("invitation", "to.username"))
+				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("invitation", "to.username",
+						"notMember"))
 				.andExpect(MockMvcResultMatchers.view().name("invitations/createForm"));
 	}
 

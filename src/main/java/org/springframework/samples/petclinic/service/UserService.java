@@ -20,24 +20,24 @@ import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.User;
+import org.springframework.samples.petclinic.repository.AuthoritiesRepository;
 import org.springframework.samples.petclinic.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
-
+	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
-	public UserService(final UserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
+	private AuthoritiesService authoritiesService;
 
 	@Transactional
 	public void saveUser(final User user) throws DataAccessException {
 		user.setEnabled(true);
 		this.userRepository.save(user);
+		this.authoritiesService.saveAuthorities(user.getUsername(), "member");
 	}
 
 	@Transactional(readOnly = true)
