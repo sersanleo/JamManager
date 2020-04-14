@@ -92,7 +92,7 @@ public class Team extends BaseEntity {
 		if (!this.marks.isEmpty()) {
 			average = 0f;
 			for (Mark mark : this.marks) {
-				average += mark.getMark();
+				average += mark.getValue();
 			}
 			average /= (float) this.marks.size();
 		}
@@ -101,7 +101,7 @@ public class Team extends BaseEntity {
 
 	public Boolean isMarkedBy(final String username) {
 		for (Mark mark : this.marks) {
-			if (mark.getGiver().getUsername().equals(username)) {
+			if (mark.getJudge().getUsername().equals(username)) {
 				return true;
 			}
 		}

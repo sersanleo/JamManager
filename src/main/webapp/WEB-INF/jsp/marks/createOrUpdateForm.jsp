@@ -6,11 +6,12 @@
 
 <petclinic:layout pageName="jams">
     <h2>
-        <c:if test="${mark['new']}">New </c:if> mark 
+        <c:if test="${mark['new']}">New </c:if> Mark 
     </h2>
     <form:form modelAttribute="mark" class="form-horizontal" id="add-mark-form">
         <div class="form-group has-feedback">
-            <petclinic:inputField label="Mark" name="mark" placeholder="0-10"/>
+            <petclinic:inputField label="Mark" name="value" placeholder="0-10"/>
+            <petclinic:inputField label="Comments" name="comments" placeholder="Do you want to add some feedback?"/>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">

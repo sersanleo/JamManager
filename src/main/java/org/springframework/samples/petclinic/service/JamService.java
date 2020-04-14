@@ -36,12 +36,12 @@ public class JamService {
 	@Autowired
 	private JamRepository jamRepository;
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public Jam findJamById(final int id) {
 		return this.jamRepository.findById(id);
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public Collection<Jam> findJams() {
 		return this.jamRepository.findAll();
 	}

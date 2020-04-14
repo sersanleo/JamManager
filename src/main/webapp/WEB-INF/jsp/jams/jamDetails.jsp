@@ -163,7 +163,9 @@
 						<spring:param name="jamId" value="${jam.id}" />
 						<spring:param name="teamId" value="${team.id}" />
 					</spring:url>
-					<td><a href="${fn:escapeXml(markUrl)}" class="btn btn-default">${ team.isMarkedBy(principal.username) ? "Update mark" : "Mark" }</a></td>
+					<td><c:if test="${ !team.isMarkedBy(principal.username) && jam.status == JamStatus.RATING }">
+							<a href="${fn:escapeXml(markUrl)}" class="btn btn-default">Give A Mark</a>
+						</c:if></td>
 				</c:if>
 			</tr>
 		</c:forEach>

@@ -17,13 +17,15 @@ public class Mark extends BaseEntity {
 
 	@Range(min = 0, max = 10)
 	@NotNull
-	private Float	mark;
+	private Float value;
+
+	private String comments;
 
 	// Relationships
 
 	@ManyToOne(optional = false)
-	private User	giver;
+	private User judge;
 
 	@ManyToOne(optional = false)
-	private Team	team;
+	private Team team;
 }
