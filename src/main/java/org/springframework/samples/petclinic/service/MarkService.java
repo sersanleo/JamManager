@@ -30,7 +30,7 @@ public class MarkService {
 
 	@Transactional(readOnly = true)
 	public Mark findByTeamIdAndJudgeUsername(final int teamId, final String judgeUsername) {
-		return this.markRepository.findByTeamIdAndJudgeUsername(teamId, judgeUsername);
+		return this.markRepository.findByTeamIdAndJudgeUsername(teamId, judgeUsername).get();
 	}
 
 	@Transactional

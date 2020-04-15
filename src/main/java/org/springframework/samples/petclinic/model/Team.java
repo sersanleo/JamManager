@@ -108,13 +108,4 @@ public class Team extends BaseEntity {
 
 		return false;
 	}
-
-	@Override
-	public String toString() {
-		return "Team [name=" + this.name + ", creationDate=" + this.creationDate + ", jam=" + this.jam + ", members="
-				+ this.members
-				+ ", invitations=" + this.invitations + ", marks=" + this.marks + ", deliveries=" + this.deliveries
-				+ ", getId()="
-				+ this.getId() + "]";
-	}
 }

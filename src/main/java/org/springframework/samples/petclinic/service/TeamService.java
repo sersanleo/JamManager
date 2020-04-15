@@ -15,8 +15,8 @@ public class TeamService {
 	private TeamRepository teamRepository;
 
 	@Transactional(readOnly = true)
-	public Team findTeamById(final int id) throws DataAccessException {
-		return this.teamRepository.findById(id);
+	public Team findTeamById(final int id) {
+		return this.teamRepository.findById(id).get();
 	}
 
 	@Transactional(readOnly = true)

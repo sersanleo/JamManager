@@ -122,6 +122,10 @@
 					<td><c:out value="${mark.comments}" /></td>
 					<c:if test="${ team.jam.status == JamStatus.RATING }">
 						<td><c:if test="${ mark.judge.username.equals(principal.username) }">
+								<spring:url value="/jams/{jamId}/teams/{teamId}/marks" var="markUrl">
+									<spring:param name="jamId" value="${jam.id}" />
+									<spring:param name="teamId" value="${team.id}" />
+								</spring:url>
 								<a href="${fn:escapeXml(markUrl)}" class="btn btn-default">Edit</a>
 							</c:if></td>
 					</c:if>

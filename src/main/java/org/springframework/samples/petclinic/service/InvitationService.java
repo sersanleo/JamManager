@@ -18,7 +18,7 @@ public class InvitationService {
 
 	@Transactional(readOnly = true)
 	public Invitation findInvitationById(final int id) throws DataAccessException {
-		return this.invitationRepository.findById(id);
+		return this.invitationRepository.findById(id).get();
 	}
 
 	@Transactional

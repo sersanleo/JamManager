@@ -30,14 +30,20 @@ public class InvitationServiceTests {
 	}
 
 	@Test
-	void shouldNotFindInvitationById() {
-		Invitation invitation = this.invitationService.findInvitationById(20);
+	void shouldNotFindInvitationByWrongId() {
+		Invitation invitation = this.invitationService.findInvitationById(200);
 		Assertions.assertThat(invitation).isEqualTo(null);
 	}
 
 	@Test
 	void shouldFindPendingInvitationsByUsername() {
 		Assertions.assertThat(this.invitationService.findPendingInvitationsByUsername("member1").size()).isEqualTo(2);
+	}
+
+	@Test
+	void shouldNotFindPendingInvitationsByWrongUsername() {
+		Assertions.assertThat(this.invitationService.findPendingInvitationsByUsername("nonExistentUser").size())
+				.isEqualTo(0);
 	}
 
 	@Test

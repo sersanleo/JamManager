@@ -1,12 +1,16 @@
 package org.springframework.samples.petclinic.web;
 
+import java.util.NoSuchElementException;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.model.JamStatus;
 import org.springframework.samples.petclinic.model.Mark;
 import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.MarkService;
+import org.springframework.samples.petclinic.service.TeamService;
 import org.springframework.samples.petclinic.util.UserUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -25,26 +29,41 @@ public class MarkController {
 
 	@Autowired
 	private MarkService markService;
+	@Autowired
+	private TeamService teamService;
+
+	@ModelAttribute("team")
+	public Team cargarTeam(@PathVariable("teamId") final int teamId) {
+		return this.teamService.findTeamById(teamId);
+	}
 
 	@ModelAttribute("mark")
 	public Mark cargarMark(@PathVariable("teamId") final int teamId) {
-		Mark mark = this.markService.findByTeamIdAndJudgeUsername(teamId, UserUtils.getCurrentUsername());
-		if (mark == null) {
-			mark = new Mark();
+		try {
+			return this.markService.findByTeamIdAndJudgeUsername(teamId, UserUtils.getCurrentUsername());
+		} catch (NoSuchElementException e) {
+			return new Mark();
 		}
-		return mark;
 	}
 
 	@GetMapping
-	public String mostrarFormulario(final ModelMap modelMap, final Mark mark) throws Exception {
+	public String mostrarFormulario(final ModelMap modelMap, final Mark mark, final Team team) throws Exception {
+		if (team.getJam().getStatus() != JamStatus.RATING) {
+			throw new Exception();
+		}
+
 		modelMap.addAttribute("mark", mark);
 		return MarkController.VIEWS_CREATE_OR_UPDATE_FORM;
 	}
 
 	@PostMapping
 	public String salvarFormulario(@Valid final Mark mark, final BindingResult result, final ModelMap modelMap,
-			@PathVariable("teamId") final int teamId)
+			final Team team)
 			throws Exception {
+		if (team.getJam().getStatus() != JamStatus.RATING) {
+			throw new Exception();
+		}
+
 		if (result.hasErrors()) {
 			return MarkController.VIEWS_CREATE_OR_UPDATE_FORM;
 		} else {
@@ -52,8 +71,6 @@ public class MarkController {
 			judge.setUsername(UserUtils.getCurrentUsername());
 			mark.setJudge(judge);
 
-			Team team = new Team();
-			team.setId(teamId);
 			mark.setTeam(team);
 
 			this.markService.saveMark(mark);

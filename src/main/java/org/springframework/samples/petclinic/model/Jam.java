@@ -136,16 +136,4 @@ public class Jam extends BaseEntity {
 	public boolean getIsFull() {
 		return this.getTeams().size() >= this.getMaxTeams();
 	}
-
-	@Override
-	public String toString() {
-		return "Jam [name=" + this.name + ", description=" + this.description + ", difficulty=" + this.difficulty
-				+ ", inscriptionDeadline=" + this.inscriptionDeadline + ", maxTeamSize=" + this.maxTeamSize
-				+ ", minTeams="
-				+ this.minTeams + ", maxTeams=" + this.maxTeams + ", start=" + this.start + ", end=" + this.end
-				+ ", rated=" + this.rated
-				+ ", teams=" + this.teams + ", jamResources=" + this.jamResources + ", winner=" + this.winner
-				+ ", creator=" + this.creator
-				+ ", id=" + this.id + "]";
-	}
 }

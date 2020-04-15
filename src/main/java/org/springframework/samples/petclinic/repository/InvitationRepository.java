@@ -24,10 +24,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.samples.petclinic.model.Invitation;
 
 public interface InvitationRepository extends CrudRepository<Invitation, Integer> {
-	Invitation findById(int id) throws DataAccessException;
-
-	@Override
-	void delete(Invitation invitation) throws DataAccessException;
 
 	@Query("SELECT i FROM Invitation i WHERE i.to.username = ?1 AND i.status = org.springframework.samples.petclinic.model.InvitationStatus.PENDING AND i.from.jam.inscriptionDeadline > CURRENT_TIMESTAMP")
 	Collection<Invitation> findPendingInvitationsByUsername(String username) throws DataAccessException;
