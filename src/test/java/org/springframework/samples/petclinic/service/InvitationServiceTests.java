@@ -1,6 +1,7 @@
 package org.springframework.samples.petclinic.service;
 
 import java.util.Collection;
+import java.util.NoSuchElementException;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -31,8 +32,8 @@ public class InvitationServiceTests {
 
 	@Test
 	void shouldNotFindInvitationByWrongId() {
-		Invitation invitation = this.invitationService.findInvitationById(200);
-		Assertions.assertThat(invitation).isEqualTo(null);
+		Assertions.assertThatThrownBy(() -> this.invitationService.findInvitationById(200))
+				.isInstanceOf(NoSuchElementException.class);
 	}
 
 	@Test
@@ -82,9 +83,10 @@ public class InvitationServiceTests {
 	public void shouldDeleteInvitation() {
 		Invitation invitation = this.invitationService.findInvitationById(2);
 		Assertions.assertThat(invitation).isNotNull();
-		this.invitationService.deleteInvitation(invitation);
-		Assertions.assertThat(this.invitationService.findInvitationById(2)).isNull();
 
+		this.invitationService.deleteInvitation(invitation);
+		Assertions.assertThatThrownBy(() -> this.invitationService.findInvitationById(2))
+				.isInstanceOf(NoSuchElementException.class);
 	}
 
 	@Test

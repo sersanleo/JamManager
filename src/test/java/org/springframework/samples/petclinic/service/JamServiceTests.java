@@ -3,6 +3,7 @@ package org.springframework.samples.petclinic.service;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,8 +27,7 @@ class JamServiceTests {
 		Jam jam = this.jamService.findJamById(1);
 		Assertions.assertThat(jam).isNotEqualTo(null);
 
-		jam = this.jamService.findJamById(20);
-		Assertions.assertThat(jam).isEqualTo(null);
+		Assertions.assertThatThrownBy(() -> this.jamService.findJamById(20)).isInstanceOf(NoSuchElementException.class);
 	}
 
 	@Test
@@ -86,9 +86,9 @@ class JamServiceTests {
 	@Transactional
 	void shouldDeleteJam() {
 		Jam jam = this.jamService.findJamById(1);
-		Assertions.assertThat(jam).isNotNull();
 		this.jamService.deleteJam(jam);
-		Assertions.assertThat(this.jamService.findJamById(1)).isNull();
+
+		Assertions.assertThatThrownBy(() -> this.jamService.findJamById(1)).isInstanceOf(NoSuchElementException.class);
 	}
 
 }

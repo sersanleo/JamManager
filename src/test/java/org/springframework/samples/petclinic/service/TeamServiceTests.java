@@ -1,6 +1,7 @@
 package org.springframework.samples.petclinic.service;
 
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.assertj.core.api.Assertions;
@@ -33,8 +34,9 @@ public class TeamServiceTests {
 	// findById()
 	@Test
 	void shouldNotFindTeamById() {
-		Team team = this.teamService.findTeamById(20);
-		Assertions.assertThat(team).isEqualTo(null);
+
+		Assertions.assertThatThrownBy(() -> this.teamService.findTeamById(20))
+				.isInstanceOf(NoSuchElementException.class);
 	}
 
 	@Test
@@ -95,8 +97,8 @@ public class TeamServiceTests {
 		team.getMembers().clear();
 		this.teamService.saveTeam(team);
 
-		team = this.teamService.findTeamById(1);
-		Assertions.assertThat(team).isNull();
+		Assertions.assertThatThrownBy(() -> this.teamService.findTeamById(1))
+				.isInstanceOf(NoSuchElementException.class);
 	}
 
 	@Test
@@ -107,7 +109,7 @@ public class TeamServiceTests {
 
 		this.teamService.deleteTeam(team);
 
-		team = this.teamService.findTeamById(2);
-		Assertions.assertThat(team).isNull();
+		Assertions.assertThatThrownBy(() -> this.teamService.findTeamById(2))
+				.isInstanceOf(NoSuchElementException.class);
 	}
 }

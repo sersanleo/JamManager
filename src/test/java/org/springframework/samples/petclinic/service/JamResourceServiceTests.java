@@ -1,5 +1,7 @@
 package org.springframework.samples.petclinic.service;
 
+import java.util.NoSuchElementException;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +28,8 @@ class JamResourceServiceTests {
 
 	@Test
 	void shouldNotFindJamResourceById() {
-		JamResource jamResource = this.jamResourceService.findJamResourceById(40);
-		Assertions.assertThat(jamResource).isNull();
+		Assertions.assertThatThrownBy(() -> this.jamResourceService.findJamResourceById(40))
+				.isInstanceOf(NoSuchElementException.class);
 	}
 
 	@Test
@@ -39,7 +41,7 @@ class JamResourceServiceTests {
 		jamResource.setDownloadUrl("https://www.google.com/intl/es_ALL/drive/");
 		jamResource.setJam(jam);
 		this.jamResourceService.saveJamResource(jamResource);
-		;
+
 		Assertions.assertThat(jamResource.getId()).isNotNull();
 	}
 
@@ -61,7 +63,7 @@ class JamResourceServiceTests {
 		JamResource jamResource = this.jamResourceService.findJamResourceById(1);
 		this.jamResourceService.deleteJamResource(jamResource);
 
-		Assertions.assertThat(this.jamResourceService.findJamResourceById(1)).isNull();
-
+		Assertions.assertThatThrownBy(() -> this.jamResourceService.findJamResourceById(1))
+				.isInstanceOf(NoSuchElementException.class);
 	}
 }
