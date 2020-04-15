@@ -2,6 +2,7 @@ package org.springframework.samples.petclinic.web;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,6 +79,7 @@ class MarkControllerTests {
 		BDDMockito.given(this.teamService.findTeamById(MarkControllerTests.TEST_RATING_TEAM_ID2))
 				.willReturn(ratingJamTeam2);
 
+		// Not a rating Jam
 		Jam inscriptionJam = new Jam();
 		inscriptionJam.setId(MarkControllerTests.TEST_NOTRATING_JAM_ID);
 		inscriptionJam.setInscriptionDeadline(MarkControllerTests.futureDateTime(2));
@@ -101,6 +103,9 @@ class MarkControllerTests {
 		BDDMockito.given(
 				this.markService.findByTeamIdAndJudgeUsername(MarkControllerTests.TEST_NOTRATING_TEAM_ID, "spring"))
 				.willReturn(new Mark());
+
+		BDDMockito.given(this.teamService.findTeamById(TEST_NONEXISTENT_TEAM_ID))
+				.willThrow(NoSuchElementException.class);
 	}
 
 	@WithMockUser(value = "spring")

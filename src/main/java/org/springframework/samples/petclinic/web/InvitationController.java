@@ -50,7 +50,7 @@ public class InvitationController {
 		return "invitations/invitationList";
 	}
 
-	@GetMapping(value = "/jams/{jamId}/teams/{teamId}/invitations/new")
+	@GetMapping("/jams/{jamId}/teams/{teamId}/invitations/new")
 	public String initCreationForm(@PathVariable("teamId") final int teamId, final Map<String, Object> model)
 			throws Exception {
 		Team team = this.teamService.findTeamById(teamId);
@@ -131,7 +131,7 @@ public class InvitationController {
 
 		// Borrar todas las solicitudes pendientes que ya no podrá aceptar
 		this.invitationService.deleteAllPendingInvitationsByJamIdAndUsername(invitation.getFrom().getJam().getId(),
-				invitation.getTo().getUsername()); // ESTO CREO QUE HAY QUE PASARLO AL SERVICIO
+				invitation.getTo().getUsername());
 
 		// Actualizar miembros del equipo
 		Team team = invitation.getFrom();
