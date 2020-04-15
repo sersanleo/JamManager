@@ -50,7 +50,7 @@ public class InvitationController {
 		return "invitations/invitationList";
 	}
 
-	@GetMapping(value = "/jams/{jamId}/teams/{teamId}/invitations/new")
+	@GetMapping("/jams/{jamId}/teams/{teamId}/invitations/new")
 	public String initCreationForm(@PathVariable("teamId") final int teamId, final Map<String, Object> model)
 			throws Exception {
 		Team team = this.teamService.findTeamById(teamId);
@@ -103,7 +103,7 @@ public class InvitationController {
 		Invitation invitation = this.invitationService.findInvitationById(invitationId);
 		Team team = invitation.getFrom();
 
-		if (invitation == null || invitation.getStatus() != InvitationStatus.PENDING
+		if (invitation.getStatus() != InvitationStatus.PENDING
 				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(team.getId(), UserUtils.getCurrentUsername())
 				|| team.getJam().getStatus() != JamStatus.INSCRIPTION) {
 			throw new Exception();
@@ -120,7 +120,7 @@ public class InvitationController {
 		Invitation invitation = this.invitationService.findInvitationById(invitationId);
 		String currentUsername = UserUtils.getCurrentUsername();
 
-		if (invitation == null || invitation.getStatus() != InvitationStatus.PENDING
+		if (invitation.getStatus() != InvitationStatus.PENDING
 				|| !invitation.getTo().getUsername().equals(currentUsername)
 				|| invitation.getFrom().getJam().getStatus() != JamStatus.INSCRIPTION) {
 			throw new Exception();
@@ -149,7 +149,7 @@ public class InvitationController {
 		Invitation invitation = this.invitationService.findInvitationById(invitationId);
 		String currentUsername = UserUtils.getCurrentUsername();
 
-		if (invitation == null || invitation.getStatus() != InvitationStatus.PENDING
+		if (invitation.getStatus() != InvitationStatus.PENDING
 				|| !invitation.getTo().getUsername().equals(currentUsername)
 				|| invitation.getFrom().getJam().getStatus() != JamStatus.INSCRIPTION) {
 			throw new Exception();

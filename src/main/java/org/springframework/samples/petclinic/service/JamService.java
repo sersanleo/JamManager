@@ -20,7 +20,7 @@ import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
-import org.springframework.samples.petclinic.repository.springdatajpa.JamRepository;
+import org.springframework.samples.petclinic.repository.JamRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,12 +36,12 @@ public class JamService {
 	@Autowired
 	private JamRepository jamRepository;
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public Jam findJamById(final int id) {
-		return this.jamRepository.findById(id);
+		return this.jamRepository.findById(id).get();
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public Collection<Jam> findJams() {
 		return this.jamRepository.findAll();
 	}

@@ -15,6 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
@@ -85,12 +86,26 @@ public class Team extends BaseEntity {
 		this.getInvitationInternal().remove(invitation);
 	}
 
-	@Override
-	public String toString() {
-		return "Team [name=" + this.name + ", creationDate=" + this.creationDate + ", jam=" + this.jam + ", members="
-				+ this.members
-				+ ", invitations=" + this.invitations + ", marks=" + this.marks + ", deliveries=" + this.deliveries
-				+ ", getId()="
-				+ this.getId() + "]";
+	@Transient
+	public Float getAverage() {
+		Float average = null;
+		if (!this.marks.isEmpty()) {
+			average = 0f;
+			for (Mark mark : this.marks) {
+				average += mark.getValue();
+			}
+			average /= (float) this.marks.size();
+		}
+		return average;
+	}
+
+	public Boolean isMarkedBy(final String username) {
+		for (Mark mark : this.marks) {
+			if (mark.getJudge().getUsername().equals(username)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

@@ -1,21 +1,13 @@
 package org.springframework.samples.petclinic.web;
 
-import java.util.Collection;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.model.JamResource;
-import org.springframework.samples.petclinic.model.Owner;
-import org.springframework.samples.petclinic.model.Pet;
-import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.service.JamResourceService;
 import org.springframework.samples.petclinic.service.JamService;
-import org.springframework.samples.petclinic.service.OwnerService;
-import org.springframework.samples.petclinic.service.PetService;
-import org.springframework.samples.petclinic.service.exceptions.DuplicatedPetNameException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -26,7 +18,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author Juergen Hoeller
@@ -37,11 +28,10 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/jams/{jamId}")
 public class JamResourceController {
 
-	private static final String	VIEWS_JAM_RESOURCE_CREATE_OR_UPDATE_FORM	= "jams/createOrUpdateJamResourceForm";
+	private static final String VIEWS_JAM_RESOURCE_CREATE_OR_UPDATE_FORM = "jams/createOrUpdateJamResourceForm";
 
 	private final JamResourceService jamResourceService;
-	private final JamService	jamService;
-
+	private final JamService jamService;
 
 	@Autowired
 	public JamResourceController(final JamResourceService jamResourceService, final JamService jamService) {
@@ -54,14 +44,13 @@ public class JamResourceController {
 		return this.jamService.findJamById(jamId);
 	}
 
-
 	@InitBinder("jam")
 	public void initJamBinder(final WebDataBinder dataBinder) {
 		dataBinder.setDisallowedFields("id");
 	}
 
 	@InitBinder
-	public void setAlloweFields(WebDataBinder dataBinder) {
+	public void setAlloweFields(final WebDataBinder dataBinder) {
 		dataBinder.setDisallowedFields("id");
 	}
 
@@ -74,7 +63,8 @@ public class JamResourceController {
 	}
 
 	@PostMapping(value = "/jamResources/new")
-	public String processCreationForm(final Jam jam, @Valid final JamResource jamResource, final BindingResult result, final ModelMap model) {
+	public String processCreationForm(final Jam jam, @Valid final JamResource jamResource, final BindingResult result,
+			final ModelMap model) {
 		if (result.hasErrors()) {
 			model.put("jamResource", jamResource);
 			return JamResourceController.VIEWS_JAM_RESOURCE_CREATE_OR_UPDATE_FORM;
@@ -85,16 +75,18 @@ public class JamResourceController {
 		}
 	}
 
-	@GetMapping(value ="/jamResources/{jamResourceId}/edit")
-	public String editJamResource(@PathVariable("jamResourceId") int jamResourceId, ModelMap modelMap, Jam jam) {
-		
+	@GetMapping(value = "/jamResources/{jamResourceId}/edit")
+	public String editJamResource(@PathVariable("jamResourceId") final int jamResourceId, final ModelMap modelMap,
+			final Jam jam) {
+
 		JamResource jamResource = this.jamResourceService.findJamResourceById(jamResourceId);
 		modelMap.put("jamResource", jamResource);
 		return JamResourceController.VIEWS_JAM_RESOURCE_CREATE_OR_UPDATE_FORM;
 	}
 
-	@PostMapping(value ="/jamResources/{jamResourceId}/edit")
-	public String updateJamResource(@Valid JamResource jamResource, BindingResult result,  @PathVariable("jamResourceId") int jamResourceId, Jam jam, ModelMap model) {
+	@PostMapping(value = "/jamResources/{jamResourceId}/edit")
+	public String updateJamResource(@Valid final JamResource jamResource, final BindingResult result,
+			@PathVariable("jamResourceId") final int jamResourceId, final Jam jam, final ModelMap model) {
 		if (result.hasErrors()) {
 			model.put("jamResource", jamResource);
 			return JamResourceController.VIEWS_JAM_RESOURCE_CREATE_OR_UPDATE_FORM;
@@ -103,15 +95,17 @@ public class JamResourceController {
 			BeanUtils.copyProperties(jamResource, jamResourceToUpdate, "id", "jam");
 			this.jamResourceService.saveJamResource(jamResourceToUpdate);
 			return "redirect:/jams/{jamId}";
-		}}
-	
+		}
+	}
+
 	@GetMapping(value = "/jamResources/{jamResourceId}/delete")
-	public String initDeleteForm(@PathVariable("jamResourceId") int jamResourceId, ModelMap model, Jam jam) {
+	public String initDeleteForm(@PathVariable("jamResourceId") final int jamResourceId, final ModelMap model,
+			final Jam jam) {
 		JamResource jamResource = this.jamResourceService.findJamResourceById(jamResourceId);
 		jam.deleteJamResource(jamResource);
 		model.remove("jamResource", jamResource);
 		this.jamResourceService.deleteJamResource(jamResource);
 		return "redirect:/jams/{jamId}";
 	}
-	
+
 }

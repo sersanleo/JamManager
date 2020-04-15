@@ -6,6 +6,11 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+
+<sec:authorize access="hasAuthority('judge')">
+	<c:set var="isJudge" value="true" />
+</sec:authorize>
 
 <petclinic:layout pageName="jams">
 
@@ -93,5 +98,39 @@
 			<spring:param name="teamId" value="${team.id}" />
 		</spring:url>
 		<a href="${fn:escapeXml(newUrl)}" class="btn btn-default">Send Invitation</a>
+	</c:if>
+
+	<c:if
+		test="${ (isJudge && team.jam.status == JamStatus.RATING) || ((isJudge || isMember) && team.jam.status == JamStatus.FINISHED) }">
+		<br />
+		<br />
+		<b>Marks</b>
+		<table class="table table-striped">
+			<tr>
+				<th>Judge</th>
+				<th>Mark</th>
+				<th>Comments</th>
+				<c:if test="${ team.jam.status == JamStatus.RATING }">
+					<th></th>
+				</c:if>
+			</tr>
+			<sec:authentication var="principal" property="principal" />
+			<c:forEach var="mark" items="${team.marks}">
+				<tr>
+					<td><c:out value="${mark.judge.username}" /></td>
+					<td><c:out value="${mark.value}" /></td>
+					<td><c:out value="${mark.comments}" /></td>
+					<c:if test="${ team.jam.status == JamStatus.RATING }">
+						<td><c:if test="${ mark.judge.username.equals(principal.username) }">
+								<spring:url value="/jams/{jamId}/teams/{teamId}/marks" var="markUrl">
+									<spring:param name="jamId" value="${jam.id}" />
+									<spring:param name="teamId" value="${team.id}" />
+								</spring:url>
+								<a href="${fn:escapeXml(markUrl)}" class="btn btn-default">Edit</a>
+							</c:if></td>
+					</c:if>
+				</tr>
+			</c:forEach>
+		</table>
 	</c:if>
 </petclinic:layout>

@@ -56,9 +56,6 @@ public class TeamController {
 	@GetMapping("/{teamId}")
 	public String mostrarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) throws Exception {
 		Team team = this.teamService.findTeamById(teamId);
-		if (team == null) {
-			throw new Exception();
-		}
 
 		modelMap.addAttribute("team", team);
 		modelMap.addAttribute("isMember",
@@ -69,7 +66,7 @@ public class TeamController {
 
 	@GetMapping("/new")
 	public String crearTeam(final ModelMap modelMap, final Jam jam) throws Exception {
-		if (jam == null || jam.getStatus() != JamStatus.INSCRIPTION
+		if (jam.getStatus() != JamStatus.INSCRIPTION
 				|| this.teamService.findIsMemberOfTeamByJamIdAndUsername(jam.getId(), UserUtils.getCurrentUsername())) {
 			throw new Exception();
 		}
@@ -83,7 +80,7 @@ public class TeamController {
 	public String salvarTeam(@Valid final Team team, final BindingResult result, final Jam jam, final ModelMap modelMap)
 			throws Exception {
 		String username = UserUtils.getCurrentUsername();
-		if (jam == null || jam.getStatus() != JamStatus.INSCRIPTION
+		if (jam.getStatus() != JamStatus.INSCRIPTION
 				|| this.teamService.findIsMemberOfTeamByJamIdAndUsername(jam.getId(), username)) {
 			throw new Exception();
 		}
@@ -112,8 +109,7 @@ public class TeamController {
 	public String editarTeam(@PathVariable("teamId") final int teamId, final ModelMap modelMap) throws Exception {
 		Team team = this.teamService.findTeamById(teamId);
 
-		if (team == null
-				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())) {
+		if (!this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())) {
 			throw new Exception();
 		}
 
@@ -127,8 +123,7 @@ public class TeamController {
 			@PathVariable("teamId") final int teamId, final ModelMap modelMap) throws Exception {
 		Team teamToUpdate = this.teamService.findTeamById(teamId);
 
-		if (teamToUpdate == null
-				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())) {
+		if (!this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())) {
 			throw new Exception();
 		}
 
@@ -148,7 +143,7 @@ public class TeamController {
 		Team team = this.teamService.findTeamById(teamId);
 		String currentUsername = UserUtils.getCurrentUsername();
 
-		if (team == null || team.getJam().getStatus() != JamStatus.INSCRIPTION
+		if (team.getJam().getStatus() != JamStatus.INSCRIPTION
 				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(team.getId(),
 						currentUsername)
 				|| !this.teamService.findIsMemberOfTeamByTeamIdAndUsername(team.getId(),

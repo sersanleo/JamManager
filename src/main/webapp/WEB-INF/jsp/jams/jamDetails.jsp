@@ -13,6 +13,9 @@
 <sec:authorize access="hasAuthority('member')">
 	<c:set var="isMember" value="true" />
 </sec:authorize>
+<sec:authorize access="hasAuthority('judge')">
+	<c:set var="isJudge" value="true" />
+</sec:authorize>
 
 <petclinic:layout pageName="jams">
 
@@ -79,7 +82,6 @@
 		<a href="${fn:escapeXml(deleteUrl)}" class="btn btn-default">Delete Jam</a>
 	</c:if>
 
-
 	<c:if test="${ isOrganizator || jam.status == JamStatus.IN_PROGRESS  }">
 		<br />
 		<br />
@@ -96,9 +98,8 @@
 			</tr>
 			<c:forEach var="jamResource" items="${jam.jamResources}">
 				<tr>
-					<td><c:out value="${jamResource.downloadUrl}" /></td>
+					<td><a href="${jamResource.downloadUrl}"><c:out value="${jamResource.downloadUrl}" /></a></td>
 					<td><c:out value="${jamResource.description}" /></td>
-
 					<c:if test="${ isOrganizator }">
 						<td><spring:url value="{jamId}/jamResources/{jamResourceId}/edit" var="editResUrl">
 								<spring:param name="jamId" value="${jam.id}" />
@@ -132,6 +133,12 @@
 		<tr>
 			<th>Name</th>
 			<th>Members</th>
+			<c:if test="${ (isJudge && jam.status == JamStatus.RATING) || jam.status == JamStatus.FINISHED }">
+				<th>Mark</th>
+			</c:if>
+			<c:if test="${ isJudge && jam.status == JamStatus.RATING }">
+				<th></th>
+			</c:if>
 		</tr>
 		<c:forEach var="team" items="${jam.teams}">
 			<tr>
@@ -144,6 +151,22 @@
 						<c:out value="${member.username}" />
 						<br>
 					</c:forEach></td>
+				<c:if test="${ (isJudge && jam.status == JamStatus.RATING) || jam.status == JamStatus.FINISHED }">
+					<td>${ (team.average == null) ? "-" : team.average }/10<c:if test="${ isJudge }">
+						 (${team.marks.size()} marks given)
+					</c:if>
+					</td>
+				</c:if>
+				<c:if test="${ isJudge && jam.status == JamStatus.RATING }">
+					<sec:authentication var="principal" property="principal" />
+					<spring:url value="/jams/{jamId}/teams/{teamId}/marks" var="markUrl">
+						<spring:param name="jamId" value="${jam.id}" />
+						<spring:param name="teamId" value="${team.id}" />
+					</spring:url>
+					<td><c:if test="${ !team.isMarkedBy(principal.username) && jam.status == JamStatus.RATING }">
+							<a href="${fn:escapeXml(markUrl)}" class="btn btn-default">Give A Mark</a>
+						</c:if></td>
+				</c:if>
 			</tr>
 		</c:forEach>
 	</table>

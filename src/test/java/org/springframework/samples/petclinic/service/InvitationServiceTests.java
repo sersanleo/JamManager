@@ -1,6 +1,7 @@
 package org.springframework.samples.petclinic.service;
 
 import java.util.Collection;
+import java.util.NoSuchElementException;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,14 +31,20 @@ public class InvitationServiceTests {
 	}
 
 	@Test
-	void shouldNotFindInvitationById() {
-		Invitation invitation = this.invitationService.findInvitationById(20);
-		Assertions.assertThat(invitation).isEqualTo(null);
+	void shouldNotFindInvitationByWrongId() {
+		Assertions.assertThatThrownBy(() -> this.invitationService.findInvitationById(200))
+				.isInstanceOf(NoSuchElementException.class);
 	}
 
 	@Test
 	void shouldFindPendingInvitationsByUsername() {
 		Assertions.assertThat(this.invitationService.findPendingInvitationsByUsername("member1").size()).isEqualTo(2);
+	}
+
+	@Test
+	void shouldNotFindPendingInvitationsByWrongUsername() {
+		Assertions.assertThat(this.invitationService.findPendingInvitationsByUsername("nonExistentUser").size())
+				.isEqualTo(0);
 	}
 
 	@Test
@@ -76,9 +83,10 @@ public class InvitationServiceTests {
 	public void shouldDeleteInvitation() {
 		Invitation invitation = this.invitationService.findInvitationById(2);
 		Assertions.assertThat(invitation).isNotNull();
-		this.invitationService.deleteInvitation(invitation);
-		Assertions.assertThat(this.invitationService.findInvitationById(2)).isNull();
 
+		this.invitationService.deleteInvitation(invitation);
+		Assertions.assertThatThrownBy(() -> this.invitationService.findInvitationById(2))
+				.isInstanceOf(NoSuchElementException.class);
 	}
 
 	@Test

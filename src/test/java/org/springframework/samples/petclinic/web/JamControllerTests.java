@@ -3,6 +3,7 @@ package org.springframework.samples.petclinic.web;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +36,7 @@ class JamControllerTests {
 
 	private static final int TEST_INSCRIPTION_JAM_ID = 1;
 	private static final int TEST_CANCELLED_JAM_ID = 2;
+	private static final int TEST_NONEXISTENT_JAM_ID = 100;
 	private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-M-d HH:mm");
 
 	@MockBean
@@ -94,6 +96,9 @@ class JamControllerTests {
 		BDDMockito.given(this.jamService.findJamById(JamControllerTests.TEST_CANCELLED_JAM_ID))
 				.willReturn(cancelledJam);
 		BDDMockito.given(this.jamService.findJams()).willReturn(Lists.newArrayList(inscriptionJam, cancelledJam));
+
+		BDDMockito.given(this.jamService.findJamById(JamControllerTests.TEST_NONEXISTENT_JAM_ID))
+				.willThrow(NoSuchElementException.class);
 	}
 
 	@WithMockUser(value = "spring")
@@ -107,11 +112,19 @@ class JamControllerTests {
 	@WithMockUser(value = "spring")
 	@ValueSource(ints = { JamControllerTests.TEST_INSCRIPTION_JAM_ID, JamControllerTests.TEST_CANCELLED_JAM_ID })
 	@ParameterizedTest
-	void testShowJam(final int jamId) throws Exception {
+	void testSuccessfulShowJam(final int jamId) throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/jams/{jamId}", jamId))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("jams/jamDetails"))
 				.andExpect(MockMvcResultMatchers.model().attributeExists("jam"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testFailedShowJamNonExistent() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/jams/{jamId}", JamControllerTests.TEST_NONEXISTENT_JAM_ID))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
 
 	@WithMockUser(value = "spring")
@@ -343,8 +356,17 @@ class JamControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testFailedInitJamUpdateForm() throws Exception {
+	void testFailedInitJamUpdateFormNotInscriptionJam() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/jams/{jamId}/edit", JamControllerTests.TEST_CANCELLED_JAM_ID))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name("exception"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testFailedInitJamUpdateFormNonExistentJam() throws Exception {
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/jams/{jamId}/edit", JamControllerTests.TEST_NONEXISTENT_JAM_ID))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
@@ -360,8 +382,17 @@ class JamControllerTests {
 
 	@WithMockUser(value = "spring")
 	@Test
-	void testFailedDeleteJam() throws Exception {
+	void testFailedDeleteJamNotInscriptionJam() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/jams/{jamId}/edit", JamControllerTests.TEST_CANCELLED_JAM_ID))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name("exception"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testFailedDeleteJamNonExistentJam() throws Exception {
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/jams/{jamId}/edit", JamControllerTests.TEST_NONEXISTENT_JAM_ID))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}

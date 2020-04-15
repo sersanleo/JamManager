@@ -3,6 +3,7 @@ package org.springframework.samples.petclinic.web;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -105,6 +106,11 @@ public class TeamControllerTests {
 
 		BDDMockito.given(this.jamService.findJamById(TeamControllerTests.TEST_CANCELLED_JAM_ID))
 				.willReturn(cancelledJam);
+
+		BDDMockito.given(this.jamService.findJamById(TeamControllerTests.TEST_NONEXISTENT_JAM_ID))
+				.willThrow(NoSuchElementException.class);
+		BDDMockito.given(this.teamService.findTeamById(TeamControllerTests.TEST_NONEXISTENT_TEAM_ID))
+				.willThrow(NoSuchElementException.class);
 	}
 
 	@WithMockUser(value = "spring")
