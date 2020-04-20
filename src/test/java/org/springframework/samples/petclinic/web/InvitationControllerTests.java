@@ -55,7 +55,9 @@ class InvitationControllerTests {
 	private void beforeEach() {
 		BDDMockito.when(this.teamService.findTeamById(InvitationControllerTests.TEST_NONEXISTENT_TEAM_ID))
 				.thenThrow(NoSuchElementException.class);
-		BDDMockito.when(this.invitationService.findInvitationById(InvitationControllerTests.TEST_NONEXISTENT_INVITATION_ID))
+		BDDMockito
+				.when(this.invitationService
+						.findInvitationById(InvitationControllerTests.TEST_NONEXISTENT_INVITATION_ID))
 				.thenThrow(NoSuchElementException.class);
 	}
 
@@ -78,6 +80,7 @@ class InvitationControllerTests {
 		Jam jam = new Jam();
 		jam.setId(InvitationControllerTests.TEST_JAM_ID);
 		jam.setInscriptionDeadline(LocalDateTime.now().plusDays(1));
+		jam.setMaxTeamSize(5);
 		team.setJam(jam);
 
 		BDDMockito.when(this.teamService.findTeamById(InvitationControllerTests.TEST_TEAM_ID)).thenReturn(team);
@@ -90,6 +93,33 @@ class InvitationControllerTests {
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("invitations/createForm"))
 				.andExpect(MockMvcResultMatchers.model().attributeExists("invitation"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testFailedInitInvitationCreationFormFullTeam() throws Exception {
+		Team team = new Team();
+		team.setId(InvitationControllerTests.TEST_TEAM_ID);
+		team.setMembers(new HashSet<User>() {
+			{
+				this.add(new User());
+			}
+		});
+		Jam jam = new Jam();
+		jam.setId(InvitationControllerTests.TEST_JAM_ID);
+		jam.setInscriptionDeadline(LocalDateTime.now().plusDays(1));
+		jam.setMaxTeamSize(1);
+		team.setJam(jam);
+
+		BDDMockito.when(this.teamService.findTeamById(InvitationControllerTests.TEST_TEAM_ID)).thenReturn(team);
+		BDDMockito.when(this.teamService.findIsMemberOfTeamByTeamIdAndUsername(InvitationControllerTests.TEST_TEAM_ID,
+				"spring")).thenReturn(true);
+
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/jams/{jamId}/teams/{teamId}/invitations/new",
+						InvitationControllerTests.TEST_JAM_ID, InvitationControllerTests.TEST_TEAM_ID))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
 
 	@WithMockUser(value = "spring")
@@ -152,6 +182,7 @@ class InvitationControllerTests {
 		Jam jam = new Jam();
 		jam.setId(InvitationControllerTests.TEST_JAM_ID);
 		jam.setInscriptionDeadline(LocalDateTime.now().plusDays(1));
+		jam.setMaxTeamSize(5);
 		team.setJam(jam);
 		User user = new User();
 		user.setUsername("testUser");
@@ -176,6 +207,47 @@ class InvitationControllerTests {
 								InvitationControllerTests.TEST_TEAM_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf()).param("to.username", "testUser"))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection());
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testFailedInvitationCreationFullTeam() throws Exception {
+		Team team = new Team();
+		team.setId(InvitationControllerTests.TEST_TEAM_ID);
+		team.setMembers(new HashSet<User>() {
+			{
+				this.add(new User());
+			}
+		});
+		Jam jam = new Jam();
+		jam.setId(InvitationControllerTests.TEST_JAM_ID);
+		jam.setInscriptionDeadline(LocalDateTime.now().plusDays(1));
+		jam.setMaxTeamSize(1);
+		team.setJam(jam);
+		User user = new User();
+		user.setUsername("testUser");
+
+		BDDMockito.when(this.teamService.findTeamById(InvitationControllerTests.TEST_TEAM_ID)).thenReturn(team);
+		BDDMockito.when(this.teamService.findIsMemberOfTeamByTeamIdAndUsername(InvitationControllerTests.TEST_TEAM_ID,
+				"spring")).thenReturn(true);
+
+		BDDMockito.when(this.userService.findByUsername("testUser")).thenReturn(user);
+		BDDMockito.when(this.invitationService
+				.findHasPendingInvitationsByTeamIdAndUsername(InvitationControllerTests.TEST_TEAM_ID, "testUser"))
+				.thenReturn(false);
+		BDDMockito.when(this.teamService.findIsMemberOfTeamByTeamIdAndUsername(InvitationControllerTests.TEST_TEAM_ID,
+				"testUser")).thenReturn(false);
+		BDDMockito.when(this.teamService.findIsMemberOfTeamByJamIdAndUsername(InvitationControllerTests.TEST_JAM_ID,
+				"testUser")).thenReturn(false);
+		BDDMockito.when(this.authoritiesService.findHasAuthorityByUsername("testUser", "member")).thenReturn(true);
+
+		this.mockMvc
+				.perform(MockMvcRequestBuilders
+						.post("/jams/{jamId}/teams/{teamId}/invitations/new", InvitationControllerTests.TEST_JAM_ID,
+								InvitationControllerTests.TEST_TEAM_ID)
+						.with(SecurityMockMvcRequestPostProcessors.csrf()).param("to.username", "testUser"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
 
 	@WithMockUser(value = "spring")
@@ -268,6 +340,7 @@ class InvitationControllerTests {
 		Jam jam = new Jam();
 		jam.setId(InvitationControllerTests.TEST_JAM_ID);
 		jam.setInscriptionDeadline(LocalDateTime.now().plusDays(1));
+		jam.setMaxTeamSize(5);
 		team.setJam(jam);
 
 		BDDMockito.when(this.teamService.findTeamById(InvitationControllerTests.TEST_TEAM_ID)).thenReturn(team);
@@ -306,6 +379,7 @@ class InvitationControllerTests {
 		Jam jam = new Jam();
 		jam.setId(InvitationControllerTests.TEST_JAM_ID);
 		jam.setInscriptionDeadline(LocalDateTime.now().plusDays(1));
+		jam.setMaxTeamSize(5);
 		team.setJam(jam);
 		User user = new User();
 		user.setUsername("testUser");
@@ -346,6 +420,7 @@ class InvitationControllerTests {
 		Jam jam = new Jam();
 		jam.setId(InvitationControllerTests.TEST_JAM_ID);
 		jam.setInscriptionDeadline(LocalDateTime.now().plusDays(1));
+		jam.setMaxTeamSize(5);
 		team.setJam(jam);
 		User user = new User();
 		user.setUsername("testUser");
@@ -386,6 +461,7 @@ class InvitationControllerTests {
 		Jam jam = new Jam();
 		jam.setId(InvitationControllerTests.TEST_JAM_ID);
 		jam.setInscriptionDeadline(LocalDateTime.now().plusDays(1));
+		jam.setMaxTeamSize(5);
 		team.setJam(jam);
 		User user = new User();
 		user.setUsername("testUser");
@@ -426,6 +502,7 @@ class InvitationControllerTests {
 		Jam jam = new Jam();
 		jam.setId(InvitationControllerTests.TEST_JAM_ID);
 		jam.setInscriptionDeadline(LocalDateTime.now().plusDays(1));
+		jam.setMaxTeamSize(5);
 		team.setJam(jam);
 		User user = new User();
 		user.setUsername("testUser");

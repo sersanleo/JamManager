@@ -67,7 +67,7 @@ public class TeamController {
 	@GetMapping("/new")
 	public String crearTeam(final ModelMap modelMap, final Jam jam) throws Exception {
 		if (jam.getStatus() != JamStatus.INSCRIPTION
-				|| this.teamService.findIsMemberOfTeamByJamIdAndUsername(jam.getId(), UserUtils.getCurrentUsername())) {
+				|| this.teamService.findIsMemberOfTeamByJamIdAndUsername(jam.getId(), UserUtils.getCurrentUsername()) || jam.getIsFull()) {
 			throw new Exception();
 		}
 
@@ -81,7 +81,7 @@ public class TeamController {
 			throws Exception {
 		String username = UserUtils.getCurrentUsername();
 		if (jam.getStatus() != JamStatus.INSCRIPTION
-				|| this.teamService.findIsMemberOfTeamByJamIdAndUsername(jam.getId(), username)) {
+				|| this.teamService.findIsMemberOfTeamByJamIdAndUsername(jam.getId(), username) || jam.getIsFull()) {
 			throw new Exception();
 		}
 
