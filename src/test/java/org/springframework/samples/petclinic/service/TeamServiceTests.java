@@ -33,8 +33,7 @@ public class TeamServiceTests {
 
 	// findById()
 	@Test
-	void shouldNotFindTeamById() {
-
+	void shouldNotFindTeamByInexistentId() {
 		Assertions.assertThatThrownBy(() -> this.teamService.findTeamById(20))
 				.isInstanceOf(NoSuchElementException.class);
 	}
@@ -53,21 +52,7 @@ public class TeamServiceTests {
 
 	@Test
 	@Transactional
-	void shouldUpdateTeam() {
-		Team team = this.teamService.findTeamById(1);
-		String oldName = team.getName(), newName = oldName + "X";
-
-		team.setName(newName);
-		this.teamService.saveTeam(team);
-
-		team = this.teamService.findTeamById(1);
-
-		Assertions.assertThat(team.getName()).isEqualTo(newName);
-	}
-
-	@Test
-	@Transactional
-	void shouldSaveTeam() throws Exception {
+	void shouldSaveTeamAndGenerateId() throws Exception {
 		Jam jam = this.jamService.findJamById(1);
 		int found = jam.getTeams().size();
 
@@ -83,9 +68,29 @@ public class TeamServiceTests {
 		jam.getTeams().add(team);
 
 		this.teamService.saveTeam(team);
+		Assertions.assertThat(team.getId()).isNotNull();
 
 		jam = this.jamService.findJamById(1);
 		Assertions.assertThat(jam.getTeams().size()).isEqualTo(found + 1);
+	}
+
+	@Test
+	void shouldNotSaveNullTeam() throws Exception {
+		Assertions.assertThatThrownBy(() -> this.teamService.saveTeam(null)).isInstanceOf(Exception.class);
+	}
+
+	@Test
+	@Transactional
+	void shouldUpdateTeam() {
+		Team team = this.teamService.findTeamById(1);
+		String oldName = team.getName(), newName = oldName + "X";
+
+		team.setName(newName);
+		this.teamService.saveTeam(team);
+
+		team = this.teamService.findTeamById(1);
+
+		Assertions.assertThat(team.getName()).isEqualTo(newName);
 	}
 
 	@Test
@@ -111,5 +116,10 @@ public class TeamServiceTests {
 
 		Assertions.assertThatThrownBy(() -> this.teamService.findTeamById(2))
 				.isInstanceOf(NoSuchElementException.class);
+	}
+
+	@Test
+	void shouldNotDeleteNullTeam() throws Exception {
+		Assertions.assertThatThrownBy(() -> this.teamService.deleteTeam(null)).isInstanceOf(Exception.class);
 	}
 }

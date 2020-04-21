@@ -31,7 +31,7 @@ public class InvitationServiceTests {
 	}
 
 	@Test
-	void shouldNotFindInvitationByWrongId() {
+	void shouldNotFindInvitationByInexistentId() {
 		Assertions.assertThatThrownBy(() -> this.invitationService.findInvitationById(200))
 				.isInstanceOf(NoSuchElementException.class);
 	}
@@ -42,7 +42,7 @@ public class InvitationServiceTests {
 	}
 
 	@Test
-	void shouldNotFindPendingInvitationsByWrongUsername() {
+	void shouldNotFindPendingInvitationsByInexistentUsername() {
 		Assertions.assertThat(this.invitationService.findPendingInvitationsByUsername("nonExistentUser").size())
 				.isEqualTo(0);
 	}
@@ -55,7 +55,7 @@ public class InvitationServiceTests {
 
 	@Test
 	void shouldFindHasPendingInvitationsByTeamIdAndUsername() {
-		Assertions.assertThat(this.invitationService.findHasPendingInvitationsByTeamIdAndUsername(1, "member3"))
+		Assertions.assertThat(this.invitationService.findHasPendingInvitationsByTeamIdAndUsername(1, "member4"))
 				.isEqualTo(true);
 		Assertions.assertThat(this.invitationService.findHasPendingInvitationsByTeamIdAndUsername(10, "member3"))
 				.isEqualTo(false);
@@ -79,6 +79,11 @@ public class InvitationServiceTests {
 	}
 
 	@Test
+	public void shouldNotInsertNullInvitation() {
+		Assertions.assertThatThrownBy(() -> this.invitationService.saveInvitation(null)).isInstanceOf(Exception.class);
+	}
+
+	@Test
 	@Transactional
 	public void shouldDeleteInvitation() {
 		Invitation invitation = this.invitationService.findInvitationById(2);
@@ -87,6 +92,11 @@ public class InvitationServiceTests {
 		this.invitationService.deleteInvitation(invitation);
 		Assertions.assertThatThrownBy(() -> this.invitationService.findInvitationById(2))
 				.isInstanceOf(NoSuchElementException.class);
+	}
+
+	@Test
+	public void shouldNotDeleteNullInvitation() {
+		Assertions.assertThatThrownBy(() -> this.invitationService.deleteInvitation(null)).isInstanceOf(Exception.class);
 	}
 
 	@Test

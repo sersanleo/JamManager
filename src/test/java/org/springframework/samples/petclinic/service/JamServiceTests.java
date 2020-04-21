@@ -24,9 +24,11 @@ class JamServiceTests {
 
 	@Test
 	void shouldFindJamById() {
-		Jam jam = this.jamService.findJamById(1);
-		Assertions.assertThat(jam).isNotEqualTo(null);
+		Assertions.assertThat(this.jamService.findJamById(1)).isNotEqualTo(null);
+	}
 
+	@Test
+	void shouldNotFindJamByInexistentId() {
 		Assertions.assertThatThrownBy(() -> this.jamService.findJamById(20)).isInstanceOf(NoSuchElementException.class);
 	}
 
@@ -70,6 +72,11 @@ class JamServiceTests {
 	}
 
 	@Test
+	public void shouldNotInsertNullJam() {
+		Assertions.assertThatThrownBy(() -> this.jamService.saveJam(null)).isInstanceOf(Exception.class);
+	}
+
+	@Test
 	@Transactional
 	void shouldUpdateJam() {
 		Jam jam = this.jamService.findJamById(1);
@@ -89,6 +96,11 @@ class JamServiceTests {
 		this.jamService.deleteJam(jam);
 
 		Assertions.assertThatThrownBy(() -> this.jamService.findJamById(1)).isInstanceOf(NoSuchElementException.class);
+	}
+
+	@Test
+	void shouldNotDeleteNullJam() {
+		Assertions.assertThatThrownBy(() -> this.jamService.deleteJam(null)).isInstanceOf(Exception.class);
 	}
 
 }

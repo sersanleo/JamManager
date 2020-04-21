@@ -100,6 +100,26 @@
 		</c:if>
 	</c:if>
 
+	<c:if test="${isJudge || isMember}">
+		<br />
+		<br />
+		<b>Deliveries</b>
+		<table class="table table-striped">
+			<tr>
+				<th>URL</th>
+				<th>Description</th>
+				<th>Date</th>
+			</tr>
+			<c:forEach var="delivery" items="${team.deliveries}">
+				<tr>
+					<td><c:out value="${delivery.downloadURL}" /></td>
+					<td><c:out value="${delivery.description}" /></td>
+					<td><petclinic:localDateTime date="${delivery.creationDate}" /></td>
+				</tr>
+			</c:forEach>
+		</table>
+	</c:if>
+
 	<c:if
 		test="${ (isJudge && team.jam.status == JamStatus.RATING) || ((isJudge || isMember) && team.jam.status == JamStatus.FINISHED) }">
 		<br />

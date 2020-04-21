@@ -10,6 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.model.JamResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 class JamResourceServiceTests {
@@ -27,12 +28,13 @@ class JamResourceServiceTests {
 	}
 
 	@Test
-	void shouldNotFindJamResourceById() {
+	void shouldNotFindJamResourceWithInexistentId() {
 		Assertions.assertThatThrownBy(() -> this.jamResourceService.findJamResourceById(40))
 				.isInstanceOf(NoSuchElementException.class);
 	}
 
 	@Test
+	@Transactional
 	public void shouldSaveJamResource() {
 		JamResource jamResource = new JamResource();
 		Jam jam = this.jamService.findJamById(1);
@@ -46,6 +48,13 @@ class JamResourceServiceTests {
 	}
 
 	@Test
+	public void shouldNotSaveNullJamResource() {
+		Assertions.assertThatThrownBy(() -> this.jamResourceService.saveJamResource(null))
+				.isInstanceOf(Exception.class);
+	}
+
+	@Test
+	@Transactional
 	void shouldUpdateJamResource() {
 		JamResource jamResource = this.jamResourceService.findJamResourceById(1);
 		String oldDescripiton = jamResource.getDescription();
@@ -59,11 +68,18 @@ class JamResourceServiceTests {
 	}
 
 	@Test
+	@Transactional
 	public void shouldDeleteJamResoruce() {
 		JamResource jamResource = this.jamResourceService.findJamResourceById(1);
 		this.jamResourceService.deleteJamResource(jamResource);
 
 		Assertions.assertThatThrownBy(() -> this.jamResourceService.findJamResourceById(1))
 				.isInstanceOf(NoSuchElementException.class);
+	}
+
+	@Test
+	public void shouldNotDeleteNullJamResoruce() {
+		Assertions.assertThatThrownBy(() -> this.jamResourceService.deleteJamResource(null))
+				.isInstanceOf(Exception.class);
 	}
 }
