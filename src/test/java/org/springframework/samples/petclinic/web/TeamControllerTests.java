@@ -34,6 +34,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 public class TeamControllerTests {
 	private static final int TEST_INSCRIPTION_JAM_ID = 1;
 	private static final int TEST_CANCELLED_JAM_ID = 2;
+	private static final int TEST_FULL_JAM_ID = 3;
 	private static final int TEST_NONEXISTENT_JAM_ID = 100;
 
 	private static final int TEST_TEAM_ID = 1;
@@ -71,9 +72,6 @@ public class TeamControllerTests {
 		inscriptionJam.setEnd(LocalDateTime.now().plusDays(4));
 		inscriptionJam.setJamResources(new HashSet());
 
-		BDDMockito.given(this.jamService.findJamById(TeamControllerTests.TEST_INSCRIPTION_JAM_ID))
-				.willReturn(inscriptionJam);
-
 		Team team1 = new Team();
 		team1.setId(TeamControllerTests.TEST_TEAM_ID);
 		team1.setJam(inscriptionJam);
@@ -85,7 +83,14 @@ public class TeamControllerTests {
 				this.add(team1Member);
 			}
 		});
+		inscriptionJam.setTeams(new HashSet<Team>() {
+			{
+				this.add(team1);
+			}
+		});
 
+		BDDMockito.given(this.jamService.findJamById(TeamControllerTests.TEST_INSCRIPTION_JAM_ID))
+				.willReturn(inscriptionJam);
 		BDDMockito.given(this.teamService.findTeamById(TeamControllerTests.TEST_TEAM_ID))
 				.willReturn(team1);
 		BDDMockito.given(this.userService.findByUsername(TeamControllerTests.TEST_TEAM1_MEMBER_USERNAME))
@@ -106,6 +111,28 @@ public class TeamControllerTests {
 
 		BDDMockito.given(this.jamService.findJamById(TeamControllerTests.TEST_CANCELLED_JAM_ID))
 				.willReturn(cancelledJam);
+
+		Jam fullJam = new Jam();
+		fullJam.setId(TeamControllerTests.TEST_FULL_JAM_ID);
+		fullJam.setName("Full Jam");
+		fullJam.setDescription("This is a test Jam.");
+		fullJam.setDifficulty(5);
+		fullJam.setInscriptionDeadline(LocalDateTime.now().plusDays(2));
+		fullJam.setMaxTeamSize(5);
+		fullJam.setMinTeams(5);
+		fullJam.setMaxTeams(2);
+		fullJam.setStart(LocalDateTime.now().plusDays(3));
+		fullJam.setEnd(LocalDateTime.now().plusDays(4));
+		fullJam.setJamResources(new HashSet());
+		fullJam.setTeams(new HashSet<Team>() {
+			{
+				this.add(new Team());
+				this.add(new Team());
+			}
+		});
+
+		BDDMockito.given(this.jamService.findJamById(TeamControllerTests.TEST_FULL_JAM_ID))
+				.willReturn(fullJam);
 
 		BDDMockito.given(this.jamService.findJamById(TeamControllerTests.TEST_NONEXISTENT_JAM_ID))
 				.willThrow(NoSuchElementException.class);
@@ -188,6 +215,21 @@ public class TeamControllerTests {
 	}
 
 	@WithMockUser(value = "spring")
+	@Test
+	void testFailedInitCreationFormFullJam() throws Exception {
+		BDDMockito
+				.given(this.teamService
+						.findIsMemberOfTeamByJamIdAndUsername(TeamControllerTests.TEST_FULL_JAM_ID, "spring"))
+				.willReturn(false);
+
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/jams/{jamId}/teams/new",
+						TeamControllerTests.TEST_FULL_JAM_ID))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name("exception"));
+	}
+
+	@WithMockUser(value = "spring")
 	@ValueSource(strings = { "test1", "3", ";.", "hola" })
 	@ParameterizedTest
 	void testSuccesfulTeamCreation(final String name) throws Exception {
@@ -243,6 +285,24 @@ public class TeamControllerTests {
 				MockMvcRequestBuilders
 						.post("/jams/{jamId}/teams/new",
 								TeamControllerTests.TEST_INSCRIPTION_JAM_ID)
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.param("name", "test team"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name("exception"));
+	}
+
+	@WithMockUser(value = "spring")
+	@Test
+	void testFailedTeamCreationFullJam() throws Exception {
+		BDDMockito
+				.given(this.teamService
+						.findIsMemberOfTeamByJamIdAndUsername(TeamControllerTests.TEST_FULL_JAM_ID, "spring"))
+				.willReturn(false);
+
+		this.mockMvc.perform(
+				MockMvcRequestBuilders
+						.post("/jams/{jamId}/teams/new",
+								TeamControllerTests.TEST_FULL_JAM_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.param("name", "test team"))
 				.andExpect(MockMvcResultMatchers.status().isOk())

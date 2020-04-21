@@ -55,7 +55,7 @@ public class InvitationController {
 			throws Exception {
 		Team team = this.teamService.findTeamById(teamId);
 		if (!this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())
-				|| team.getJam().getStatus() != JamStatus.INSCRIPTION) {
+				|| team.getJam().getStatus() != JamStatus.INSCRIPTION || team.getIsFull()) {
 			throw new Exception();
 		}
 
@@ -68,7 +68,7 @@ public class InvitationController {
 			@PathVariable("teamId") final int teamId) throws Exception {
 		Team team = this.teamService.findTeamById(teamId);
 		if (!this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())
-				|| team.getJam().getStatus() != JamStatus.INSCRIPTION) {
+				|| team.getJam().getStatus() != JamStatus.INSCRIPTION || team.getIsFull()) {
 			throw new Exception();
 		}
 

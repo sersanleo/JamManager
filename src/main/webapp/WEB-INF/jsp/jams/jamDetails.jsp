@@ -66,11 +66,19 @@
 			<th>Created by</th>
 			<td><c:out value="${jam.creator.username}" /></td>
 		</tr>
+		<c:if test="${ jam.status == JamStatus.FINISHED }">
+			<tr>
+				<th>Winner</th>
+				<td><spring:url value="/jams/{jamId}/teams/{teamId}" var="winnerUrl">
+						<spring:param name="jamId" value="${jam.id}" />
+						<spring:param name="teamId" value="${jam.winner.id}" />
+					</spring:url> <a href="${fn:escapeXml(winnerUrl)}"><c:out value="${jam.winner.name}" /></a></td>
+			</tr>
+		</c:if>
 	</table>
 
 
 	<c:if test="${ isOrganizator && jam.status == JamStatus.INSCRIPTION }">
-
 		<spring:url value="{jamId}/edit" var="editUrl">
 			<spring:param name="jamId" value="${jam.id}" />
 		</spring:url>
@@ -142,11 +150,10 @@
 		</tr>
 		<c:forEach var="team" items="${jam.teams}">
 			<tr>
-				<spring:url value="/jams/{jamId}/teams/{teamId}" var="teamUrl">
-					<spring:param name="jamId" value="${jam.id}" />
-					<spring:param name="teamId" value="${team.id}" />
-				</spring:url>
-				<td><a href="${fn:escapeXml(teamUrl)}"><c:out value="${team.name}" /></a></td>
+				<td><spring:url value="/jams/{jamId}/teams/{teamId}" var="teamUrl">
+						<spring:param name="jamId" value="${jam.id}" />
+						<spring:param name="teamId" value="${team.id}" />
+					</spring:url> <a href="${fn:escapeXml(teamUrl)}"><c:out value="${team.name}" /></a></td>
 				<td><c:forEach var="member" items="${team.members}">
 						<c:out value="${member.username}" />
 						<br>

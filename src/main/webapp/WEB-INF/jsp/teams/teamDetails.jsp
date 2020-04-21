@@ -69,22 +69,20 @@
 				<th></th>
 			</tr>
 			<c:forEach var="invitation" items="${team.invitations}">
-				<c:if test="${invitation.status != InvitationStatus.ACCEPTED}">
-					<tr>
-						<td><c:out value="${invitation.to.username}" /></td>
-						<td><petclinic:localDateTime date="${invitation.creationDate}" /></td>
-						<td><c:out value="${invitation.status}" /></td>
-						<td><c:if test="${ team.jam.status == JamStatus.INSCRIPTION  && invitation.status == InvitationStatus.PENDING }">
-								<spring:url value="/jams/{jamId}/teams/{teamId}/invitations/{invitationId}/delete" var="deleteInvUrl">
-									<spring:param name="jamId" value="${jam.id}" />
-									<spring:param name="teamId" value="${team.id}" />
-									<spring:param name="invitationId" value="${invitation.id}" />
-								</spring:url>
-								<a href="${fn:escapeXml(deleteInvUrl)}" class="btn btn-default">Delete Invitation</a>
-							</c:if></td>
-						</td>
-					</tr>
-				</c:if>
+				<tr>
+					<td><c:out value="${invitation.to.username}" /></td>
+					<td><petclinic:localDateTime date="${invitation.creationDate}" /></td>
+					<td><c:out value="${invitation.status}" /></td>
+					<td><c:if test="${ team.jam.status == JamStatus.INSCRIPTION  && invitation.status == InvitationStatus.PENDING }">
+							<spring:url value="/jams/{jamId}/teams/{teamId}/invitations/{invitationId}/delete" var="deleteInvUrl">
+								<spring:param name="jamId" value="${jam.id}" />
+								<spring:param name="teamId" value="${team.id}" />
+								<spring:param name="invitationId" value="${invitation.id}" />
+							</spring:url>
+							<a href="${fn:escapeXml(deleteInvUrl)}" class="btn btn-default">Delete Invitation</a>
+						</c:if></td>
+					</td>
+				</tr>
 			</c:forEach>
 		</table>
 
@@ -93,11 +91,33 @@
 		</spring:url>
 		<a href="${fn:escapeXml(editUrl)}" class="btn btn-default">Edit Team</a>
 
-		<spring:url value="/jams/{jamId}/teams/{teamId}/invitations/new" var="newUrl">
-			<spring:param name="jamId" value="${jam.id}" />
-			<spring:param name="teamId" value="${team.id}" />
-		</spring:url>
-		<a href="${fn:escapeXml(newUrl)}" class="btn btn-default">Send Invitation</a>
+		<c:if test="${ !team.isFull }">
+			<spring:url value="/jams/{jamId}/teams/{teamId}/invitations/new" var="newUrl">
+				<spring:param name="jamId" value="${jam.id}" />
+				<spring:param name="teamId" value="${team.id}" />
+			</spring:url>
+			<a href="${fn:escapeXml(newUrl)}" class="btn btn-default">Send Invitation</a>
+		</c:if>
+	</c:if>
+
+	<c:if test="${isJudge || isMember}">
+		<br />
+		<br />
+		<b>Deliveries</b>
+		<table class="table table-striped">
+			<tr>
+				<th>URL</th>
+				<th>Description</th>
+				<th>Date</th>
+			</tr>
+			<c:forEach var="delivery" items="${team.deliveries}">
+				<tr>
+					<td><c:out value="${delivery.downloadURL}" /></td>
+					<td><c:out value="${delivery.description}" /></td>
+					<td><petclinic:localDateTime date="${delivery.creationDate}" /></td>
+				</tr>
+			</c:forEach>
+		</table>
 	</c:if>
 
 	<c:if

@@ -3,6 +3,7 @@ package org.springframework.samples.petclinic.model;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Range;
@@ -13,6 +14,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Table(name = "marks")
 public class Mark extends BaseEntity {
 
 	@Range(min = 0, max = 10)

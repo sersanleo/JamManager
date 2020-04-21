@@ -59,6 +59,8 @@ public class Team extends BaseEntity {
 	public Team() {
 		super();
 		this.creationDate = LocalDateTime.now().minusNanos(1);
+		this.members = new HashSet();
+		this.invitations = new HashSet();
 	}
 
 	protected Set<Invitation> getInvitationInternal() {
@@ -97,6 +99,11 @@ public class Team extends BaseEntity {
 			average /= (float) this.marks.size();
 		}
 		return average;
+	}
+	
+	@Transient
+	public boolean getIsFull() {
+		return invitations.stream().filter(x->x.getStatus() == InvitationStatus.PENDING).count() + members.size() >= jam.getMaxTeamSize();
 	}
 
 	public Boolean isMarkedBy(final String username) {
