@@ -1,6 +1,8 @@
 
 package org.springframework.samples.petclinic.service;
 
+import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Team;
@@ -29,6 +31,12 @@ public class TeamService {
 	public boolean findIsMemberOfTeamByTeamIdAndUsername(final int teamId, final String username)
 			throws DataAccessException {
 		return this.teamRepository.findIsMemberOfTeamByTeamIdAndUsername(teamId, username);
+	}
+
+	@Transactional(readOnly = true)
+	public Collection<Team> findTeamsByJamId(int jamId)
+			throws DataAccessException {
+		return this.teamRepository.findTeamsByJamId(jamId);
 	}
 
 	@Transactional

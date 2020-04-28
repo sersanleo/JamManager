@@ -177,12 +177,17 @@
 			</tr>
 		</c:forEach>
 	</table>
+	<c:if test="${ isJudge && jam.status == JamStatus.RATING }">
+		<spring:url value="{jamId}/publish" var="publishResultsUrl">
+			<spring:param name="jamId" value="${jam.id}" />
+		</spring:url>
+		<a href="${fn:escapeXml(publishResultsUrl)}" class="btn btn-default">Publish Results</a>
+	</c:if>
 
 	<c:if test="${ jam.status == JamStatus.INSCRIPTION && jam.isFull == false && !hasTeam && isMember}">
 		<spring:url value="{jamId}/teams/new" var="addTeamUrl">
 			<spring:param name="jamId" value="${jam.id}" />
 		</spring:url>
 		<a href="${fn:escapeXml(addTeamUrl)}" class="btn btn-default">Join this Jam</a>
-
 	</c:if>
 </petclinic:layout>
