@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.model.JamStatus;
+import org.springframework.samples.petclinic.model.Team;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.JamService;
 import org.springframework.samples.petclinic.service.TeamService;
@@ -117,5 +118,61 @@ public class JamController {
 		this.jamService.deleteJam(jam);
 
 		return "redirect:/jams";
+	}
+
+	@GetMapping("/{jamId}/publish")
+	public String mostrarPublicarResultados(@PathVariable("jamId") final int jamId, final ModelMap modelMap)
+			throws Exception {
+		Jam jam = this.jamService.findJamById(jamId);
+		if (jam.getStatus() != JamStatus.RATING) {
+			throw new Exception();
+		}
+
+		modelMap.addAttribute("jam", jam);
+		return "jams/publishResultsForm";
+	}
+
+	@PostMapping("/{jamId}/publish")
+	public String publicarResultados(@Valid final Jam jam, final BindingResult result,
+			@PathVariable("jamId") final int jamId, final ModelMap modelMap) throws Exception {
+		Jam jamToUpdate = this.jamService.findJamById(jamId);
+		if (jamToUpdate.getStatus() != JamStatus.RATING) {
+			throw new Exception();
+		}
+
+		Integer minMarksCount = null;
+		boolean sameMarks = true;
+		for (Team team : jamToUpdate.getTeams()) {
+			int currentCount = team.getMarks().size();
+			if (minMarksCount == null) {
+				minMarksCount = currentCount;
+				continue;
+			}
+			sameMarks = sameMarks && minMarksCount.equals(currentCount);
+			minMarksCount = Math.min(minMarksCount, currentCount);
+		}
+		
+		if(minMarksCount == 0) {
+			String errorMessage = "There must be at least 1 mark per team";
+			result.rejectValue("winner.id", "atLeast1", errorMessage);
+		}
+		
+		if(!sameMarks) {
+			String errorMessage = "Every team must have the same number of marks";
+			result.rejectValue("winner.id", "sameNumberOfMarks", errorMessage);
+		}
+		
+		if (result.hasFieldErrors("winner.id")) {
+			modelMap.addAttribute("jam", jamToUpdate);
+			modelMap.addAttribute("org.springframework.validation.BindingResult.jam", result);
+			return "jams/publishResultsForm";
+		} else {
+			jamToUpdate.setWinner(jam.getWinner());
+			jamToUpdate.setRated(true);
+
+			this.jamService.saveJam(jamToUpdate);
+
+			return "redirect:/jams/{jamId}";
+		}
 	}
 }
