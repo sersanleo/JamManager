@@ -4,5 +4,6 @@ jdk: oraclejdk8
 services:
   - mysql
 before_install:
+  - chmod +x mvnw
   - mysql -e 'CREATE DATABASE petclinic;'
 script: mvn test -Dspring.profiles.active=mysql-travis
