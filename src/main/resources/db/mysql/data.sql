@@ -1,53 +1,141 @@
-INSERT IGNORE INTO vets VALUES (1, 'James', 'Carter');
-INSERT IGNORE INTO vets VALUES (2, 'Helen', 'Leary');
-INSERT IGNORE INTO vets VALUES (3, 'Linda', 'Douglas');
-INSERT IGNORE INTO vets VALUES (4, 'Rafael', 'Ortega');
-INSERT IGNORE INTO vets VALUES (5, 'Henry', 'Stevens');
-INSERT IGNORE INTO vets VALUES (6, 'Sharon', 'Jenkins');
+INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('jamOrganizator1','jamOrganizator1',TRUE,'example@example.com',34,'','600 000 000');
+INSERT INTO authorities(username,authority) VALUES ('jamOrganizator1','jamOrganizator');
+INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('judge1','judge1',TRUE,'example@example.com',34,'','600 000 000');
+INSERT INTO authorities(username,authority) VALUES ('judge1','judge');
+INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('judge2','judge2',TRUE,'example@example.com',34,'','600 000 000');
+INSERT INTO authorities(username,authority) VALUES ('judge2','judge');
+INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('member1','member1',TRUE,'example@example.com',34,'','600 000 000');
+INSERT INTO authorities(username,authority) VALUES ('member1','member');
+INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('member2','member2',TRUE,'example@example.com',34,'','600 000 000');
+INSERT INTO authorities(username,authority) VALUES ('member2','member');
+INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('member3','member3',TRUE,'example@example.com',34,'','600 000 000');
+INSERT INTO authorities(username,authority) VALUES ('member3','member');
+INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('member4','member4',TRUE,'example@example.com',34,'','600 000 000');
+INSERT INTO authorities(username,authority) VALUES ('member4','member');
+INSERT INTO users(username,password,enabled,email,phone_country_code,phone_area_code,phone_number) VALUES ('member5','member5',TRUE,'example@example.com',34,'','600 000 000');
+INSERT INTO authorities(username,authority) VALUES ('member5','member');
 
-INSERT IGNORE INTO specialties VALUES (1, 'radiology');
-INSERT IGNORE INTO specialties VALUES (2, 'surgery');
-INSERT IGNORE INTO specialties VALUES (3, 'dentistry');
+/* Inscription Jam */
+INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_size,min_teams,max_teams,start,end,rated,creator_username)
+VALUES 			(1,'Inscription Jam','test',1,'2025-06-08 12:00',3,2,3,'2025-06-09 12:00','2025-06-10 12:00',FALSE,'jamOrganizator1');
+INSERT INTO jam_resource(id,description,download_url,jams_id)
+VALUES 			(1,'Test Resource 1','https://www.youtube.com/',1);
+/* Teams */
+INSERT INTO teams(id,name,creation_date,jam_id)
+VALUES 			(1,'Grupo 1','2020-03-08 12:00',1);
+INSERT INTO teams_members(members_username,team_id)
+VALUES 			('member2',1);
+INSERT INTO invitations(id,creation_date,status,team_id,user_username)
+VALUES          (1,'2020-03-08 12:00',0,1,'member1');
+INSERT INTO invitations(id,creation_date,status,team_id,user_username)
+VALUES          (2,'2020-03-08 12:00',0,1,'member4');
+INSERT INTO invitations(id, creation_date, status, team_id, user_username)
+VALUES 			(3,'2020-03-08 12:00',2,1, 'member3');
+INSERT INTO invitations(id, creation_date, status, team_id, user_username)
+VALUES 			(4,'2020-03-08 12:00',2,1, 'member4');
 
-INSERT IGNORE INTO vet_specialties VALUES (2, 1);
-INSERT IGNORE INTO vet_specialties VALUES (3, 2);
-INSERT IGNORE INTO vet_specialties VALUES (3, 3);
-INSERT IGNORE INTO vet_specialties VALUES (4, 2);
-INSERT IGNORE INTO vet_specialties VALUES (5, 1);
+INSERT INTO teams(id,name,creation_date,jam_id)
+VALUES 			(12,'Grupo 2','2020-03-08 12:00',1);
+INSERT INTO teams_members(members_username,team_id)
+VALUES 			('member3',12);
+INSERT INTO invitations(id,creation_date,status,team_id,user_username)
+VALUES          (5,'2020-03-08 12:00',0,12,'member1');
+INSERT INTO invitations(id, creation_date, status, team_id, user_username)
+VALUES 			(6,'2020-03-08 12:00',0,12, 'member4');
 
-INSERT IGNORE INTO types VALUES (1, 'cat');
-INSERT IGNORE INTO types VALUES (2, 'dog');
-INSERT IGNORE INTO types VALUES (3, 'lizard');
-INSERT IGNORE INTO types VALUES (4, 'snake');
-INSERT IGNORE INTO types VALUES (5, 'bird');
-INSERT IGNORE INTO types VALUES (6, 'hamster');
+/* Pending Jam */
+INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_size,min_teams,max_teams,start,end,rated,creator_username)
+VALUES 			(2,'Pending Jam','test',2,'2019-06-08 12:00',5,2,2,'2025-06-09 12:00','2025-06-10 12:00',FALSE,'jamOrganizator1');
+INSERT INTO jam_resource(id,description,download_url,jams_id)
+VALUES 			(2,'Test Resource 1','https://www.youtube.com/',2);
+/* Teams */
+INSERT INTO teams(id,name,creation_date,jam_id)
+VALUES 			(2,'Grupo 1','2019-03-08 12:00',2);
+INSERT INTO teams_members(members_username,team_id)
+VALUES 			('member1',2);
+INSERT INTO teams(id,name,creation_date,jam_id)
+VALUES 			(3,'Grupo 2','2019-03-08 12:00',2);
+INSERT INTO teams_members(members_username,team_id)
+VALUES 			('member2',3);
 
-INSERT IGNORE INTO owners VALUES (1, 'George', 'Franklin', '110 W. Liberty St.', 'Madison', '6085551023');
-INSERT IGNORE INTO owners VALUES (2, 'Betty', 'Davis', '638 Cardinal Ave.', 'Sun Prairie', '6085551749');
-INSERT IGNORE INTO owners VALUES (3, 'Eduardo', 'Rodriquez', '2693 Commerce St.', 'McFarland', '6085558763');
-INSERT IGNORE INTO owners VALUES (4, 'Harold', 'Davis', '563 Friendly St.', 'Windsor', '6085553198');
-INSERT IGNORE INTO owners VALUES (5, 'Peter', 'McTavish', '2387 S. Fair Way', 'Madison', '6085552765');
-INSERT IGNORE INTO owners VALUES (6, 'Jean', 'Coleman', '105 N. Lake St.', 'Monona', '6085552654');
-INSERT IGNORE INTO owners VALUES (7, 'Jeff', 'Black', '1450 Oak Blvd.', 'Monona', '6085555387');
-INSERT IGNORE INTO owners VALUES (8, 'Maria', 'Escobito', '345 Maple St.', 'Madison', '6085557683');
-INSERT IGNORE INTO owners VALUES (9, 'David', 'Schroeder', '2749 Blackhawk Trail', 'Madison', '6085559435');
-INSERT IGNORE INTO owners VALUES (10, 'Carlos', 'Estaban', '2335 Independence La.', 'Waunakee', '6085555487');
+/* In Progress Jam */
+INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_size,min_teams,max_teams,start,end,rated,creator_username)
+VALUES 			(3,'In Progress Jam','test',3,'2019-06-08 12:00',5,2,2,'2019-06-09 12:00','2025-06-10 12:00',FALSE,'jamOrganizator1');
+INSERT INTO jam_resource(id,description,download_url,jams_id)
+VALUES 			(3,'Test Resource 1','https://www.youtube.com/',3);
+/* Teams */
+INSERT INTO teams(id,name,creation_date,jam_id)
+VALUES 			(4,'Grupo 1','2019-03-08 12:00',3);
+INSERT INTO teams_members(members_username,team_id)
+VALUES 			('member1',4);
+INSERT INTO teams(id,name,creation_date,jam_id)
+VALUES 			(5,'Grupo 2','2019-03-08 12:00',3);
+INSERT INTO teams_members(members_username,team_id)
+VALUES 			('member2',5);
 
-INSERT IGNORE INTO pets VALUES (1, 'Leo', '2000-09-07', 1, 1);
-INSERT IGNORE INTO pets VALUES (2, 'Basil', '2002-08-06', 6, 2);
-INSERT IGNORE INTO pets VALUES (3, 'Rosy', '2001-04-17', 2, 3);
-INSERT IGNORE INTO pets VALUES (4, 'Jewel', '2000-03-07', 2, 3);
-INSERT IGNORE INTO pets VALUES (5, 'Iggy', '2000-11-30', 3, 4);
-INSERT IGNORE INTO pets VALUES (6, 'George', '2000-01-20', 4, 5);
-INSERT IGNORE INTO pets VALUES (7, 'Samantha', '1995-09-04', 1, 6);
-INSERT IGNORE INTO pets VALUES (8, 'Max', '1995-09-04', 1, 6);
-INSERT IGNORE INTO pets VALUES (9, 'Lucky', '1999-08-06', 5, 7);
-INSERT IGNORE INTO pets VALUES (10, 'Mulligan', '1997-02-24', 2, 8);
-INSERT IGNORE INTO pets VALUES (11, 'Freddy', '2000-03-09', 5, 9);
-INSERT IGNORE INTO pets VALUES (12, 'Lucky', '2000-06-24', 2, 10);
-INSERT IGNORE INTO pets VALUES (13, 'Sly', '2002-06-08', 1, 10);
+/* Rating Jam */
+INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_size,min_teams,max_teams,start,end,rated,creator_username)
+VALUES 			(4,'Rating Jam','test',4,'2019-06-08 12:00',5,2,2,'2019-06-09 12:00','2019-06-10 12:00',FALSE,'jamOrganizator1');
+INSERT INTO jam_resource(id,description,download_url,jams_id)
+VALUES 			(4,'Test Resource 1','https://www.youtube.com/',4);
+/* Teams */
+INSERT INTO teams(id,name,creation_date,jam_id)
+VALUES 			(6,'Grupo 1','2019-03-08 12:00',4);
+INSERT INTO teams_members(members_username,team_id)
+VALUES 			('member1',6);
+INSERT INTO teams(id,name,creation_date,jam_id)
+VALUES 			(7,'Grupo 2','2019-03-08 12:00',4);
+INSERT INTO teams_members(members_username,team_id)
+VALUES 			('member2',7);
+/* Marks */
+INSERT INTO marks(value,comments,judge_username,team_id)
+VALUES 			(4,'Not very good','judge1',6);
+INSERT INTO marks(value,comments,judge_username,team_id)
+VALUES 			(7.5,'Good','judge2',7);
 
-INSERT IGNORE INTO visits VALUES (1, 7, '2010-03-04', 'rabies shot');
-INSERT IGNORE INTO visits VALUES (2, 8, '2011-03-04', 'rabies shot');
-INSERT IGNORE INTO visits VALUES (3, 8, '2009-06-04', 'neutered');
-INSERT IGNORE INTO visits VALUES (4, 7, '2008-09-04', 'spayed');
+/* Finished Jam */
+INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_size,min_teams,max_teams,start,end,rated,creator_username)
+VALUES 			(5,'Finished Jam','test',5,'2019-06-08 12:00',5,2,2,'2019-06-09 12:00','2019-06-10 12:00',FALSE,'jamOrganizator1');
+INSERT INTO jam_resource(id,description,download_url,jams_id)
+VALUES 			(5,'Test Resource 1','https://www.youtube.com/',5);
+/* Teams */
+INSERT INTO teams(id,name,creation_date,jam_id)
+VALUES 			(8,'Grupo 1','2019-03-08 12:00',5);
+INSERT INTO teams_members(members_username,team_id)
+VALUES 			('member1',8);
+INSERT INTO teams(id,name,creation_date,jam_id)
+VALUES 			(9,'Grupo 2','2019-03-08 12:00',5);
+INSERT INTO teams_members(members_username,team_id)
+VALUES 			('member2',9);
+/* Marks */
+INSERT INTO marks(value,comments,judge_username,team_id)
+VALUES 			(5,'Not very good','judge1',8);
+INSERT INTO marks(value,comments,judge_username,team_id)
+VALUES 			(7,'You could have done more','judge2',8);
+INSERT INTO marks(value,comments,judge_username,team_id)
+VALUES 			(9.5,'Very good','judge1',9);
+INSERT INTO marks(value,comments,judge_username,team_id)
+VALUES 			(10,'Perfect!','judge2',9);
+/* Winner */
+UPDATE jams SET rated = TRUE, winner_id = 9 WHERE id = 5;
+
+/* Cancelled Jam */
+INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_size,min_teams,max_teams,start,end,rated,creator_username)
+VALUES 			(6,'Cancelled Jam','test',1,'2019-06-08 12:00',5,2,2,'2019-06-09 12:00','2025-06-10 12:00',FALSE,'jamOrganizator1');
+INSERT INTO jam_resource(id,description,download_url,jams_id)
+VALUES 			(6,'Test Resource 1','https://www.youtube.com/',6);
+
+/* Full Jam */
+INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_size,min_teams,max_teams,start,end,rated,creator_username)
+VALUES 			(7,'Full Jam','test',2,'2025-06-08 12:00',5,2,2,'2025-06-09 12:00','2025-06-10 12:00',FALSE,'jamOrganizator1');
+INSERT INTO jam_resource(id,description,download_url,jams_id)
+VALUES 			(7,'Test Resource 1','https://www.youtube.com/',7);
+/* Teams */
+INSERT INTO teams(id,name,creation_date,jam_id)
+VALUES 			(10,'Grupo 1','2020-03-08 12:00',7);
+INSERT INTO teams_members(members_username,team_id)
+VALUES 			('member1',10);
+INSERT INTO teams(id,name,creation_date,jam_id)
+VALUES 			(11,'Grupo 2','2020-03-08 12:00',7);
+INSERT INTO teams_members(members_username,team_id)
+VALUES 			('member2',11);
