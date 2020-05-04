@@ -29,7 +29,7 @@ public class InvitationServiceTests {
 
 	@Test
 	void shouldFindInvitationById() {
-		Invitation invitation = this.invitationService.findInvitationById(1);
+		Invitation invitation = this.invitationService.findInvitationById(2);
 		Assertions.assertThat(invitation).isNotNull();
 	}
 
