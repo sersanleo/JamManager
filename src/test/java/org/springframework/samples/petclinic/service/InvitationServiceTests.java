@@ -30,7 +30,7 @@ public class InvitationServiceTests {
 	@Test
 	void shouldFindInvitationById() {
 		Invitation invitation = this.invitationService.findInvitationById(1);
-		Assertions.assertThat(invitation).isNotEqualTo(null);
+		Assertions.assertThat(invitation).isNotNull();
 	}
 
 	@Test
