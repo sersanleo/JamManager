@@ -115,4 +115,33 @@ public class Team extends BaseEntity {
 
 		return false;
 	}
+	
+	
+	
+	protected Set<Delivery> getDeliveryInternal() {
+		if (this.deliveries == null) {
+			this.deliveries = new HashSet<>();
+		}
+		return this.deliveries;
+	}
+
+	protected void setDeliveryInternal(final Set<Delivery> delivery) {
+		this.deliveries = delivery;
+	}
+
+	public List<Delivery> getDeliveries() {
+		List<Delivery> sortedDelivery = new ArrayList<>(this.getDeliveryInternal());
+		return Collections.unmodifiableList(sortedDelivery);
+	}
+
+	public void addDelivery(final Delivery delivery) {
+		this.getDeliveryInternal().add(delivery);
+		delivery.setTeam(this);
+	}
+
+	public void deleteDelivery(final Delivery delivery) {
+		this.getDeliveryInternal().remove(delivery);
+	}
+
+
 }

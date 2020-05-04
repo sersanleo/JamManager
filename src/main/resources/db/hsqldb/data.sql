@@ -139,3 +139,13 @@ INSERT INTO teams(id,name,creation_date,jam_id)
 VALUES 			(11,'Grupo 2','2020-03-08 12:00',7);
 INSERT INTO teams_members(members_username,team_id)
 VALUES 			('member2',11);
+
+/* Deliveries */
+INSERT INTO deliveries(id, description, download_url,creation_date,team_id)
+VALUES 			(1,'Primer envio en Progress','https://www.youtube.com/','2020-03-26 12:00',4);
+INSERT INTO deliveries(id,description, download_url,creation_date,team_id)
+VALUES 			(2,'Segundo envio en Progress','https://www.us.es/','2020-03-26 13:00',4);
+
+INSERT INTO deliveries(id,description, download_url,creation_date,team_id)
+VALUES 			(3,'Segundo envio en Rating','https://www.us.es/','2020-03-26 13:00',6);
+
