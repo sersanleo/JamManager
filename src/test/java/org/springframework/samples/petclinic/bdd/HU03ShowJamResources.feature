@@ -16,7 +16,6 @@ Feature: Show Jam Resources
     Given I am not logged in the system
     When I am viewing the jam <jamName> details
     Then I can not see the resources
-    Then I can see the resources
 
     Examples: 
       | jamName           |
