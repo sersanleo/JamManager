@@ -1,5 +1,5 @@
 Feature: Jam management
-   I want to create Jams and edit/delete them (as long as they are still in inscription)
+   As a jam organizator, I want to create Jams and edit/delete them (as long as they are still in inscription)
 
   Scenario: I can not create a Jam when not logged in
     Given I am not logged in the system
