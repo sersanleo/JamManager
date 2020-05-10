@@ -1,7 +1,7 @@
 Feature: Jam management
-   I want to create Jams and edit/remove them (as long as they are still in inscription)
+   I want to create Jams and edit/delete them (as long as they are still in inscription)
 
-  Scenario: I cannot create a Jam
+  Scenario: I can not create a Jam when not logged in
     Given I am not logged in the system
     When I list jams
     Then the create button is not present
@@ -22,14 +22,46 @@ Feature: Jam management
     Then the name is changed from <oldName> to <newName>
 
     Examples: 
-      | oldName           | newName            |
-      | "Inscription Jam" | "Inscription Jams" |
+      | oldName    | newName     |
+      | "Test Jam" | "Test Jams" |
 
-  Scenario Outline: I remove a Jam
+  Scenario: I can not edit a Jam when not logged in
+    Given I am not logged in the system
+    When I am viewing the jam "Test Jams" details
+    Then the edit button is not present
+
+  Scenario Outline: I can not edit a Jam which is not in inscription
     Given I am logged in the system as "jamOrganizator1" with password "jamOrganizator1"
-    When I delete the jam named <name>
-    Then the jam <name> is removed
+    When I am viewing the jam <jamName> details
+    Then the edit button is not present
 
     Examples: 
-      | name               |
-      | "Inscription Jams" |
+      | jamName           |
+      | "Pending Jam"     |
+      | "In Progress Jam" |
+      | "Rating Jam"      |
+
+  Scenario Outline: I delete a Jam
+    Given I am logged in the system as "jamOrganizator1" with password "jamOrganizator1"
+    When I delete the jam named <name>
+    Then the jam <name> is deleted
+
+    Examples: 
+      | name        |
+      | "Test Jams" |
+
+  Scenario: I can not delete a Jam when not logged in
+    Given I am not logged in the system
+    When I am viewing the jam "Inscription Jam" details
+    Then the delete button is not present
+
+  Scenario Outline: I can not delete a Jam which is not in inscription
+    Given I am logged in the system as "jamOrganizator1" with password "jamOrganizator1"
+    When I am viewing the jam <jamName> details
+    Then the delete button is not present
+
+    Examples: 
+      | jamName           |
+      | "Pending Jam"     |
+      | "In Progress Jam" |
+      | "Rating Jam"      |
