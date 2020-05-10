@@ -116,9 +116,29 @@ public class HU01ManageJamsStepDefinitions extends AbstractStep {
 		getDriver().findElement(By.linkText("Delete Jam")).click();
 	}
 
-	@Then("the jam {string} is removed")
+	@Then("the jam {string} is deleted")
 	public void jamIsRemoved(String name) throws Exception {
 		assertFalse(isElementPresent(By.linkText(name)));
+
+		this.stopDriver();
+	}
+
+	@When("I am viewing the jam {string} details")
+	public void viewJamDetails(String jamName) throws Exception {
+		listJams();
+		getDriver().findElement(By.linkText(jamName)).click();
+	}
+
+	@Then("the edit button is not present")
+	public void editButtonNotPresent() throws Exception {
+		assertFalse(isElementPresent(By.linkText("Edit Jam")));
+
+		this.stopDriver();
+	}
+
+	@Then("the delete button is not present")
+	public void deleteButtonNotPresent() throws Exception {
+		assertFalse(isElementPresent(By.linkText("Delete Jam")));
 
 		this.stopDriver();
 	}
