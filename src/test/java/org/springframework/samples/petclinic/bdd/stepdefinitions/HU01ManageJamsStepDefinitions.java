@@ -31,6 +31,17 @@ public class HU01ManageJamsStepDefinitions extends AbstractStep {
 		}
 	}
 
+	@Given("I am logged in the system as {string} with password {string}")
+	public void IdoLoginAs(String username, String password) throws Exception {
+		getDriver().get("http://localhost:" + port);
+		getDriver().findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
+		getDriver().findElement(By.id("password")).clear();
+		getDriver().findElement(By.id("password")).sendKeys(password);
+		getDriver().findElement(By.id("username")).clear();
+		getDriver().findElement(By.id("username")).sendKeys(username);
+		getDriver().findElement(By.xpath("//button[@type='submit']")).click();
+	}
+
 	@When("I list jams")
 	public void listJams() throws Exception {
 		getDriver().findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a/span[2]")).click();
@@ -41,17 +52,6 @@ public class HU01ManageJamsStepDefinitions extends AbstractStep {
 		assertFalse(isElementPresent(By.linkText("Add Jam")));
 
 		this.stopDriver();
-	}
-
-	@Given("I am logged in the system as {string} with password {string}")
-	public void IdoLoginAs(String username, String password) throws Exception {
-		getDriver().get("http://localhost:" + port);
-		getDriver().findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
-		getDriver().findElement(By.id("password")).clear();
-		getDriver().findElement(By.id("password")).sendKeys(password);
-		getDriver().findElement(By.id("username")).clear();
-		getDriver().findElement(By.id("username")).sendKeys(username);
-		getDriver().findElement(By.xpath("//button[@type='submit']")).click();
 	}
 
 	@When("I create a new Jam with name {string}, description {string}, difficulty {string}, inscription deadline {string},	max team size {string}, min. teams {string}, max. teams {string}, start {string} and end {string}")
