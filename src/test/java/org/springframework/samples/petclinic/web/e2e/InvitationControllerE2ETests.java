@@ -42,6 +42,7 @@ class InvitationControllerE2ETests {
 	@WithMockUser(username = "member2", authorities = { "member" })
 	@Test
 	void testSuccessfulInitInvitationCreationForm() throws Exception {
+		System.out.println("testSuccessfulInitInvitationCreationForm()");
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.get("/jams/{jamId}/teams/{teamId}/invitations/new",
 						InvitationControllerE2ETests.TEST_JAM_ID, InvitationControllerE2ETests.TEST_TEAM_ID))
@@ -186,6 +187,7 @@ class InvitationControllerE2ETests {
 	@WithMockUser(username = "member2", authorities = { "member" })
 	@Test
 	void testFailedInvitationCreationUsernameInJam() throws Exception {
+		System.out.println("testFailedInvitationCreationUsernameInJam()");
 		this.mockMvc
 				.perform(MockMvcRequestBuilders
 						.post("/jams/{jamId}/teams/{teamId}/invitations/new", InvitationControllerE2ETests.TEST_JAM_ID,
@@ -203,6 +205,7 @@ class InvitationControllerE2ETests {
 	@WithMockUser(username = "member2", authorities = { "member" })
 	@Test
 	void testFailedInvitationCreationPendingInvitation() throws Exception {
+		System.out.println("testFailedInvitationCreationPendingInvitation()");
 		this.mockMvc
 				.perform(MockMvcRequestBuilders
 						.post("/jams/{jamId}/teams/{teamId}/invitations/new", InvitationControllerE2ETests.TEST_JAM_ID,
@@ -220,6 +223,7 @@ class InvitationControllerE2ETests {
 	@WithMockUser(username = "member2", authorities = { "member" })
 	@Test
 	void testFailedInvitationCreationNotMemberAuthority() throws Exception {
+		System.out.println("testFailedInvitationCreationNotMemberAuthority()");
 		this.mockMvc
 				.perform(MockMvcRequestBuilders
 						.post("/jams/{jamId}/teams/{teamId}/invitations/new", InvitationControllerE2ETests.TEST_JAM_ID,
