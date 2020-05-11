@@ -116,7 +116,7 @@
 					<td><c:out value="${delivery.downloadURL}" /></td>
 					<td><c:out value="${delivery.description}" /></td>
 					<td><petclinic:localDateTime date="${delivery.creationDate}" /></td>
-					<td><c:if test="${ team.jam.status == JamStatus.IN_PROGRESS}">
+					<td><c:if test="${ team.jam.status == JamStatus.IN_PROGRESS && isMember}">
 							<spring:url value="/jams/{jamId}/teams/{teamId}/deliveries/{deliveryId}/delete" var="deleteDelUrl">
 								<spring:param name="jamId" value="${jam.id}" />
 								<spring:param name="teamId" value="${team.id}" />
@@ -129,7 +129,7 @@
 			</c:forEach>
 			
 		</table>
-		<c:if test="${ team.jam.status == JamStatus.IN_PROGRESS}">
+		<c:if test="${ team.jam.status == JamStatus.IN_PROGRESS && isMember}">
 		<spring:url value="/jams/{jamId}/teams/{teamId}/deliveries/new" var="newDel">
 				<spring:param name="jamId" value="${jam.id}" />
 				<spring:param name="teamId" value="${team.id}" />

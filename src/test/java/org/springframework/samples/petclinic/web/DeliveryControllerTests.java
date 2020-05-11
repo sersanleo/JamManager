@@ -185,6 +185,73 @@ class DeliveryControllerTests {
 	
 	@WithMockUser(value = "spring")
 	@Test
+	void testFailedDeliveryCreationURLNull() throws Exception {
+		Team team = new Team();
+		team.setId(DeliveryControllerTests.TEST_TEAM_ID);
+		Jam jam = new Jam();
+		jam.setId(DeliveryControllerTests.TEST_JAM_ID);
+		jam.setInscriptionDeadline(LocalDateTime.now().minusDays(5));
+		jam.setStart(LocalDateTime.now().minusDays(3));
+		jam.setEnd(LocalDateTime.now().plusDays(1));
+		jam.setMinTeams(1);
+		jam.setTeams(new HashSet<Team>() {
+			{
+				this.add(team);
+			}
+		});
+		jam.setMaxTeamSize(5);
+		team.setJam(jam);
+
+		BDDMockito.when(this.teamService.findTeamById(DeliveryControllerTests.TEST_TEAM_ID)).thenReturn(team);
+		BDDMockito.when(this.teamService.findIsMemberOfTeamByTeamIdAndUsername(DeliveryControllerTests.TEST_TEAM_ID,
+				"spring")).thenReturn(true);
+		
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.post("/jams/{jamId}/teams/{teamId}/deliveries/new",
+						DeliveryControllerTests.TEST_JAM_ID, DeliveryControllerTests.TEST_TEAM_ID)
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.param("description", "test")
+				.param("downloadURL", ""))
+				.andExpect(MockMvcResultMatchers.model().attributeHasErrors("delivery"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name("deliveries/createForm"));
+	}
+	
+	@WithMockUser(value = "spring")
+	@Test
+	void testFailedDeliveryCreationInvalidURL() throws Exception {
+		Team team = new Team();
+		team.setId(DeliveryControllerTests.TEST_TEAM_ID);
+		Jam jam = new Jam();
+		jam.setId(DeliveryControllerTests.TEST_JAM_ID);
+		jam.setInscriptionDeadline(LocalDateTime.now().minusDays(5));
+		jam.setStart(LocalDateTime.now().minusDays(3));
+		jam.setEnd(LocalDateTime.now().plusDays(1));
+		jam.setMinTeams(1);
+		jam.setTeams(new HashSet<Team>() {
+			{
+				this.add(team);
+			}
+		});
+		jam.setMaxTeamSize(5);
+		team.setJam(jam);
+
+		BDDMockito.when(this.teamService.findTeamById(DeliveryControllerTests.TEST_TEAM_ID)).thenReturn(team);
+		BDDMockito.when(this.teamService.findIsMemberOfTeamByTeamIdAndUsername(DeliveryControllerTests.TEST_TEAM_ID,
+				"spring")).thenReturn(true);
+		
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.post("/jams/{jamId}/teams/{teamId}/deliveries/new",
+						DeliveryControllerTests.TEST_JAM_ID, DeliveryControllerTests.TEST_TEAM_ID)
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.param("description", "test")
+				.param("downloadURL", "no es una url"))
+				.andExpect(MockMvcResultMatchers.model().attributeHasErrors("delivery"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name("deliveries/createForm"));
+	}
+	@WithMockUser(value = "spring")
+	@Test
 	void testFailedDeliveryCreationNotInProgressJam() throws Exception {
 		Team team = new Team();
 		team.setId(DeliveryControllerTests.TEST_TEAM_ID);
