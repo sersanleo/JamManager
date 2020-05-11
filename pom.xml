@@ -302,6 +302,7 @@
 				<configuration>
 					<excludes>
 						<exclude>**/*UITest.java</exclude>
+						<exclude>**/*UITests.java</exclude>
 						<exclude>**/*APITest.java</exclude>
 					</excludes>
 				</configuration>

@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Transactional
-class JamResourceControllerE2ETest {
+class JamResourceControllerE2ETests {
 
 	private static final int TEST_JAM_ID = 1;
 	private static final int TEST_JAMRESOURCE_ID = 1;
@@ -33,7 +33,7 @@ class JamResourceControllerE2ETest {
 	void testSuccessfulInitJamResourceCreationForm() throws Exception {
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.get("/jams/{jamId}/jamResources/new",
-						JamResourceControllerE2ETest.TEST_JAM_ID))
+						JamResourceControllerE2ETests.TEST_JAM_ID))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("jams/createOrUpdateJamResourceForm"))
 				.andExpect(MockMvcResultMatchers.model().attributeExists("jamResource"));
@@ -44,7 +44,7 @@ class JamResourceControllerE2ETest {
 	void testFailedInitJamResourceCreationFormNonExistentJam() throws Exception {
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.get("/jams/{jamId}/jamResources/new",
-						JamResourceControllerE2ETest.TEST_NONEXISTENT_JAM_ID))
+						JamResourceControllerE2ETests.TEST_NONEXISTENT_JAM_ID))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
@@ -53,7 +53,7 @@ class JamResourceControllerE2ETest {
 	@Test
 	void testSuccesfulJamResourceCreation() throws Exception {
 		this.mockMvc.perform(
-				MockMvcRequestBuilders.post("/jams/{jamId}/jamResources/new", JamResourceControllerE2ETest.TEST_JAM_ID)
+				MockMvcRequestBuilders.post("/jams/{jamId}/jamResources/new", JamResourceControllerE2ETests.TEST_JAM_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.param("description", "test")
 						.param("downloadUrl", "https://www.google.com/intl/es_ALL/drive/"))
@@ -64,7 +64,7 @@ class JamResourceControllerE2ETest {
 	@Test
 	void testFailedJamResourceCreationEmptyDescription() throws Exception {
 		this.mockMvc.perform(
-				MockMvcRequestBuilders.post("/jams/{jamId}/jamResources/new", JamResourceControllerE2ETest.TEST_JAM_ID)
+				MockMvcRequestBuilders.post("/jams/{jamId}/jamResources/new", JamResourceControllerE2ETests.TEST_JAM_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.param("description", "")
 						.param("downloadUrl", "https://www.google.com/intl/es_ALL/drive/"))
@@ -79,7 +79,7 @@ class JamResourceControllerE2ETest {
 	@Test
 	void testFailedJamResourceCreationEmptyUrl() throws Exception {
 		this.mockMvc.perform(
-				MockMvcRequestBuilders.post("/jams/{jamId}/jamResources/new", JamResourceControllerE2ETest.TEST_JAM_ID)
+				MockMvcRequestBuilders.post("/jams/{jamId}/jamResources/new", JamResourceControllerE2ETests.TEST_JAM_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.param("description", "test")
 						.param("downloadUrl", ""))
@@ -94,7 +94,7 @@ class JamResourceControllerE2ETest {
 	@Test
 	void testFailedJamResourceCreationInvalidUrl() throws Exception {
 		this.mockMvc.perform(
-				MockMvcRequestBuilders.post("/jams/{jamId}/jamResources/new", JamResourceControllerE2ETest.TEST_JAM_ID)
+				MockMvcRequestBuilders.post("/jams/{jamId}/jamResources/new", JamResourceControllerE2ETests.TEST_JAM_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.param("description", "test")
 						.param("downloadUrl", "No es una url"))
@@ -110,7 +110,7 @@ class JamResourceControllerE2ETest {
 	void testFailedJamResourceCreationNonExistentJam() throws Exception {
 		this.mockMvc.perform(
 				MockMvcRequestBuilders
-						.post("/jams/{jamId}/jamResources/new", JamResourceControllerE2ETest.TEST_NONEXISTENT_JAM_ID)
+						.post("/jams/{jamId}/jamResources/new", JamResourceControllerE2ETests.TEST_NONEXISTENT_JAM_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.param("description", "test")
 						.param("downloadUrl", "https://www.google.com/intl/es_ALL/drive/"))
@@ -123,7 +123,7 @@ class JamResourceControllerE2ETest {
 	void testSuccessfulInitJamResourceUpdateForm() throws Exception {
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.get("/jams/{jamId}/jamResources/{jamResourceId}/edit",
-						JamResourceControllerE2ETest.TEST_JAM_ID, JamResourceControllerE2ETest.TEST_JAMRESOURCE_ID))
+						JamResourceControllerE2ETests.TEST_JAM_ID, JamResourceControllerE2ETests.TEST_JAMRESOURCE_ID))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("jams/createOrUpdateJamResourceForm"))
 				.andExpect(MockMvcResultMatchers.model().attributeExists("jamResource"));
@@ -134,8 +134,8 @@ class JamResourceControllerE2ETest {
 	void testFailedInitJamResourceUpdateFormNonExistentJamResource() throws Exception {
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.get("/jams/{jamId}/jamResources/{jamResourceId}/edit",
-						JamResourceControllerE2ETest.TEST_JAM_ID,
-						JamResourceControllerE2ETest.TEST_NONEXISTENT_JAMRESOURCE_ID))
+						JamResourceControllerE2ETests.TEST_JAM_ID,
+						JamResourceControllerE2ETests.TEST_NONEXISTENT_JAMRESOURCE_ID))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
@@ -145,8 +145,8 @@ class JamResourceControllerE2ETest {
 	void testSuccessfulProcessJamResourceUpdateForm() throws Exception {
 		this.mockMvc
 				.perform(MockMvcRequestBuilders
-						.post("/jams/{jamId}/jamResources/{jamResourceId}/edit", JamResourceControllerE2ETest.TEST_JAM_ID,
-								JamResourceControllerE2ETest.TEST_JAMRESOURCE_ID)
+						.post("/jams/{jamId}/jamResources/{jamResourceId}/edit", JamResourceControllerE2ETests.TEST_JAM_ID,
+								JamResourceControllerE2ETests.TEST_JAMRESOURCE_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.param("description", "tests cambiado")
 						.param("downloadUrl", "https://www.google.com/intl/es_ALL/drive/"))
@@ -158,8 +158,8 @@ class JamResourceControllerE2ETest {
 	void testFailedProcessJamResourceUpdateNonExistentResource() throws Exception {
 		this.mockMvc
 				.perform(MockMvcRequestBuilders
-						.post("/jams/{jamId}/jamResources/{jamResourceId}/edit", JamResourceControllerE2ETest.TEST_JAM_ID,
-								JamResourceControllerE2ETest.TEST_NONEXISTENT_JAMRESOURCE_ID)
+						.post("/jams/{jamId}/jamResources/{jamResourceId}/edit", JamResourceControllerE2ETests.TEST_JAM_ID,
+								JamResourceControllerE2ETests.TEST_NONEXISTENT_JAMRESOURCE_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.param("description", "tests cambiado")
 						.param("downloadUrl", "https://www.google.com/intl/es_ALL/drive/"))
@@ -172,8 +172,8 @@ class JamResourceControllerE2ETest {
 	void testFailedJamResourceUpdateEmptyDescription() throws Exception {
 		this.mockMvc.perform(
 				MockMvcRequestBuilders
-						.post("/jams/{jamId}/jamResources/{jamResourceId}/edit", JamResourceControllerE2ETest.TEST_JAM_ID,
-								JamResourceControllerE2ETest.TEST_JAMRESOURCE_ID)
+						.post("/jams/{jamId}/jamResources/{jamResourceId}/edit", JamResourceControllerE2ETests.TEST_JAM_ID,
+								JamResourceControllerE2ETests.TEST_JAMRESOURCE_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.param("description", "")
 						.param("downloadUrl", "https://www.google.com/intl/es_ALL/drive/"))
@@ -189,8 +189,8 @@ class JamResourceControllerE2ETest {
 	void testFailedJamResourceUpdateEmptyUrl() throws Exception {
 		this.mockMvc.perform(
 				MockMvcRequestBuilders
-						.post("/jams/{jamId}/jamResources/{jamResourceId}/edit", JamResourceControllerE2ETest.TEST_JAM_ID,
-								JamResourceControllerE2ETest.TEST_JAMRESOURCE_ID)
+						.post("/jams/{jamId}/jamResources/{jamResourceId}/edit", JamResourceControllerE2ETests.TEST_JAM_ID,
+								JamResourceControllerE2ETests.TEST_JAMRESOURCE_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.param("description", "test")
 						.param("downloadUrl", ""))
@@ -206,8 +206,8 @@ class JamResourceControllerE2ETest {
 	void testFailedJamResourceUpdateInvalidUrl() throws Exception {
 		this.mockMvc.perform(
 				MockMvcRequestBuilders
-						.post("/jams/{jamId}/jamResources/{jamResourceId}/edit", JamResourceControllerE2ETest.TEST_JAM_ID,
-								JamResourceControllerE2ETest.TEST_JAMRESOURCE_ID)
+						.post("/jams/{jamId}/jamResources/{jamResourceId}/edit", JamResourceControllerE2ETests.TEST_JAM_ID,
+								JamResourceControllerE2ETests.TEST_JAMRESOURCE_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.param("description", "test")
 						.param("downloadUrl", "No es una url"))
@@ -224,7 +224,7 @@ class JamResourceControllerE2ETest {
 		this.mockMvc.perform(
 				MockMvcRequestBuilders
 						.get("/jams/{jamId}/jamResources/{jamResourceId}/delete",
-								JamResourceControllerE2ETest.TEST_JAM_ID, JamResourceControllerE2ETest.TEST_JAMRESOURCE_ID)
+								JamResourceControllerE2ETests.TEST_JAM_ID, JamResourceControllerE2ETests.TEST_JAMRESOURCE_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf()))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection());
 	}
@@ -235,8 +235,8 @@ class JamResourceControllerE2ETest {
 		this.mockMvc.perform(
 				MockMvcRequestBuilders
 						.get("/jams/{jamId}/jamResources/{jamResourceId}/delete",
-								JamResourceControllerE2ETest.TEST_JAM_ID,
-								JamResourceControllerE2ETest.TEST_NONEXISTENT_JAMRESOURCE_ID)
+								JamResourceControllerE2ETests.TEST_JAM_ID,
+								JamResourceControllerE2ETests.TEST_NONEXISTENT_JAMRESOURCE_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf()))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
