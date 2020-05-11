@@ -41,7 +41,6 @@ public class JamResourceUITest {
 	public void setUp() throws Exception {
 		String pathToGeckoDriver = ".\\src\\main\\resources";
 		System.setProperty("webdriver.gecko.driver", pathToGeckoDriver + "\\geckodriver.exe");
-		System.setProperty("webdriver.firefox.driver", pathToGeckoDriver + "\\geckodriver.exe");
 		driver = new FirefoxDriver();
 		baseUrl = "https://www.google.com/";
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);

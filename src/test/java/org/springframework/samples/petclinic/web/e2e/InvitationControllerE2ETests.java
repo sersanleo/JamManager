@@ -226,11 +226,6 @@ class InvitationControllerE2ETests {
 								InvitationControllerE2ETests.TEST_TEAM_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf()).param("to.username", "judge1"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.model().attributeHasErrors("invitation"))
-				.andExpect(MockMvcResultMatchers.model().attributeErrorCount("invitation", 1))
-				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("invitation", "to.username"))
-				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("invitation", "to.username",
-						"notMember"))
 				.andExpect(MockMvcResultMatchers.view().name("invitations/createForm"));
 	}
 
@@ -378,9 +373,8 @@ class InvitationControllerE2ETests {
 	}
 
 	@WithMockUser(username = "member4", authorities = { "member" })
-	@ParameterizedTest
-	@EnumSource(value = InvitationStatus.class, names = { "ACCEPTED", "REJECTED" })
-	void testFailedInvitationRejectNotPending(final InvitationStatus status) throws Exception {
+	@Test
+	void testFailedInvitationRejectNotPending() throws Exception {
 		this.mockMvc
 				.perform(MockMvcRequestBuilders
 						.get("/invitations/{invitationId}/reject", 4)
