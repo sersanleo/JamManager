@@ -301,8 +301,8 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<excludes>
+						<exclude>**/*E2ETests.java</exclude>
 						<exclude>**/*UITest.java</exclude>
-						<exclude>**/*UITests.java</exclude>
 						<exclude>**/*APITest.java</exclude>
 					</excludes>
 				</configuration>

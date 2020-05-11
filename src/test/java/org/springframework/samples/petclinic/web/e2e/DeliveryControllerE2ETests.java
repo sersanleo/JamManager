@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureMockMvc
 @Transactional
 @DirtiesContext
-class DeliveryControllerE2ETest {
+class DeliveryControllerE2ETests {
 
 	private static final int TEST_JAM_IN_PROGRESS_ID = 3;
 	private static final int TEST_JAM_NOT_IN_PROGRESS_ID = 4;
@@ -41,7 +41,7 @@ class DeliveryControllerE2ETest {
 	@Test
 	void testSuccessfulInitDeliveryCreationForm() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.get("/jams/{jamId}/teams/{teamId}/deliveries/new",
-				DeliveryControllerE2ETest.TEST_JAM_IN_PROGRESS_ID, DeliveryControllerE2ETest.TEST_TEAM_MEMBER_ID))
+				DeliveryControllerE2ETests.TEST_JAM_IN_PROGRESS_ID, DeliveryControllerE2ETests.TEST_TEAM_MEMBER_ID))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("deliveries/createForm"))
 				.andExpect(MockMvcResultMatchers.model().attributeExists("delivery"));
@@ -53,7 +53,7 @@ class DeliveryControllerE2ETest {
 	void testFailedInitDeliveryCreationFormNotMember() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/jams/{jamId}/teams/{teamId}/deliveries/new",
-				DeliveryControllerE2ETest.TEST_JAM_IN_PROGRESS_ID, DeliveryControllerE2ETest.TEST_TEAM_MEMBER_ID))
+				DeliveryControllerE2ETests.TEST_JAM_IN_PROGRESS_ID, DeliveryControllerE2ETests.TEST_TEAM_MEMBER_ID))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
@@ -62,8 +62,8 @@ class DeliveryControllerE2ETest {
 	@Test
 	void testFailedInitDeliveryCreationFormNotInProgressJam() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.get("/jams/{jamId}/teams/{teamId}/deliveries/new",
-				DeliveryControllerE2ETest.TEST_JAM_NOT_IN_PROGRESS_ID,
-				DeliveryControllerE2ETest.TEST_TEAM_MEMBER_NOT_IN_PROGRESS_ID))
+				DeliveryControllerE2ETests.TEST_JAM_NOT_IN_PROGRESS_ID,
+				DeliveryControllerE2ETests.TEST_TEAM_MEMBER_NOT_IN_PROGRESS_ID))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
@@ -73,8 +73,8 @@ class DeliveryControllerE2ETest {
 	void testSuccessfulDeliveryCreation() throws Exception {
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.post("/jams/{jamId}/teams/{teamId}/deliveries/new",
-						DeliveryControllerE2ETest.TEST_JAM_IN_PROGRESS_ID,
-						DeliveryControllerE2ETest.TEST_TEAM_MEMBER_ID)
+						DeliveryControllerE2ETests.TEST_JAM_IN_PROGRESS_ID,
+						DeliveryControllerE2ETests.TEST_TEAM_MEMBER_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.param("description", "test")
 						.param("downloadURL", "https://www.google.com/intl/es_ALL/drive/"))
@@ -87,8 +87,8 @@ class DeliveryControllerE2ETest {
 
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.post("/jams/{jamId}/teams/{teamId}/deliveries/new",
-						DeliveryControllerE2ETest.TEST_JAM_IN_PROGRESS_ID,
-						DeliveryControllerE2ETest.TEST_TEAM_MEMBER_ID)
+						DeliveryControllerE2ETests.TEST_JAM_IN_PROGRESS_ID,
+						DeliveryControllerE2ETests.TEST_TEAM_MEMBER_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.param("description", "test")
 						.param("downloadURL", ""))
@@ -102,8 +102,8 @@ class DeliveryControllerE2ETest {
 	void testFailedDeliveryCreationInvalidURL() throws Exception {
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.post("/jams/{jamId}/teams/{teamId}/deliveries/new",
-						DeliveryControllerE2ETest.TEST_JAM_IN_PROGRESS_ID,
-						DeliveryControllerE2ETest.TEST_TEAM_MEMBER_ID)
+						DeliveryControllerE2ETests.TEST_JAM_IN_PROGRESS_ID,
+						DeliveryControllerE2ETests.TEST_TEAM_MEMBER_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.param("description", "test")
 						.param("downloadURL", "no es una url"))
@@ -117,8 +117,8 @@ class DeliveryControllerE2ETest {
 	void testFailedDeliveryCreationNotInProgressJam() throws Exception {
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.post("/jams/{jamId}/teams/{teamId}/deliveries/new",
-						DeliveryControllerE2ETest.TEST_JAM_NOT_IN_PROGRESS_ID,
-						DeliveryControllerE2ETest.TEST_TEAM_MEMBER_NOT_IN_PROGRESS_ID)
+						DeliveryControllerE2ETests.TEST_JAM_NOT_IN_PROGRESS_ID,
+						DeliveryControllerE2ETests.TEST_TEAM_MEMBER_NOT_IN_PROGRESS_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.param("description", "test")
 						.param("downloadURL", "https://www.google.com/intl/es_ALL/drive/"))
@@ -131,8 +131,8 @@ class DeliveryControllerE2ETest {
 	void testFailedDeliveryCreationNotMember() throws Exception {
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.post("/jams/{jamId}/teams/{teamId}/deliveries/new",
-						DeliveryControllerE2ETest.TEST_JAM_IN_PROGRESS_ID,
-						DeliveryControllerE2ETest.TEST_TEAM_MEMBER_ID)
+						DeliveryControllerE2ETests.TEST_JAM_IN_PROGRESS_ID,
+						DeliveryControllerE2ETests.TEST_TEAM_MEMBER_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
 						.param("description", "test")
 						.param("downloadURL", "https://www.google.com/intl/es_ALL/drive/"))
@@ -147,9 +147,9 @@ class DeliveryControllerE2ETest {
 		this.mockMvc.perform(
 				MockMvcRequestBuilders
 						.get("/jams/{jamId}/teams/{teamId}/deliveries/{deliveryId}/delete",
-								DeliveryControllerE2ETest.TEST_JAM_IN_PROGRESS_ID,
-								DeliveryControllerE2ETest.TEST_TEAM_MEMBER_ID,
-								DeliveryControllerE2ETest.TEST_DELIVERY_ID)
+								DeliveryControllerE2ETests.TEST_JAM_IN_PROGRESS_ID,
+								DeliveryControllerE2ETests.TEST_TEAM_MEMBER_ID,
+								DeliveryControllerE2ETests.TEST_DELIVERY_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf()))
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection());
 	}
@@ -160,9 +160,9 @@ class DeliveryControllerE2ETest {
 		this.mockMvc.perform(
 				MockMvcRequestBuilders
 						.get("/jams/{jamId}/teams/{teamId}/deliveries/{deliveryId}/delete",
-								DeliveryControllerE2ETest.TEST_JAM_IN_PROGRESS_ID,
-								DeliveryControllerE2ETest.TEST_TEAM_MEMBER_ID,
-								DeliveryControllerE2ETest.TEST_DELIVERY_ID)
+								DeliveryControllerE2ETests.TEST_JAM_IN_PROGRESS_ID,
+								DeliveryControllerE2ETests.TEST_TEAM_MEMBER_ID,
+								DeliveryControllerE2ETests.TEST_DELIVERY_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf()))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
@@ -175,9 +175,9 @@ class DeliveryControllerE2ETest {
 		this.mockMvc.perform(
 				MockMvcRequestBuilders
 						.get("/jams/{jamId}/teams/{teamId}/deliveries/{deliveryId}/delete",
-								DeliveryControllerE2ETest.TEST_JAM_NOT_IN_PROGRESS_ID,
-								DeliveryControllerE2ETest.TEST_TEAM_MEMBER_NOT_IN_PROGRESS_ID,
-								DeliveryControllerE2ETest.TEST_DELIVERY_NOT_IN_PROGRESS_ID)
+								DeliveryControllerE2ETests.TEST_JAM_NOT_IN_PROGRESS_ID,
+								DeliveryControllerE2ETests.TEST_TEAM_MEMBER_NOT_IN_PROGRESS_ID,
+								DeliveryControllerE2ETests.TEST_DELIVERY_NOT_IN_PROGRESS_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf()))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
