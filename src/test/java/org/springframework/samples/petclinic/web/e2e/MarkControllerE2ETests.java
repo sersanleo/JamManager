@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Transactional
-@DirtiesContext
 class MarkControllerE2ETests {
 
 	private static final int TEST_RATING_JAM_ID = 4;

@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Transactional
-@DirtiesContext
 class InvitationControllerE2ETests {
 	private static final int TEST_JAM_ID = 1;
 	private static final int TEST_TEAM_ID = 1;
@@ -53,12 +52,12 @@ class InvitationControllerE2ETests {
 				.andExpect(MockMvcResultMatchers.model().attributeExists("invitation"));
 	}
 
-	@WithMockUser(username = "member1", authorities = { "member" })
+	@WithMockUser(username = "member2", authorities = { "member" })
 	@Test
 	void testFailedInitInvitationCreationFormFullTeam() throws Exception {
 		this.mockMvc
 				.perform(MockMvcRequestBuilders.get("/jams/{jamId}/teams/{teamId}/invitations/new",
-						InvitationControllerE2ETests.TEST_JAM_ID, InvitationControllerE2ETests.TEST_TEAM_ID))
+						InvitationControllerE2ETests.TEST_JAM_ID, 17))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}

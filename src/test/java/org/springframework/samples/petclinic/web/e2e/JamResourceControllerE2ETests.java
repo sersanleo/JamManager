@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Transactional
-@DirtiesContext
 class JamResourceControllerE2ETests {
 
 	private static final int TEST_JAM_ID = 1;

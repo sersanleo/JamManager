@@ -17,7 +17,7 @@ INSERT INTO authorities(username,authority) VALUES ('member5','member');
 
 /* Inscription Jam */
 INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_size,min_teams,max_teams,start,end,rated,creator_username)
-VALUES 			(1,'Inscription Jam','test',1,'2025-06-08 12:00',4,2,3,'2025-06-09 12:00','2025-06-10 12:00',FALSE,'jamOrganizator1');
+VALUES 			(1,'Inscription Jam','test',1,'2025-06-08 12:00',5,2,3,'2025-06-09 12:00','2025-06-10 12:00',FALSE,'jamOrganizator1');
 INSERT INTO jam_resource(id,description,download_url,jams_id)
 VALUES 			(1,'Test Resource 1','https://www.youtube.com/',1);
 /* Teams */
@@ -191,3 +191,16 @@ INSERT INTO marks(value,comments,judge_username,team_id)
 VALUES 			(1,'Bad','judge2',15);
 INSERT INTO marks(value,comments,judge_username,team_id)
 VALUES 			(4,'Not very good','judge1',16);
+
+/* Inscription Jam with a full team */
+INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_size,min_teams,max_teams,start,end,rated,creator_username)
+VALUES 			(10,'Inscription Jam (with a full team)','test',1,'2025-06-08 12:00',2,2,3,'2025-06-09 12:00','2025-06-10 12:00',FALSE,'jamOrganizator1');
+INSERT INTO jam_resource(id,description,download_url,jams_id)
+VALUES 			(10,'Test Resource 1','https://www.youtube.com/',10);
+/* Teams */
+INSERT INTO teams(id,name,creation_date,jam_id)
+VALUES 			(17,'Grupo 1','2020-03-08 12:00',10);
+INSERT INTO teams_members(members_username,team_id)
+VALUES 			('member2',17);
+INSERT INTO teams_members(members_username,team_id)
+VALUES 			('member3',17);
