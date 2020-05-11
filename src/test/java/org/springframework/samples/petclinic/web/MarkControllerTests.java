@@ -35,7 +35,7 @@ class MarkControllerTests {
 	private static final int TEST_RATING_TEAM_ID2 = 2;
 	private static final int TEST_NOTRATING_JAM_ID = 1;
 	private static final int TEST_NOTRATING_TEAM_ID = 3;
-	private static final int TEST_NONEXISTENT_TEAM_ID = 30;
+	private static final int TEST_NONEXISTENT_TEAM_ID = 100;
 
 	@MockBean
 	private MarkService markService;
