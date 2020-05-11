@@ -98,7 +98,7 @@ VALUES 			(7,'Grupo 2','2019-03-08 12:00',4);
 INSERT INTO teams_members(members_username,team_id)
 VALUES 			('member2',7);
 INSERT INTO deliveries(id,description, download_url,creation_date,team_id)
-VALUES 			(3,'Segundo envio en Rating grupo 2','https://www.us.es/','2020-03-26 13:00',7);
+VALUES 			(4,'Segundo envio en Rating grupo 2','https://www.us.es/','2020-03-26 13:00',7);
 /* Marks */
 INSERT INTO marks(value,comments,judge_username,team_id)
 VALUES 			(4,'Not very good','judge1',6);
