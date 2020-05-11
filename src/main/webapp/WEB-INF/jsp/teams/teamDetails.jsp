@@ -113,7 +113,7 @@
 			</tr>
 			<c:forEach var="delivery" items="${team.deliveries}">
 				<tr>
-					<td><c:out value="${delivery.downloadURL}" /></td>
+					<td><a href="${fn:escapeXml(delivery.downloadURL)}"><c:out value="${delivery.downloadURL}" /></a></td>
 					<td><c:out value="${delivery.description}" /></td>
 					<td><petclinic:localDateTime date="${delivery.creationDate}" /></td>
 					<td><c:if test="${ team.jam.status == JamStatus.IN_PROGRESS && isMember}">

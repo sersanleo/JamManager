@@ -91,12 +91,14 @@ VALUES 			(6,'Grupo 1','2019-03-08 12:00',4);
 INSERT INTO teams_members(members_username,team_id)
 VALUES 			('member1',6);
 INSERT INTO deliveries(id,description, download_url,creation_date,team_id)
-VALUES 			(3,'Segundo envio en Rating','https://www.us.es/','2020-03-26 13:00',6);
+VALUES 			(3,'Primer envio en Rating grupo 1','https://www.us.es/','2020-03-26 13:00',6);
 
 INSERT INTO teams(id,name,creation_date,jam_id)
 VALUES 			(7,'Grupo 2','2019-03-08 12:00',4);
 INSERT INTO teams_members(members_username,team_id)
 VALUES 			('member2',7);
+INSERT INTO deliveries(id,description, download_url,creation_date,team_id)
+VALUES 			(4,'Segundo envio en Rating grupo 2','https://www.us.es/','2020-03-26 13:00',7);
 /* Marks */
 INSERT INTO marks(value,comments,judge_username,team_id)
 VALUES 			(4,'Not very good','judge1',6);
