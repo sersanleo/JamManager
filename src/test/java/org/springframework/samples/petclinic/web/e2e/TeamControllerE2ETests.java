@@ -1,3 +1,4 @@
+
 package org.springframework.samples.petclinic.web.e2e;
 
 import org.junit.jupiter.api.Test;
@@ -19,20 +20,19 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Transactional
-class TeamControllerE2ETests {
-	
-	
+public class TeamControllerE2ETests {
 	private static final int TEST_INSCRIPTION_JAM_ID = 1;
 	private static final int TEST_CANCELLED_JAM_ID = 6;
 	private static final int TEST_FULL_JAM_ID = 7;
 	private static final int TEST_NONEXISTENT_JAM_ID = 100;
+
 	private static final int TEST_TEAM_ID = 1;
 	private static final int TEST_NONEXISTENT_TEAM_ID = 100;
-	private static final String TEST_TEAM1_MEMBER_USERNAME = "member1";
+
+	private static final String TEST_TEAM1_MEMBER_USERNAME = "member2";
 
 	@Autowired
 	private MockMvc mockMvc;
-
 
 	@WithMockUser(username = "member1", authorities = { "member" })
 	@Test
@@ -68,7 +68,7 @@ class TeamControllerE2ETests {
 				.andExpect(MockMvcResultMatchers.model().attributeExists("team"));
 	}
 
-	@WithMockUser(username = "member1", authorities = { "member" })
+	@WithMockUser(username = "member2", authorities = { "member" })
 	@Test
 	void testFailedInitCreationFormUserAlreadyParticipating() throws Exception {
 		this.mockMvc
@@ -147,7 +147,7 @@ class TeamControllerE2ETests {
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
 
-	@WithMockUser(username = "member1", authorities = { "member" })
+	@WithMockUser(username = "member2", authorities = { "member" })
 	@Test
 	void testFailedTeamCreationUserAlreadyParticipating() throws Exception {
 		this.mockMvc.perform(
@@ -173,7 +173,7 @@ class TeamControllerE2ETests {
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
 
-	@WithMockUser(username = "member1", authorities = { "member" })
+	@WithMockUser(username = "member2", authorities = { "member" })
 	@Test
 	void testSuccessfulInitEditionForm() throws Exception {
 		this.mockMvc.perform(
@@ -185,7 +185,7 @@ class TeamControllerE2ETests {
 				.andExpect(MockMvcResultMatchers.model().attributeExists("team"));
 	}
 
-	@WithMockUser(username = "member1", authorities = { "member" })
+	@WithMockUser(username = "member2", authorities = { "member" })
 	@Test
 	void testFailedInitEditionFormNonExistent() throws Exception {
 		this.mockMvc.perform(
@@ -208,7 +208,7 @@ class TeamControllerE2ETests {
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
 
-	@WithMockUser(username = "member1", authorities = { "member" })
+	@WithMockUser(username = "member2", authorities = { "member" })
 	@ValueSource(strings = { "test1", "3", ";.", "hola" })
 	@ParameterizedTest
 	void testSuccessfulEdition(final String name) throws Exception {
@@ -222,7 +222,7 @@ class TeamControllerE2ETests {
 				.andExpect(MockMvcResultMatchers.view().name("redirect:/jams/{jamId}/teams/{teamId}"));
 	}
 
-	@WithMockUser(username = "member1", authorities = { "member" })
+	@WithMockUser(username = "member2", authorities = { "member" })
 	@Test
 	void testFailedEditionNonExistent() throws Exception {
 		this.mockMvc.perform(
@@ -249,7 +249,7 @@ class TeamControllerE2ETests {
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
 
-	@WithMockUser(username = "member1", authorities = { "member" })
+	@WithMockUser(username = "member2", authorities = { "member" })
 	@Test
 	void testSuccessfulMemberDeletion() throws Exception {
 		this.mockMvc.perform(
@@ -260,7 +260,7 @@ class TeamControllerE2ETests {
 				.andExpect(MockMvcResultMatchers.status().is3xxRedirection());
 	}
 
-	@WithMockUser(username = "member1", authorities = { "member" })
+	@WithMockUser(username = "member2", authorities = { "member" })
 	@Test
 	void testFailedMemberDeletionNonExistentTeam() throws Exception {
 		this.mockMvc.perform(
@@ -273,15 +273,15 @@ class TeamControllerE2ETests {
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
 
-	@WithMockUser(username = "member1", authorities = { "member" })
+	@WithMockUser(username = "member2", authorities = { "member" })
 	@Test
 	void testFailedMemberDeletionNotInscriptionJam() throws Exception {
 		this.mockMvc.perform(
 				MockMvcRequestBuilders
 						.get("/jams/{jamId}/teams/{teamId}/members/{username}/delete",
-								TeamControllerE2ETests.TEST_INSCRIPTION_JAM_ID,
-								TeamControllerE2ETests.TEST_TEAM_ID,
-								TeamControllerE2ETests.TEST_TEAM1_MEMBER_USERNAME))
+								TeamControllerE2ETests.TEST_CANCELLED_JAM_ID,
+								3,
+								"member2"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
@@ -293,19 +293,19 @@ class TeamControllerE2ETests {
 				MockMvcRequestBuilders
 						.get("/jams/{jamId}/teams/{teamId}/members/{username}/delete",
 								TeamControllerE2ETests.TEST_INSCRIPTION_JAM_ID, TeamControllerE2ETests.TEST_TEAM_ID,
-								TeamControllerE2ETests.TEST_TEAM1_MEMBER_USERNAME))
+								"member2"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
 
-	@WithMockUser(username = "member1", authorities = { "member" })
+	@WithMockUser(username = "member2", authorities = { "member" })
 	@Test
 	void testFailedMemberDeletionMemberNotFound() throws Exception {
 		this.mockMvc.perform(
 				MockMvcRequestBuilders
 						.get("/jams/{jamId}/teams/{teamId}/members/{username}/delete",
 								TeamControllerE2ETests.TEST_INSCRIPTION_JAM_ID, TeamControllerE2ETests.TEST_TEAM_ID,
-								TeamControllerE2ETests.TEST_TEAM1_MEMBER_USERNAME))
+								"nonExistentUser"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
