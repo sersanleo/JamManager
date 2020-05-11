@@ -75,6 +75,8 @@ public class InvitationController {
 					+ this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername()));
 			System.out.println("ESTADO JAM: " + team.getJam().getStatus());
 			System.out.println("ESTALLENO: " + team.getIsFull());
+			System.out.println("Miembros: " + team.getMembers());
+			System.out.println("Invitaciones: " + team.getInvitations());
 			throw new Exception();
 		}
 

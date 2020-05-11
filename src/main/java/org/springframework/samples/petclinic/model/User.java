@@ -43,4 +43,9 @@ public class User {
 	public boolean isNew() {
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "User [username=" + username + "]";
+	}
 }
