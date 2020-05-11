@@ -92,17 +92,6 @@ class InvitationControllerE2ETests {
 				.andExpect(MockMvcResultMatchers.view().name("exception"));
 	}
 
-	@WithMockUser(username = "member2", authorities = { "member" })
-	@Test
-	void testSuccesfulInvitationCreation() throws Exception {
-		this.mockMvc
-				.perform(MockMvcRequestBuilders
-						.post("/jams/{jamId}/teams/{teamId}/invitations/new", InvitationControllerE2ETests.TEST_JAM_ID,
-								InvitationControllerE2ETests.TEST_TEAM_ID)
-						.with(SecurityMockMvcRequestPostProcessors.csrf()).param("to.username", "member5"))
-				.andExpect(MockMvcResultMatchers.status().is3xxRedirection());
-	}
-
 	@WithMockUser(username = "member1", authorities = { "member" })
 	@Test
 	void testFailedInvitationCreationFullTeam() throws Exception {
