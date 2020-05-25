@@ -27,7 +27,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(OrderAnnotation.class)
-public class HU05ManageTeamsUITest {
+public class HU07InvitacionesUITest {
 
 	@LocalServerPort
 	private int port;
@@ -47,94 +47,51 @@ public class HU05ManageTeamsUITest {
 	}
 
 	//
-
-	@Test
-	@Order(1)
-	public void testCrearNuevoTeam() throws Exception {
-		driver.get("http://localhost:8080/");
-		driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
-		driver.findElement(By.id("username")).clear();
-		driver.findElement(By.id("username")).sendKeys("member1");
-		driver.findElement(By.id("password")).click();
-		driver.findElement(By.id("password")).clear();
-		driver.findElement(By.id("password")).sendKeys("member1");
-		driver.findElement(By.xpath("//button[@type='submit']")).click();
-		driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a")).click();
-		driver.findElement(By.linkText("Inscription Jam")).click();
-		driver.findElement(By.linkText("Join this Jam")).click();
-		driver.findElement(By.id("name")).click();
-		driver.findElement(By.id("name")).clear();
-		driver.findElement(By.id("name")).sendKeys("equipo");
-		driver.findElement(By.xpath("//button[@type='submit']")).click();
-		driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
-	    driver.findElement(By.linkText("Logout")).click();
-	    driver.findElement(By.xpath("//button[@type='submit']")).click();
-	}
 	
-	@Test
-	@Order(2)
-	  public void testEditarTeam() throws Exception {
+	  @Test
+	  @Order(1)
+	  public void testEnviarInvitacion() throws Exception {
 	    driver.get("http://localhost:8080/");
 	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
 	    driver.findElement(By.id("username")).click();
 	    driver.findElement(By.id("username")).clear();
-	    driver.findElement(By.id("username")).sendKeys("member1");
+	    driver.findElement(By.id("username")).sendKeys("member2");
 	    driver.findElement(By.id("password")).click();
 	    driver.findElement(By.id("password")).clear();
-	    driver.findElement(By.id("password")).sendKeys("member1");
+	    driver.findElement(By.id("password")).sendKeys("member2");
 	    driver.findElement(By.xpath("//button[@type='submit']")).click();
 	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a")).click();
 	    driver.findElement(By.linkText("Inscription Jam")).click();
-	    driver.findElement(By.linkText("equipo")).click();
-	    driver.findElement(By.linkText("Edit Team")).click();
-	    driver.findElement(By.id("name")).click();
-	    driver.findElement(By.id("name")).clear();
-	    driver.findElement(By.id("name")).sendKeys("nuevo equipo");
-	    driver.findElement(By.xpath("//button[@type='submit']")).click();
+	    driver.findElement(By.linkText("Grupo 1")).click();
+	    driver.findElement(By.xpath("//a[contains(text(),'Send Invitation')]")).click();
+	    driver.findElement(By.id("to.username")).click();
+	    driver.findElement(By.id("to.username")).clear();
+	    driver.findElement(By.id("to.username")).sendKeys("member5");
+	    driver.findElement(By.id("add-invitation-form")).submit();
+	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li/a/span[2]")).click();
 	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
 	    driver.findElement(By.linkText("Logout")).click();
 	    driver.findElement(By.xpath("//button[@type='submit']")).click();
 	  }
-	
-	@Test
-	@Order(3)
-	  public void testDeleteTeam() throws Exception {
-	    driver.get("http://localhost:8080/");
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
-	    driver.findElement(By.id("username")).click();
-	    driver.findElement(By.id("username")).clear();
-	    driver.findElement(By.id("username")).sendKeys("member1");
-	    driver.findElement(By.id("password")).click();
-	    driver.findElement(By.id("password")).clear();
-	    driver.findElement(By.id("password")).sendKeys("member1");
-	    driver.findElement(By.xpath("//button[@type='submit']")).click();
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a/span[2]")).click();
-	    driver.findElement(By.linkText("Inscription Jam")).click();
-	    driver.findElement(By.linkText("nuevo equipo")).click();
-	    driver.findElement(By.linkText("Delete Member")).click();
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
-	    driver.findElement(By.linkText("Logout")).click();
-	    driver.findElement(By.xpath("//button[@type='submit']")).click();
-	  }
-	
+	  
+	  
 	  @Test
-	  @Order(4)
-	  public void testCreatTeamSinNombre() throws Exception {
+	  @Order(2)
+	  public void testBorrarInvitacion() throws Exception {
 	    driver.get("http://localhost:8080/");
 	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
 	    driver.findElement(By.id("username")).click();
 	    driver.findElement(By.id("username")).clear();
-	    driver.findElement(By.id("username")).sendKeys("member1");
+	    driver.findElement(By.id("username")).sendKeys("member2");
 	    driver.findElement(By.id("password")).click();
 	    driver.findElement(By.id("password")).clear();
-	    driver.findElement(By.id("password")).sendKeys("member1");
+	    driver.findElement(By.id("password")).sendKeys("member2");
 	    driver.findElement(By.xpath("//button[@type='submit']")).click();
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a/span[2]")).click();
+	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a")).click();
 	    driver.findElement(By.linkText("Inscription Jam")).click();
-	    driver.findElement(By.linkText("Join this Jam")).click();
-	    driver.findElement(By.xpath("//button[@type='submit']")).click();
-	    driver.findElement(By.xpath("//form[@id='add-team-form']/div/div/div")).click();
-	    assertEquals("no puede estar vacío", driver.findElement(By.xpath("//form[@id='add-team-form']/div/div/div/span[2]")).getText());
+	    driver.findElement(By.linkText("Grupo 1")).click();
+	    driver.findElement(By.xpath("//a[contains(text(),'Delete Invitation')]")).click();
+	  	driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li/a/span[2]")).click();
 	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
 	    driver.findElement(By.linkText("Logout")).click();
 	    driver.findElement(By.xpath("//button[@type='submit']")).click();
