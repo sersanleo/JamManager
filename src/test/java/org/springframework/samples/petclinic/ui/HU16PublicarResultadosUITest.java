@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.ui;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
@@ -64,6 +65,12 @@ public class HU16PublicarResultadosUITest {
 	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a")).click();
 	    driver.findElement(By.linkText("Rating Jam")).click();
 	    driver.findElement(By.xpath("//a[contains(text(),'Publish Results')]")).click();
+	    driver.findElement(By.id("winner.id")).click();
+	    driver.findElement(By.id("winner.id")).click();
+	    driver.findElement(By.xpath("//button[@type='submit']")).click();
+	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a")).click();
+	    driver.findElement(By.linkText("Rating Jam")).click();
+	    assertEquals("Winner", driver.findElement(By.xpath("//tr[12]/th")).getText());
 	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
 	    driver.findElement(By.linkText("Logout")).click();
 	    driver.findElement(By.xpath("//button[@type='submit']")).click();
