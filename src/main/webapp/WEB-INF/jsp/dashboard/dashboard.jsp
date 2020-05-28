@@ -13,22 +13,102 @@
 
 
 <petclinic:layout pageName="dashboard">
+	<script src=/resources/js/Chart.js " type="text/javascript"></script>
 
+	<h2>Jams:</h2>
+	<b>Active jams grouped by status:</b>
+	<canvas id="jamsStatus"></canvas>
+	<script>
+		var ctx = document.getElementById('jamsStatus').getContext('2d');
+		var myChart = new Chart(ctx, {
+			type : "pie",
+			data : {
+				labels : [
+						'Inscription', 'Pending', 'In progress', 'Rating'
+				],
+				datasets : [
+					{
+						label : '# of Votes',
+						data : [
+							${ dashboard.jamsInscription }, ${ dashboard.jamsPending }, ${ dashboard.jamsInProgress }, ${ dashboard.jamsRating }
+						],
+						backgroundColor : [
+								'rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)'
+						],
+						borderColor : [
+								'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)'
+						],
+						borderWidth : 1
+					}
+				]
+			},
+			options : {
+				scales : {
+					yAxes : [
+						{
+							ticks : {
+								beginAtZero : true
+							}
+						}
+					]
+				}
+			}
+		});
+	</script>
+	<br>
+	<b>Active jams capacity:</b>
+	<canvas id="jamsCapacity"></canvas>
+	<script>
+		var ctx = document.getElementById('jamsCapacity').getContext('2d');
+		var myChart = new Chart(ctx, {
+			type : "bar",
+			data: {
+                labels: [ <c:forEach var='jam' items='${ dashboard.activeJams }'>'${ jam.name }',</c:forEach>],
+                datasets: [
+                	{
+                        label: [ 'Current teams count' ],
+                        data: [<c:forEach var='jam' items='${ dashboard.activeJams }'>${ jam.teams.size() },</c:forEach>],
+                        backgroundColor: "rgb(150,0,0)",
+                    },
+                	{
+                        label: [ 'Remaining' ],
+                        data: [<c:forEach var='jam' items='${ dashboard.activeJams }'>${ jam.maxTeams-jam.teams.size() },</c:forEach>],
+                        backgroundColor: "green",
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        stacked: true
+                    }],
+                    yAxes: [{
+                        stacked: true
+                    }]
+                }
+            }
+		});
+	</script>
+	<br>
+	<br>
 
-					<h2> Jams: </h2> 
-					<b>Total number of Jams:</b><c:out value="${jams}"></c:out>
-					<br><br>
-
-					<h2> Teams: </h2> 
-					<b>Total number of Teams:</b><c:out value="${teams}"></c:out>
-
-					<br><br>			
-
-
-
-
-
-
-
-
+	<b>Winners:</b>
+	<table id="winnersTable" class="table table-striped">
+		<thead>
+			<tr>
+				<th>Username</th>
+				<th>Times he/she won</th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach items="${dashboard.winners}" var="winner">
+				<tr>
+					<td><c:out value="${winner.key}" /></td>
+					<td><c:out value="${winner.value}" /></td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+	<br>
+	<br>
 </petclinic:layout>
