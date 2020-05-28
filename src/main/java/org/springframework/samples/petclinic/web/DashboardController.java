@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.model.JamStatus;
-import org.springframework.samples.petclinic.service.DashboardService;
 import org.springframework.samples.petclinic.service.JamService;
 import org.springframework.samples.petclinic.util.Dashboard;
 import org.springframework.stereotype.Controller;
@@ -23,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/dashboard")
 public class DashboardController {
 
-	@Autowired
-	private DashboardService dashboardService;
 	@Autowired
 	private JamService jamService;
 
@@ -46,7 +43,7 @@ public class DashboardController {
 				.filter(jam -> jam.getStatus() == JamStatus.IN_PROGRESS || jam.getStatus() == JamStatus.INSCRIPTION
 						|| jam.getStatus() == JamStatus.PENDING || jam.getStatus() == JamStatus.RATING)
 				.collect(Collectors.toList());
-		
+
 		dashboard.setActiveJams(activeJams);
 
 		Map<String, Long> winners = jams.stream()
