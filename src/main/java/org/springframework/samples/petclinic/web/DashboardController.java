@@ -2,14 +2,13 @@
 package org.springframework.samples.petclinic.web;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
-import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.model.JamStatus;
+import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.JamService;
 import org.springframework.samples.petclinic.util.Dashboard;
 import org.springframework.stereotype.Controller;
@@ -56,7 +55,7 @@ public class DashboardController {
 	}
 
 	@GetMapping
-	public String getDashboardGeneral(final Dashboard dashboard, ModelMap modelMap) {
+	public String getDashboard(final Dashboard dashboard, ModelMap modelMap) {
 		modelMap.addAttribute("dashboard", dashboard);
 
 		return "/dashboard/dashboard";
