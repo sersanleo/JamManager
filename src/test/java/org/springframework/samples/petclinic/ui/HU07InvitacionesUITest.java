@@ -1,24 +1,25 @@
 package org.springframework.samples.petclinic.ui;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
-
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -46,58 +47,128 @@ public class HU07InvitacionesUITest {
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 	}
 
-	//
-	
-	  @Test
-	  @Order(1)
-	  public void testEnviarInvitacion() throws Exception {
-	    driver.get("http://localhost:8080/");
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
-	    driver.findElement(By.id("username")).click();
-	    driver.findElement(By.id("username")).clear();
-	    driver.findElement(By.id("username")).sendKeys("member2");
-	    driver.findElement(By.id("password")).click();
-	    driver.findElement(By.id("password")).clear();
-	    driver.findElement(By.id("password")).sendKeys("member2");
-	    driver.findElement(By.xpath("//button[@type='submit']")).click();
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a")).click();
-	    driver.findElement(By.linkText("Inscription Jam")).click();
-	    driver.findElement(By.linkText("Grupo 1")).click();
-	    driver.findElement(By.xpath("//a[contains(text(),'Send Invitation')]")).click();
-	    driver.findElement(By.id("to.username")).click();
-	    driver.findElement(By.id("to.username")).clear();
-	    driver.findElement(By.id("to.username")).sendKeys("member5");
-	    driver.findElement(By.id("add-invitation-form")).submit();
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li/a/span[2]")).click();
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
-	    driver.findElement(By.linkText("Logout")).click();
-	    driver.findElement(By.xpath("//button[@type='submit']")).click();
-	  }
-	  
-	  
-	  @Test
-	  @Order(2)
-	  public void testBorrarInvitacion() throws Exception {
-	    driver.get("http://localhost:8080/");
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
-	    driver.findElement(By.id("username")).click();
-	    driver.findElement(By.id("username")).clear();
-	    driver.findElement(By.id("username")).sendKeys("member2");
-	    driver.findElement(By.id("password")).click();
-	    driver.findElement(By.id("password")).clear();
-	    driver.findElement(By.id("password")).sendKeys("member2");
-	    driver.findElement(By.xpath("//button[@type='submit']")).click();
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a")).click();
-	    driver.findElement(By.linkText("Inscription Jam")).click();
-	    driver.findElement(By.linkText("Grupo 1")).click();
-	    driver.findElement(By.xpath("//a[contains(text(),'Delete Invitation')]")).click();
-	  	driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li/a/span[2]")).click();
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
-	    driver.findElement(By.linkText("Logout")).click();
-	    driver.findElement(By.xpath("//button[@type='submit']")).click();
-	  }
+	public HU07InvitacionesUITest asAnonymous() {
+		driver.get("http://localhost:" + port);
+		WebElement element = driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a"));
+		if (element == null || !element.getText().equalsIgnoreCase("login")) {
+			driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a/span[2]")).click();
+			driver.findElement(By.linkText("Logout")).click();
+			driver.findElement(By.xpath("//button[@type='submit']")).click();
+		}
 
-	//
+		return this;
+	}
+
+	public HU07InvitacionesUITest as(String username, String password) {
+		driver.get("http://localhost:" + port);
+		driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
+		driver.findElement(By.id("password")).clear();
+		driver.findElement(By.id("password")).sendKeys(password);
+		driver.findElement(By.id("username")).clear();
+		driver.findElement(By.id("username")).sendKeys(username);
+		driver.findElement(By.xpath("//button[@type='submit']")).click();
+
+		return this;
+	}
+
+	public HU07InvitacionesUITest whenISendAnInvitation(String jamName, String teamName, String invitedUser) {
+		driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a")).click();
+		driver.findElement(By.linkText(jamName)).click();
+		driver.findElement(By.linkText(teamName)).click();
+		driver.findElement(By.xpath("//a[contains(text(),'Send Invitation')]")).click();
+		driver.findElement(By.id("to.username")).click();
+		driver.findElement(By.id("to.username")).clear();
+		driver.findElement(By.id("to.username")).sendKeys(invitedUser);
+		driver.findElement(By.id("add-invitation-form")).submit();
+
+		return this;
+	}
+
+	public HU07InvitacionesUITest thenTheInvitationExists(String invitedUser) {
+		assertAnyTextEquals(invitedUser, driver.findElements(By.xpath("//table[3]/tbody/tr[*]/td")));
+
+		return this;
+	}
+
+	public HU07InvitacionesUITest whenIShowTheTeam(String jamName, String teamName) {
+		driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a")).click();
+		driver.findElement(By.linkText(jamName)).click();
+		driver.findElement(By.linkText(teamName)).click();
+
+		return this;
+	}
+
+	public HU07InvitacionesUITest andIDeleteAnInvitation() {
+		driver.findElement(By.linkText("Delete Invitation")).click();
+
+		return this;
+	}
+
+	public HU07InvitacionesUITest thenTheInvitationNumberDecreases(int originalCount) {
+		assertEquals(driver.findElements(By.linkText("Delete Invitation")).size(), originalCount - 1);
+
+		return this;
+	}
+
+	public HU07InvitacionesUITest thenButtonIsNotPresent(String buttonText) {
+		assertFalse(isElementPresent(By.linkText(buttonText)));
+
+		return this;
+	}
+
+	@Test
+	@Order(1)
+	public void testEnviarInvitacion() throws Exception {
+		String invitedUser = "member5";
+		as("member2", "member2")
+				.whenISendAnInvitation("Inscription Jam", "Grupo 1", "member5")
+				.thenTheInvitationExists(invitedUser);
+	}
+
+	@Test
+	@Order(2)
+	public void testBorrarInvitacion() throws Exception {
+		as("member2", "member2")
+				.whenIShowTheTeam("Inscription Jam", "Grupo 1");
+
+		int numberOfInvitations = driver.findElements(By.linkText("Delete Invitation")).size();
+
+		andIDeleteAnInvitation()
+				.thenTheInvitationNumberDecreases(numberOfInvitations);
+	}
+
+	// apartir de aqui lo he movido de HU09
+	@Test
+	@Order(3)
+	public void testEnviarInvitacionSinRegistrar() throws Exception {
+		asAnonymous()
+				.whenIShowTheTeam("Inscription Jam", "Grupo 1")
+				.thenButtonIsNotPresent("Send Invitation");
+	}
+
+	@Test
+	@Order(4)
+	public void testEnviarInvitacionEnOtroGrupo() throws Exception {
+		as("member3", "member3")
+				.whenIShowTheTeam("Inscription Jam", "Grupo 1")
+				.thenButtonIsNotPresent("Send Invitation");
+	}
+
+	@Test
+	@Order(5)
+	public void testBorrarInvitacionSinRegistrar() throws Exception {
+		asAnonymous()
+				.whenIShowTheTeam("Inscription Jam", "Grupo 1")
+				.thenButtonIsNotPresent("Delete Invitation");
+	}
+
+	@Test
+	@Order(6)
+	public void testBorrarInvitacionEnOtroGrupo() throws Exception {
+		as("member3", "member3")
+				.whenIShowTheTeam("Inscription Jam", "Grupo 1")
+				.thenButtonIsNotPresent("Delete Invitation");
+	}
 
 	@AfterEach
 	public void tearDown() throws Exception {
@@ -139,5 +210,13 @@ public class HU07InvitacionesUITest {
 		} finally {
 			acceptNextAlert = true;
 		}
+	}
+
+	private static final void assertAnyTextEquals(String text, List<WebElement> webElements) {
+		for (WebElement webElement : webElements) {
+			if (text.equals(webElement.getText()))
+				return;
+		}
+		assert false;
 	}
 }
