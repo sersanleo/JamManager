@@ -1,22 +1,16 @@
 package org.springframework.samples.petclinic.ui;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
-
 
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -27,7 +21,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestMethodOrder(OrderAnnotation.class)
 public class HU11AforoCompletoUITest {
 
 	@LocalServerPort
@@ -47,29 +40,37 @@ public class HU11AforoCompletoUITest {
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 	}
 
-	//
-
-	@Test
-	@Order(1)
-	public void testCrearTeamAforoCompleto() throws Exception {
-		driver.get("http://localhost:8080/");
+	public HU11AforoCompletoUITest as(String username, String password) {
+		driver.get("http://localhost:" + port);
 		driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
-		driver.findElement(By.id("username")).clear();
-		driver.findElement(By.id("username")).sendKeys("member3");
-		driver.findElement(By.id("password")).click();
 		driver.findElement(By.id("password")).clear();
-		driver.findElement(By.id("password")).sendKeys("member3");
+		driver.findElement(By.id("password")).sendKeys(password);
+		driver.findElement(By.id("username")).clear();
+		driver.findElement(By.id("username")).sendKeys(username);
 		driver.findElement(By.xpath("//button[@type='submit']")).click();
-		driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a")).click();
-		driver.findElement(By.linkText("Full Jam")).click();
-		assertFalse(isElementPresent(By.linkText("Join this Jam")));
-		driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
-	    driver.findElement(By.linkText("Logout")).click();
-	    driver.findElement(By.xpath("//button[@type='submit']")).click();
+
+		return this;
 	}
 
+	public HU11AforoCompletoUITest whenIShowTheJam(String jamName) {
+		driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a")).click();
+		driver.findElement(By.linkText(jamName)).click();
 
-	//
+		return this;
+	}
+
+	public HU11AforoCompletoUITest thenButtonIsNotPresent(String buttonText) {
+		assertFalse(isElementPresent(By.linkText(buttonText)));
+
+		return this;
+	}
+
+	@Test
+	public void testCrearTeamAforoCompleto() throws Exception {
+		as("member3", "member3")
+				.whenIShowTheJam("Full Jam")
+				.thenButtonIsNotPresent("Join this Jam");
+	}
 
 	@AfterEach
 	public void tearDown() throws Exception {
