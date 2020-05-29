@@ -17,16 +17,19 @@
 package org.springframework.samples.petclinic.service;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Jam;
-import org.springframework.samples.petclinic.model.JamStatus;
 import org.springframework.samples.petclinic.repository.JamRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Mostly used as a facade for all Petclinic controllers Also a placeholder
+ * for @Transactional and @Cacheable annotations
+ *
+ * @author Michael Isvy
+ */
 @Service
 public class JamService {
 
