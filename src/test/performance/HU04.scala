@@ -23,34 +23,29 @@ class HU04 extends Simulation {
 		"Proxy-Connection" -> "keep-alive",
 		"Purpose" -> "prefetch")
 
-
-
-	val scn = scenario("HU04")
-		.exec(http("request_0")
+	object Home {
+		val home = exec(http("Home")
 			.get("/")
 			.headers(headers_0))
-		.pause(5)
-		// Home
-		.exec(http("request_1")
-			.get("/jams")
-			.headers(headers_0))
-		.pause(9)
-		// ListJams
-		.exec(http("request_2")
-			.get("/")
-			.headers(headers_2))
-		.pause(14)
-		// Home
-		.exec(http("request_3")
+		.pause(4)
+	}
+
+	object ListJams {
+		val listJams = exec(http("ListJams")
 			.get("/jams")
 			.headers(headers_0))
 		.pause(2)
-		// ListJams
-		.exec(http("request_4")
+	}
+
+	object ShowJam {
+		val showJam = exec(http("ShowJam")
 			.get("/jams/1")
 			.headers(headers_0))
 		.pause(3)
-		// ShowJam
+	}
 
-	setUp(scn.inject(atOnceUsers(1))).protocols(httpProtocol)
+	val listJams = scenario("ListJams").exec(Home.home, ListJams.listJams)
+	val showJam = scenario("ShowJam").exec(Home.home, ListJams.listJams, ShowJam.showJam)
+
+	setUp(listJams.inject(atOnceUsers(1)), showJam.inject(atOnceUsers(1))).protocols(httpProtocol)
 }

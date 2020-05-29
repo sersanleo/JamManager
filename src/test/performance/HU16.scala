@@ -6,7 +6,7 @@ import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
 
-class HU15 extends Simulation {
+class HU16 extends Simulation {
 
 	val httpProtocol = http
 		.baseUrl("http://www.dp2.com")
@@ -30,51 +30,72 @@ class HU15 extends Simulation {
 		"Upgrade-Insecure-Requests" -> "1")
 
 
-
-	val scn = scenario("HU15")
-		.exec(http("request_0")
+	object Home {
+		val home = exec(http("Home")
 			.get("/")
 			.headers(headers_0))
-		.pause(14)
-		// Home
-		.exec(http("request_1")
+		.pause(3)
+	}
+
+	object Login {
+		val login = exec(http("Login")
 			.get("/login")
 			.headers(headers_0)
 			.resources(http("request_2")
 			.get("/login")
 			.headers(headers_2)))
-		.pause(5)
-		// Login
-		.exec(http("request_3")
+		.pause(3)
+	}
+
+	object LoggedAsJudge {
+		val loggedAsJudge = exec(http("LoggedAsJudge")
 			.post("/login")
 			.headers(headers_3)
 			.formParam("username", "judge1")
 			.formParam("password", "judge1")
 			.formParam("_csrf", "a78d07c6-876d-4c4b-b068-25c0ab4bfa7b"))
 		.pause(3)
-		// Logged
-		.exec(http("request_4")
+	}
+
+	object ListJams {
+		val listJams = exec(http("ListJams")
 			.get("/jams")
 			.headers(headers_0))
-		.pause(23)
-		// ListJams
-		.exec(http("request_5")
+		.pause(5)
+	}
+
+	object ShowJam {
+		var showJam = exec(http("ShowJam")
 			.get("/jams/4")
 			.headers(headers_0))
 		.pause(5)
-		// ShowJam
-		.exec(http("request_6")
+	}
+
+	object PublishJamResultsForm {
+		var publishJamResultsForm = exec(http("PublishJamResultsForm")
 			.get("/jams/4/publish")
 			.headers(headers_0))
 		.pause(8)
-		// PublishResultsForm
-		.exec(http("request_7")
+	}
+
+	object PublishJamResults {
+		var publishJamResults = exec(http("PublishJamResults")
 			.post("/jams/4/publish")
 			.headers(headers_3)
 			.formParam("winner.id", "7")
 			.formParam("_csrf", "eb037b18-f48a-4736-afcc-3acd9a8ef4ea"))
 		.pause(5)
-		// PublishResults
+	}
 
-	setUp(scn.inject(atOnceUsers(1))).protocols(httpProtocol)
+	val publishResults = scenario("PublishResults").exec(
+		Home.home,
+		Login.login,
+		LoggedAsJudge.loggedAsJudge,
+		ListJams.listJams,
+		ShowJam.showJam,
+		PublishJamResultsForm.publishJamResultsForm,
+		PublishJamResults.publishJamResults
+	)
+
+	setUp(publishResults.inject(atOnceUsers(1))).protocols(httpProtocol)
 }

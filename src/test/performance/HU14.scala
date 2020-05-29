@@ -29,52 +29,65 @@ class HU14 extends Simulation {
 		"Proxy-Connection" -> "keep-alive",
 		"Upgrade-Insecure-Requests" -> "1")
 
-
-
-	val scn = scenario("HU14")
-		.exec(http("request_0")
+	object Home {
+		val home = exec(http("Home")
 			.get("/")
 			.headers(headers_0))
 		.pause(3)
-		// Home
-		.exec(http("request_1")
+	}
+
+	object Login {
+		val login = exec(http("Login")
 			.get("/login")
 			.headers(headers_0)
 			.resources(http("request_2")
 			.get("/login")
 			.headers(headers_2)))
 		.pause(3)
-		.exec(http("request_3")
+	}
+
+	object LoggedAsJudge {
+		val loggedAsJudge = exec(http("LoggedAsJudge")
 			.post("/login")
 			.headers(headers_3)
 			.formParam("username", "judge1")
 			.formParam("password", "judge1")
 			.formParam("_csrf", "e6475e82-afc4-45e3-8845-350dd147c045"))
 		.pause(7)
-		// Logged
-		.exec(http("request_4")
+	}
+
+	object ListJams {
+		val listJams = exec(http("ListJams")
 			.get("/jams")
 			.headers(headers_0))
 		.pause(9)
-		// ListJams
-		.exec(http("request_5")
+	}
+
+	object ShowJam {
+		var showJam = exec(http("ShowJam")
 			.get("/jams/4")
 			.headers(headers_0))
-		.pause(7)
-		// ShowJam
-		.exec(http("request_6")
+		.pause(6)
+	}
+
+	object RateTeamForm {
+		var rateTeamForm = exec(http("RateTeamForm")
 			.get("/jams/4/teams/7/marks")
 			.headers(headers_0))
-		.pause(14)
-		// RateGroup
-		.exec(http("request_7")
+		.pause(10)
+	}
+
+	object RateTeam {
+		var rateTeam = exec(http("RateTeam")
 			.post("/jams/4/teams/7/marks")
 			.headers(headers_3)
 			.formParam("value", "5")
 			.formParam("comments", "Great work")
 			.formParam("_csrf", "4b8cd936-1111-432c-851c-26147734b05e"))
 		.pause(7)
-		// RateGroup
+	}
 
-	setUp(scn.inject(atOnceUsers(1))).protocols(httpProtocol)
+	val rateTeam = scenario("RateTeam").exec(Home.home, Login.login, LoggedAsJudge.loggedAsJudge, ListJams.listJams, ShowJam.showJam, RateTeamForm.rateTeamForm, RateTeam.rateTeam)
+
+	setUp(rateTeam.inject(atOnceUsers(1))).protocols(httpProtocol)
 }

@@ -20,71 +20,29 @@ class HU03 extends Simulation {
 		"Proxy-Connection" -> "keep-alive",
 		"Upgrade-Insecure-Requests" -> "1")
 
-	val headers_3 = Map(
-		"Proxy-Connection" -> "keep-alive",
-		"Purpose" -> "prefetch",
-		"Upgrade-Insecure-Requests" -> "1")
-
-	val headers_6 = Map(
-		"Accept" -> "image/webp,image/apng,image/*,*/*;q=0.8",
-		"Proxy-Connection" -> "keep-alive")
-
-	val headers_7 = Map(
-		"Origin" -> "http://www.dp2.com",
-		"Proxy-Connection" -> "keep-alive",
-		"Upgrade-Insecure-Requests" -> "1")
-
-
-
-	val scn = scenario("HU03")
-		.exec(http("request_0")
+	object Home {
+		val home = exec(http("Home")
 			.get("/")
 			.headers(headers_0))
-		.pause(7)
-		// Home
-		.exec(http("request_1")
+		.pause(4)
+	}
+
+	object ListJams {
+		val listJams = exec(http("ListJams")
 			.get("/jams")
 			.headers(headers_0))
 		.pause(8)
-		// ListJams
-		.exec(http("request_2")
+	}
+
+	object ShowJamResources {
+		val showJamResources = exec(http("ShowJamResources")
 			.get("/jams/3")
 			.headers(headers_0))
 		.pause(24)
-		// AnonymousShowJamResources
-		.exec(http("request_3")
-			.get("/")
-			.headers(headers_3)
-			.resources(http("request_4")
-			.get("/")
-			.headers(headers_0)))
-		.pause(12)
-		.exec(http("request_5")
-			.get("/login")
-			.headers(headers_0)
-			.resources(http("request_6")
-			.get("/login")
-			.headers(headers_6)))
-		.pause(18)
-		// LoginForm
-		.exec(http("request_7")
-			.post("/login")
-			.headers(headers_7)
-			.formParam("username", "jamOrganizator1")
-			.formParam("password", "jamOrganizator1")
-			.formParam("_csrf", "f16329cf-c026-47ba-a66f-c3e0853b732e"))
-		.pause(5)
-		// Logged
-		.exec(http("request_8")
-			.get("/jams")
-			.headers(headers_0))
-		.pause(22)
-		// ListJams
-		.exec(http("request_9")
-			.get("/jams/3")
-			.headers(headers_0))
-		.pause(12)
-		// LoggedShowJamResources
+	}
 
-	setUp(scn.inject(atOnceUsers(1))).protocols(httpProtocol)
+	val showJamResources = scenario("ShowJamResources")
+		.exec(Home.home, ListJams.listJams, ShowJamResources.showJamResources)
+
+	setUp(showJamResources.inject(atOnceUsers(1))).protocols(httpProtocol)
 }
