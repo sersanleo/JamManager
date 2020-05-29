@@ -26,11 +26,18 @@
 					<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 					<span>Jams</span>
 				</petclinic:menuItem>
-				
+
 				<sec:authorize access="hasAuthority('member')">
 					<petclinic:menuItem active="${name eq 'invitations'}" url="/invitations" title="invitations">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 						<span>My Invitations</span>
+					</petclinic:menuItem>
+				</sec:authorize>
+
+				<sec:authorize access="hasAnyAuthority('judge','jamOrganizator')">
+					<petclinic:menuItem active="${name eq 'dashboard'}" url="/dashboard" title="dashboard">
+						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+						<span>Dashboard</span>
 					</petclinic:menuItem>
 				</sec:authorize>
 
