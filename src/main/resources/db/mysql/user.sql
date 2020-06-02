@@ -6,4 +6,4 @@ ALTER DATABASE petclinic
 
 CREATE USER 'petclinic'@'localhost' IDENTIFIED BY 'petclinic';
 
-GRANT ALL PRIVILEGES ON petclinic.* TO 'petclinic'@'%';
+GRANT ALL PRIVILEGES ON petclinic.* TO 'petclinic'@'localhost';
