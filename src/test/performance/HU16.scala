@@ -41,20 +41,15 @@ class HU16 extends Simulation {
 		val login = exec(http("Login")
 			.get("/login")
 			.headers(headers_0)
-			.resources(http("request_2")
-			.get("/login")
-			.headers(headers_2)))
-		.pause(3)
-	}
-
-	object LoggedAsJudge {
-		val loggedAsJudge = exec(http("LoggedAsJudge")
+			.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+		).pause(3)
+		.exec(http("LoggedAsJudge")
 			.post("/login")
 			.headers(headers_3)
 			.formParam("username", "judge1")
 			.formParam("password", "judge1")
-			.formParam("_csrf", "a78d07c6-876d-4c4b-b068-25c0ab4bfa7b"))
-		.pause(3)
+        	.formParam("_csrf", "${stoken}")
+		).pause(3)
 	}
 
 	object ListJams {
@@ -71,29 +66,25 @@ class HU16 extends Simulation {
 		.pause(5)
 	}
 
-	object PublishJamResultsForm {
-		var publishJamResultsForm = exec(http("PublishJamResultsForm")
-			.get("/jams/4/publish")
-			.headers(headers_0))
-		.pause(8)
-	}
-
 	object PublishJamResults {
-		var publishJamResults = exec(http("PublishJamResults")
+		var publishJamResults = exec(http("PublishJamResultsForm")
+			.get("/jams/4/publish")
+			.headers(headers_0)
+			.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+		).pause(8)
+		.exec(http("PublishJamResults")
 			.post("/jams/4/publish")
 			.headers(headers_3)
 			.formParam("winner.id", "7")
-			.formParam("_csrf", "eb037b18-f48a-4736-afcc-3acd9a8ef4ea"))
-		.pause(5)
+        	.formParam("_csrf", "${stoken}")
+		).pause(5)
 	}
 
 	val publishResults = scenario("PublishResults").exec(
 		Home.home,
 		Login.login,
-		LoggedAsJudge.loggedAsJudge,
 		ListJams.listJams,
 		ShowJam.showJam,
-		PublishJamResultsForm.publishJamResultsForm,
 		PublishJamResults.publishJamResults
 	)
 

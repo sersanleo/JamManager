@@ -40,20 +40,15 @@ class HU18 extends Simulation {
 		val login = exec(http("Login")
 			.get("/login")
 			.headers(headers_0)
-			.resources(http("request_2")
-			.get("/login")
-			.headers(headers_2)))
-		.pause(3)
-	}
-
-	object LoggedAsJudge {
-		val loggedAsJudge = exec(http("LoggedAsJudge")
+        	.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+		).pause(3)
+		.exec(http("LoggedAsJudge")
 			.post("/login")
 			.headers(headers_3)
 			.formParam("username", "judge1")
 			.formParam("password", "judge1")
-			.formParam("_csrf", "50a711f6-695f-4a51-8f54-4d7e4da82673"))
-		.pause(7)
+        	.formParam("_csrf", "${stoken}")
+		).pause(7)
 	}
 
 	object ListJams {
@@ -70,20 +65,18 @@ class HU18 extends Simulation {
 		.pause(7)
 	}
 
-	object PublishJam1ResultsForm {
-		var publishJam1ResultsForm = exec(http("PublishJam1ResultsForm")
-			.get("/jams/8/publish")
-			.headers(headers_0))
-		.pause(6)
-	}
-
 	object PublishJam1Results {
-		var publishJam1Results = exec(http("PublishJam1Results")
+		var publishJam1Results = exec(http("PublishJam1ResultsForm")
+			.get("/jams/8/publish")
+			.headers(headers_0)
+        	.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+		).pause(6)
+		.exec(http("PublishJam1Results")
 			.post("/jams/8/publish")
 			.headers(headers_3)
 			.formParam("winner.id", "14")
-			.formParam("_csrf", "048279cb-cece-4df3-a187-c86e6de00f2a"))
-		.pause(8)
+        	.formParam("_csrf", "${stoken}")
+		).pause(8)
 	}
 
 	object ShowJam2Jam {
@@ -93,28 +86,26 @@ class HU18 extends Simulation {
 		.pause(7)
 	}
 
-	object PublishJam2ResultsForm {
-		var publishUnpublishableResultsForm = exec(http("PublishJam2ResultsForm")
-			.get("/jams/9/publish")
-			.headers(headers_0))
-		.pause(6)
-	}
-
 	object PublishJam2Results {
-		var publishUnpublishableResults = exec(http("PublishJam2Results")
+		var publishUnpublishableResults = exec(http("PublishJam2ResultsForm")
+			.get("/jams/9/publish")
+			.headers(headers_0)
+        	.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+		).pause(6)
+		.exec(http("PublishJam2Results")
 			.post("/jams/9/publish")
 			.headers(headers_3)
 			.formParam("winner.id", "15")
-			.formParam("_csrf", "048279cb-cece-4df3-a187-c86e6de00f2a"))
-		.pause(8)
+        	.formParam("_csrf", "${stoken}")
+		).pause(8)
 	}
 
 	val publishResultsNotEveryTeamHas1MarkAtLeast = scenario("PublishResultsNotEveryTeamHas1MarkAtLeast").exec(
-		Home.home, Login.login, LoggedAsJudge.loggedAsJudge, ListJams.listJams, ShowJam1.showJam1, PublishJam1ResultsForm.publishJam1ResultsForm, PublishJam1Results.publishJam1Results
+		Home.home, Login.login, ListJams.listJams, ShowJam1.showJam1, PublishJam1Results.publishJam1Results
 	)
 
 	val publishResultsEveryTeamNeedsSameAmountOfMarks = scenario("PublishResultsEveryTeamNeedsSameAmountOfMarks").exec(
-		Home.home, Login.login, LoggedAsJudge.loggedAsJudge, ListJams.listJams, ShowJam1.showJam1, PublishJam1ResultsForm.publishJam1ResultsForm, PublishJam1Results.publishJam1Results
+		Home.home, Login.login, ListJams.listJams, ShowJam1.showJam1, PublishJam1Results.publishJam1Results
 	)
 
 	setUp(

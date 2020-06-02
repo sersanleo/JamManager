@@ -45,20 +45,15 @@ class HU01 extends Simulation {
 		val login = exec(http("Login")
 			.get("/login")
 			.headers(headers_0)
-			.resources(http("request_2")
-			.get("/login")
-			.headers(headers_2)))
-		.pause(12)
-	}
-
-	object LoggedAsJamOrganizator {
-		val loggedAsJamOrganizator = exec(http("LoggedAsJamOrganizator")
+        	.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+		).pause(12)
+		.exec(http("LoggedAsJamOrganizator")
 			.post("/login")
 			.headers(headers_3)
 			.formParam("username", "jamOrganizator1")
 			.formParam("password", "jamOrganizator1")
-			.formParam("_csrf", "3603a0fc-32db-44d9-af41-f551614059d0"))
-		.pause(16)
+        	.formParam("_csrf", "${stoken}")
+		).pause(16)
 	}
 
 	object ListJams {
@@ -68,15 +63,13 @@ class HU01 extends Simulation {
 		.pause(7)
 	}
 
-	object CreateJamForm {
-		val createJamForm = exec(http("CreateJamForm")
-			.get("/jams/new")
-			.headers(headers_0))
-		.pause(79)
-	}
-
 	object CreateJam {
-		val createJam = exec(http("CreateJam")
+		val createJam = exec(http("CreateJamForm")
+			.get("/jams/new")
+			.headers(headers_0)
+        	.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+		).pause(79)
+		.exec(http("CreateJam")
 			.post("/jams/new")
 			.headers(headers_3)
 			.formParam("name", "Test Jam")
@@ -88,8 +81,8 @@ class HU01 extends Simulation {
 			.formParam("maxTeams", "10")
 			.formParam("start", "2020-10-7 10:00")
 			.formParam("end", "2020-10-8 10:00")
-			.formParam("_csrf", "a62e0d98-ef39-4718-9f25-8113444dea44"))
-		.pause(77)
+        	.formParam("_csrf", "${stoken}")
+		).pause(77)
 	}
 
 	object ShowJamToEdit {
@@ -99,15 +92,13 @@ class HU01 extends Simulation {
 		.pause(4)
 	}
 
-	object EditJamForm {
-		val editJamForm = exec(http("EditJamForm")
-			.get("/jams/1/edit")
-			.headers(headers_0))
-		.pause(5)
-	}
-
 	object EditJam {
-		val editJam = exec(http("EditJam")
+		val editJam = exec(http("EditJamForm")
+			.get("/jams/1/edit")
+			.headers(headers_0)
+        	.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+		).pause(5)
+		.exec(http("EditJam")
 			.post("/jams/1/edit")
 			.headers(headers_3)
 			.formParam("name", "Test Jam changed")
@@ -119,8 +110,8 @@ class HU01 extends Simulation {
 			.formParam("maxTeams", "10")
 			.formParam("start", "2020-10-7 10:00")
 			.formParam("end", "2020-10-8 10:00")
-			.formParam("_csrf", "a62e0d98-ef39-4718-9f25-8113444dea44"))
-		.pause(18)
+        	.formParam("_csrf", "${stoken}")
+		).pause(18)
 	}
 
 	object ShowJamToDelete {
@@ -140,24 +131,19 @@ class HU01 extends Simulation {
 	val createJamScenario = scenario("CreateJam").exec(
 		Home.home,
 		Login.login,
-		LoggedAsJamOrganizator.loggedAsJamOrganizator,
 		ListJams.listJams,
-		CreateJamForm.createJamForm,
 		CreateJam.createJam)
 
 	val editJamScenario = scenario("EditJam").exec(
 		Home.home,
 		Login.login,
-		LoggedAsJamOrganizator.loggedAsJamOrganizator,
 		ListJams.listJams,
 		ShowJamToEdit.showJamToEdit,
-		EditJamForm.editJamForm,
 		EditJam.editJam)
 
 	val deleteJamScenario = scenario("DeleteJam").exec(
 		Home.home,
 		Login.login,
-		LoggedAsJamOrganizator.loggedAsJamOrganizator,
 		ListJams.listJams,
 		ShowJamToDelete.showJamToDelete,
 		DeleteJam.deleteJam)
