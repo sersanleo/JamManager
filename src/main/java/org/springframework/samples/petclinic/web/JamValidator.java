@@ -9,22 +9,21 @@ import org.springframework.validation.Validator;
 
 public class JamValidator implements Validator {
 
-	private static final String REQUIRED = "required";
-
-
 	@Override
 	public void validate(final Object obj, final Errors errors) {
 		Jam jam = (Jam) obj;
 
 		LocalDateTime now = LocalDateTime.now();
 
-		if (!errors.hasFieldErrors("minTeams") && !errors.hasFieldErrors("maxTeams") && jam.getMinTeams() > jam.getMaxTeams()) {
+		if (!errors.hasFieldErrors("minTeams") && !errors.hasFieldErrors("maxTeams")
+				&& jam.getMinTeams() > jam.getMaxTeams()) {
 
 			String errorMessage = "The minimum number of teams must be lower than the maximum";
 			errors.rejectValue("minTeams", errorMessage, errorMessage);
 		}
 
-		if (!errors.hasFieldErrors("inscriptionDeadline") && !errors.hasFieldErrors("start") && jam.getInscriptionDeadline().isAfter(jam.getStart())) {
+		if (!errors.hasFieldErrors("inscriptionDeadline") && !errors.hasFieldErrors("start")
+				&& jam.getInscriptionDeadline().isAfter(jam.getStart())) {
 
 			String errorMessage = "The inscription deadline must be before the start of the event";
 			errors.rejectValue("inscriptionDeadline", errorMessage, errorMessage);
@@ -52,9 +51,6 @@ public class JamValidator implements Validator {
 
 	}
 
-	/**
-	 * This Validator validates *just* Pet instances
-	 */
 	@Override
 	public boolean supports(final Class<?> clazz) {
 		return Jam.class.isAssignableFrom(clazz);

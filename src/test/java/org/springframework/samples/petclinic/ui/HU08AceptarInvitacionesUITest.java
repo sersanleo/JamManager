@@ -3,22 +3,21 @@ package org.springframework.samples.petclinic.ui;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -45,55 +44,78 @@ public class HU08AceptarInvitacionesUITest {
 		baseUrl = "https://www.google.com/";
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 	}
-	
-	
-	  @Test
-	  @Order(1)
-	  public void testEnviarInvitacion() throws Exception {
-	    driver.get("http://localhost:8080/");
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
-	    driver.findElement(By.id("username")).click();
-	    driver.findElement(By.id("username")).clear();
-	    driver.findElement(By.id("username")).sendKeys("member2");
-	    driver.findElement(By.id("password")).click();
-	    driver.findElement(By.id("password")).clear();
-	    driver.findElement(By.id("password")).sendKeys("member2");
-	    driver.findElement(By.xpath("//button[@type='submit']")).click();
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[2]/a")).click();
-	    driver.findElement(By.linkText("Inscription Jam")).click();
-	    driver.findElement(By.linkText("Grupo 1")).click();
-	    driver.findElement(By.xpath("//a[contains(text(),'Send Invitation')]")).click();
-	    driver.findElement(By.id("to.username")).click();
-	    driver.findElement(By.id("to.username")).clear();
-	    driver.findElement(By.id("to.username")).sendKeys("member5");
-	    driver.findElement(By.id("add-invitation-form")).submit();
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li/a/span[2]")).click();
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
-	    driver.findElement(By.linkText("Logout")).click();
-	    driver.findElement(By.xpath("//button[@type='submit']")).click();
-	  }
-	  
-	  
-	  @Test
-	  @Order(2)
-	  public void testAceptarInvitacion() throws Exception {
-	    driver.get("http://localhost:8080/");
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
-	    driver.findElement(By.id("username")).click();
-	    driver.findElement(By.id("username")).clear();
-	    driver.findElement(By.id("username")).sendKeys("member5");
-	    driver.findElement(By.id("password")).click();
-	    driver.findElement(By.id("password")).clear();
-	    driver.findElement(By.id("password")).sendKeys("member5");
-	    driver.findElement(By.xpath("//button[@type='submit']")).click();
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[3]/a/span[2]")).click();
-	    driver.findElement(By.xpath("//a[contains(text(),'Accept Invitation')]")).click();
-	    driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
-	    driver.findElement(By.linkText("Logout")).click();
-	    driver.findElement(By.xpath("//button[@type='submit']")).click();
-	  }
 
-	//
+	public HU08AceptarInvitacionesUITest asAnonymous() {
+		driver.get("http://localhost:" + port);
+		WebElement element = driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a"));
+		if (element == null || !element.getText().equalsIgnoreCase("login")) {
+			driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a/span[2]")).click();
+			driver.findElement(By.linkText("Logout")).click();
+			driver.findElement(By.xpath("//button[@type='submit']")).click();
+		}
+
+		return this;
+	}
+
+	public HU08AceptarInvitacionesUITest as(String username, String password) {
+		driver.get("http://localhost:" + port);
+		driver.findElement(By.xpath("//div[@id='main-navbar']/ul[2]/li/a")).click();
+		driver.findElement(By.id("password")).clear();
+		driver.findElement(By.id("password")).sendKeys(password);
+		driver.findElement(By.id("username")).clear();
+		driver.findElement(By.id("username")).sendKeys(username);
+		driver.findElement(By.xpath("//button[@type='submit']")).click();
+
+		return this;
+	}
+
+	public HU08AceptarInvitacionesUITest whenIListMyInvitations() {
+		driver.findElement(By.xpath("//div[@id='main-navbar']/ul/li[3]/a/span[2]")).click();
+
+		return this;
+	}
+
+	public HU08AceptarInvitacionesUITest andIRejectAnInvitation() {
+		driver.findElement(By.linkText("Reject Invitation")).click();
+
+		return this;
+	}
+
+	public HU08AceptarInvitacionesUITest andIAcceptAnInvitation() {
+		driver.findElement(By.linkText("Accept Invitation")).click();
+
+		return this;
+	}
+
+	public HU08AceptarInvitacionesUITest thenTheInvitationNumberDecreases(int originalCount) {
+		assertEquals(driver.findElements(By.linkText("Reject Invitation")).size(), originalCount - 1);
+
+		return this;
+	}
+
+	@Test
+	@Order(1)
+	public void testRechazarInvitacion() throws Exception {
+		as("member1", "member1")
+				.whenIListMyInvitations();
+
+		int numberOfInvitations = driver.findElements(By.linkText("Accept Invitation")).size();
+
+		andIRejectAnInvitation()
+				.thenTheInvitationNumberDecreases(numberOfInvitations);
+	}
+
+	@Test
+	@Order(2)
+	public void testAceptarInvitacion() throws Exception {
+		as("member1", "member1")
+				.whenIListMyInvitations();
+
+		int numberOfInvitations = driver.findElements(By.linkText("Accept Invitation")).size();
+
+		andIAcceptAnInvitation()
+				.thenTheInvitationNumberDecreases(numberOfInvitations);
+	}
 
 	@AfterEach
 	public void tearDown() throws Exception {

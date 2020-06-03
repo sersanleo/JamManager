@@ -1,16 +1,12 @@
 package org.springframework.samples.petclinic.bdd.stepdefinitions;
 
 import org.openqa.selenium.By;
-import org.springframework.boot.web.server.LocalServerPort;
 
 import io.cucumber.java.en.And;
 import lombok.extern.java.Log;
 
 @Log
 public class HU15RateTeamsRestrictionsStepDefinitions extends AbstractStep {
-	@LocalServerPort
-	private int port;
-
 	@And("rate a team with a value of {string} and comments {string}")
 	public void rateATeam(String value, String comments) throws Exception {
 		getDriver().findElement(By.linkText("Give A Mark")).click();

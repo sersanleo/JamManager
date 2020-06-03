@@ -18,12 +18,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
-import org.springframework.samples.petclinic.datatypes.Phone;
 import org.springframework.samples.petclinic.model.Jam;
 import org.springframework.samples.petclinic.model.JamResource;
 import org.springframework.samples.petclinic.model.Mark;
 import org.springframework.samples.petclinic.model.Team;
-import org.springframework.samples.petclinic.model.User;
 import org.springframework.samples.petclinic.service.JamService;
 import org.springframework.samples.petclinic.service.TeamService;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
@@ -461,7 +459,7 @@ class JamControllerTests {
 	void testFailedPublishResultsAtLeastOneMark() throws Exception {
 		Jam ratingJam = this.jamService.findJamById(TEST_RATING_JAM_ID);
 		ratingJam.getTeams().iterator().next().getMarks().clear();
-		
+
 		this.mockMvc.perform(
 				MockMvcRequestBuilders.post("/jams/{jamId}/publish", TEST_RATING_JAM_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
@@ -478,7 +476,7 @@ class JamControllerTests {
 	void testFailedPublishResultsNeedsSameNumberOfMarks() throws Exception {
 		Jam ratingJam = this.jamService.findJamById(TEST_RATING_JAM_ID);
 		ratingJam.getTeams().iterator().next().getMarks().add(buildMark(8));
-		
+
 		this.mockMvc.perform(
 				MockMvcRequestBuilders.post("/jams/{jamId}/publish", TEST_RATING_JAM_ID)
 						.with(SecurityMockMvcRequestPostProcessors.csrf())
@@ -486,7 +484,8 @@ class JamControllerTests {
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.model().attributeHasErrors("jam"))
 				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("jam", "winner.id"))
-				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("jam", "winner.id", "sameNumberOfMarks"))
+				.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("jam", "winner.id",
+						"sameNumberOfMarks"))
 				.andExpect(MockMvcResultMatchers.view().name("jams/publishResultsForm"));
 	}
 }
