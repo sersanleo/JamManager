@@ -43,14 +43,8 @@
 				]
 			},
 			options : {
-				scales : {
-					yAxes : [
-						{
-							ticks : {
-								beginAtZero : true
-							}
-						}
-					]
+				legend : {
+					display : true
 				}
 			}
 		});
@@ -83,7 +77,10 @@
                         stacked: true
                     }],
                     yAxes: [{
-                        stacked: true
+                        stacked: true,
+                        ticks : {
+							stepSize: 1
+						}
                     }]
                 }
             }
