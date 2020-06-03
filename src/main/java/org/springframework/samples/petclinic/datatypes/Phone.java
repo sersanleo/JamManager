@@ -47,7 +47,7 @@ public class Phone implements Serializable {
 		StringBuilder result;
 
 		result = new StringBuilder();
-		result.append("<<+");
+		result.append("+");
 		result.append(this.countryCode);
 
 		if (this.areaCode == null) {
@@ -59,7 +59,6 @@ public class Phone implements Serializable {
 		}
 
 		result.append(this.number);
-		result.append(">>");
 
 		return result.toString();
 	}
