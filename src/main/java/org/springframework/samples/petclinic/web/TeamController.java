@@ -112,7 +112,6 @@ public class TeamController {
 		if (!this.teamService.findIsMemberOfTeamByTeamIdAndUsername(teamId, UserUtils.getCurrentUsername())) {
 			throw new Exception();
 		}
-
 		modelMap.addAttribute("team", team);
 
 		return TeamController.VIEWS_TEAM_CREATE_OR_UPDATE_FORM;
@@ -138,7 +137,7 @@ public class TeamController {
 	}
 
 	@GetMapping(value = "/{teamId}/members/{username}/delete")
-	public String initDeleteMemberForm(@PathVariable("teamId") final int teamId,
+	public String deleteMember(@PathVariable("teamId") final int teamId,
 			@PathVariable("username") final String username, final ModelMap model) throws Exception {
 		Team team = this.teamService.findTeamById(teamId);
 		String currentUsername = UserUtils.getCurrentUsername();

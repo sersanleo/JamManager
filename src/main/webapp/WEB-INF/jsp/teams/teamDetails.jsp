@@ -91,7 +91,7 @@
 		</spring:url>
 		<a href="${fn:escapeXml(editUrl)}" class="btn btn-default">Edit Team</a>
 
-		<c:if test="${ !team.isFull }">
+		<c:if test="${ !team.isFull && team.jam.status == JamStatus.INSCRIPTION }">
 			<spring:url value="/jams/{jamId}/teams/{teamId}/invitations/new" var="newUrl">
 				<spring:param name="jamId" value="${jam.id}" />
 				<spring:param name="teamId" value="${team.id}" />
