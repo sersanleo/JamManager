@@ -40,19 +40,14 @@ class HU09Test extends Simulation {
 		val login = exec(http("Login")
 			.get("/login")
 			.headers(headers_0)
-			.resources(http("request_2")
-			.get("/login")
-			.headers(headers_2)))
+        	.check(css("input[name=_csrf]", "value").saveAs("stoken")))
 		.pause(11)
-	}
-
-	object Logged {
-		val logged = exec(http("Logged")
+		.exec(http("Logged")
 			.post("/login")
 			.headers(headers_3)
 			.formParam("username", "member2")
 			.formParam("password", "member2")
-			.formParam("_csrf", "ff1d1871-616a-43ee-aaa5-2d248a2d097d"))
+        	.formParam("_csrf", "${stoken}"))
 		.pause(10)
 	}
 
@@ -77,22 +72,27 @@ class HU09Test extends Simulation {
 		.pause(13)
 	}
 
-	object SendInvitation {
-		val sendInvitation = exec(http("SendInvitation")
+	object SendInvitationError {
+		val sendInvitationError  = exec(http("SendInvitation")
 			.get("/jams/1/teams/1/invitations/new")
-			.headers(headers_0))
+			.headers(headers_0)
+        	.check(css("input[name=_csrf]", "value").saveAs("stoken")))
 		.pause(22)
-	}
-
-	object SendingError {
-		val sendingError = exec(http("SendingError")
+		.exec(http("SendingError")
 			.post("/jams/1/teams/1/invitations/new")
 			.headers(headers_3)
 			.formParam("to.username", "NoExistMember")
-			.formParam("_csrf", "58520cd7-fc3c-4184-986b-f5ae8d1fc2ca"))
+        	.formParam("_csrf", "${stoken}"))
 		.pause(8)
 	}
 
-	val invitationErrorScn = scenario("HU09Test").exec(Home.home, Login.login, Logged.logged, ShowJams.showJams, ListJam.listJam, ViewTeam.viewTeam, SendInvitation.sendInvitation, SendingError.sendingError)
-	setUp(invitationErrorScn.inject(rampUsers(5000) during (100 seconds))).protocols(httpProtocol)
+	val invitationErrorScn = scenario("HU09Test").exec(Home.home, Login.login, ShowJams.showJams, ListJam.listJam, ViewTeam.viewTeam, SendInvitationError.sendInvitationError)
+	
+	setUp(invitationErrorScn.inject(rampUsers(5000) during (100 seconds)))
+	.protocols(httpProtocol)
+	.assertions(
+			global.responseTime.max.lt(5000),    
+			global.responseTime.mean.lt(1000),
+			global.successfulRequests.percent.gt(95)
+		)
 }

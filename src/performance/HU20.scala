@@ -10,7 +10,7 @@ class HU20 extends Simulation {
 
 	val httpProtocol = http
 		.baseUrl("http://www.dp2.com")
-		.inferHtmlResources()
+		.inferHtmlResources(BlackList(""".*\.js""", """.*\.css""", """.*\.gif""", """.*\.jpeg""", """.*\.jpg""", """.*\.ico""", """.*\.woff""", """.*\.woff2""", """.*\.(t|o)tf""", """.*\.png""", """.*detectportal\.firefox\.com.*"""), WhiteList())
 		.acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
 		.acceptEncodingHeader("gzip, deflate")
 		.acceptLanguageHeader("es-ES,es;q=0.9,en;q=0.8")
@@ -42,46 +42,39 @@ class HU20 extends Simulation {
 	}
 
 	object Login1 {
-		val login1 = exec(http("Login")
+		val login1 = exec(http("Login1")
 			.get("/login")
 			.headers(headers_0)
-			.resources(http("request_2")
-			.get("/favicon.ico")
-			.headers(headers_2)))
-		.pause(20)
-		.exec(http("JamOrganizatorLoged")
+        	.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+		).pause(20)
+		.exec(http("JamOrganizatorLogged")
 			.post("/login")
 			.headers(headers_3)
 			.formParam("username", "jamOrganizator1")
 			.formParam("password", "jamOrganizator1")
-			.formParam("_csrf", "b9c60d0f-71d3-4de8-90ad-ed4d63c7da88"))
-		.pause(33)
+        	.formParam("_csrf", "${stoken}")
+		).pause(33)
 	}
 		
 	object Login2 {
-		val login2 = exec(http("Login")
+		val login2 = exec(http("Login2")
 			.get("/login")
 			.headers(headers_0)
-			.resources(http("request_10")
-			.get("/favicon.ico")
-			.headers(headers_2)))
-		.pause(17)
-		.exec(http("JudgeLoged")
+        	.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+		).pause(20)
+		.exec(http("JudgeLogged")
 			.post("/login")
 			.headers(headers_3)
 			.formParam("username", "judge1")
 			.formParam("password", "judge1")
-			.formParam("_csrf", "45168b82-9c37-4de9-83d0-4d01de86c753"))
-		.pause(15)
+        	.formParam("_csrf", "${stoken}")
+		).pause(33)
 	}
 
 	object ShowDashboard {
 		val showDashboard = exec(http("ShowDashboard")
 			.get("/dashboard")
-			.headers(headers_0)
-			.resources(http("request_5")
-			.get("/resources/js/Chart.js")
-			.headers(headers_5)))
+			.headers(headers_0))
 		.pause(16)
 	}
 

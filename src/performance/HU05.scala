@@ -7,10 +7,11 @@ import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
 
 class HU05GestionarTeams extends Simulation {
+	
 
 	val httpProtocol = http
 		.baseUrl("http://www.dp2.com")
-		.inferHtmlResources()
+		.inferHtmlResources(BlackList(""".*\.js""", """.*\.css""", """.*\.gif""", """.*\.jpeg""", """.*\.jpg""", """.*\.ico""", """.*\.woff""", """.*\.woff2""", """.*\.(t|o)tf""", """.*\.png""", """.*detectportal\.firefox\.com.*"""), WhiteList())
 		.userAgentHeader("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36")
 
 	val headers_0 = Map(
@@ -51,37 +52,31 @@ class HU05GestionarTeams extends Simulation {
 		val login1 = exec(http("Login")
 			.get("/login")
 			.headers(headers_0)
-			.resources(http("request_2")
-			.get("/favicon.ico")
-			.headers(headers_2)))
+        	.check(css("input[name=_csrf]", "value").saveAs("stoken")))
 		.pause(17)
 		.exec(http("LogedMember1")
 			.post("/login")
 			.headers(headers_3)
 			.formParam("username", "member1")
 			.formParam("password", "member1")
-			.formParam("_csrf", "0abe2e05-1e2b-4172-b629-d5c8860d9648"))
+        	.formParam("_csrf", "${stoken}"))
 		.pause(15)
 	}
 
-
-		object Login2 {
+	object Login2 {
 		val login2 = exec(http("Login")
 			.get("/login")
 			.headers(headers_0)
-			.resources(http("request_2")
-			.get("/favicon.ico")
-			.headers(headers_2)))
+        	.check(css("input[name=_csrf]", "value").saveAs("stoken")))
 		.pause(17)
 		.exec(http("LogedMember2")
 			.post("/login")
 			.headers(headers_3)
 			.formParam("username", "member2")
 			.formParam("password", "member2")
-			.formParam("_csrf", "b6125be6-e601-495b-94a0-fb507d997653"))
+        	.formParam("_csrf", "${stoken}"))
 		.pause(13)
 	}
-
 
 	object ShowJams {
 		val showJams = exec(http("ShowJams")
@@ -100,16 +95,14 @@ class HU05GestionarTeams extends Simulation {
 	object CrearTeam {
 		val crearTeam = exec(http("CrearTeam")
 			.get("/jams/1/teams/new")
-			.headers(headers_0))
+			.headers(headers_0)
+        	.check(css("input[name=_csrf]", "value").saveAs("stoken")))
 		.pause(29)
-	}
-
-	object TeamCreado {
-		val teamCreado = exec(http("TeamCreado")
+		.exec(http("TeamCreado")
 			.post("/jams/1/teams/new")
 			.headers(headers_3)
 			.formParam("name", "mi grupo")
-			.formParam("_csrf", "51556c76-0eba-4731-a5b3-395f157f6057"))
+        	.formParam("_csrf", "${stoken}"))
 		.pause(43)
 	}
 
@@ -120,13 +113,6 @@ class HU05GestionarTeams extends Simulation {
 		.pause(33)
 	}
 
-	object ShowGrupoMember3 {
-		val showGrupoMember3 = exec(http("ShowGrupoMember3")
-			.get("/jams/1/teams/12")
-			.headers(headers_0))
-		.pause(28)
-	}
-
 	object GrupoMember2Borrado {
 		val grupoMember2Borrado = exec(http("GrupoMember2Borrado")
 			.get("/jams/1/teams/1/members/member2/delete")
@@ -134,31 +120,12 @@ class HU05GestionarTeams extends Simulation {
 		.pause(34)
 	}
 
-	object EditGrupoMember3 {
-		val editGrupoMember3 = exec(http("EditGrupoMember3")
-			.get("/jams/1/teams/12/edit")
-			.headers(headers_0))
-		.pause(34)
-	}
-
-	object EditedGrupoMember3 {
-		val editedGrupoMember3 = exec(http("EditedGrupoMember3")
-			.post("/jams/1/teams/12/edit")
-			.headers(headers_3)
-			.formParam("name", "Grupo 2 hola")
-			.formParam("_csrf", "58ec37c5-25ca-4a2d-963c-eba34f247613"))
-		.pause(17)
-	}
-
 	val createTeamScn = scenario("CreateJam").exec(
 		Home.home,
 		Login1.login1,
 		ShowJams.showJams,
 		ShowJam.showJam,
-		CrearTeam.crearTeam,
-		TeamCreado.teamCreado)
-
-
+		CrearTeam.crearTeam)
 
 	val deleteTeamScn = scenario("DeleteJam").exec(
 		Home.home,
