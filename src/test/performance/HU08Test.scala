@@ -81,4 +81,7 @@ class HU08Test extends Simulation {
 	val rejectScn = scenario("Reject").exec(Home.home, Login.login, Logged.logged, ViewInvitations.viewInvitations, RejectInvitation.rejectInvitation)
 
 	setUp(acceptScn.inject(rampUsers(5000) during (100 seconds)), rejectScn.inject(rampUsers(5000) during (100 seconds))).protocols(httpProtocol)
+        .assertions(global.responseTime.max.lt(5000),
+			global.responseTime.mean.lt(1000),
+			global.successfulRequests.percent.gt(95))
 }
