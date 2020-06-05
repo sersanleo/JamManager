@@ -109,7 +109,12 @@ class HU18 extends Simulation {
 	)
 
 	setUp(
-		publishResultsNotEveryTeamHas1MarkAtLeast.inject(atOnceUsers(1)),
-		publishResultsEveryTeamNeedsSameAmountOfMarks.inject(atOnceUsers(1)),
+		publishResultsNotEveryTeamHas1MarkAtLeast.inject(rampUsers(3500) during (100 seconds)),
+		publishResultsEveryTeamNeedsSameAmountOfMarks.inject(rampUsers(3500) during (100 seconds)),
 		).protocols(httpProtocol)
+		.assertions(
+			global.responseTime.max.lt(5000),    
+			global.responseTime.mean.lt(1000),
+			global.successfulRequests.percent.gt(95)
+		)
 }
