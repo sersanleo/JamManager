@@ -65,6 +65,8 @@ INSERT INTO jams(id,name,description,difficulty,inscription_deadline,max_team_si
 VALUES 			(3,'In Progress Jam','test',3,'2019-06-08 12:00',5,2,2,'2019-06-09 12:00','2025-06-10 12:00',FALSE,'jamOrganizator1');
 INSERT INTO jam_resource(id,description,download_url,jams_id)
 VALUES 			(3,'Test Resource 1','https://www.youtube.com/',3);
+INSERT INTO jam_resource(id,description,download_url,jams_id)
+VALUES 			(11,'Test Resource 2','https://www.youtube.com/',3);
 /* Teams */
 INSERT INTO teams(id,name,creation_date,jam_id)
 VALUES 			(4,'Grupo 1','2019-03-08 12:00',3);
