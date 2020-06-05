@@ -47,5 +47,13 @@ class HU04 extends Simulation {
 	val listJams = scenario("ListJams").exec(Home.home, ListJams.listJams)
 	val showJam = scenario("ShowJam").exec(Home.home, ListJams.listJams, ShowJam.showJam)
 
-	setUp(listJams.inject(atOnceUsers(1)), showJam.inject(atOnceUsers(1))).protocols(httpProtocol)
+	setUp(
+		listJams.inject(rampUsers(4500) during (100 seconds)),
+		showJam.inject(rampUsers(4500) during (100 seconds)))
+		.protocols(httpProtocol)
+		.assertions(
+			global.responseTime.max.lt(5000),    
+			global.responseTime.mean.lt(1000),
+			global.successfulRequests.percent.gt(95)
+		)
 }

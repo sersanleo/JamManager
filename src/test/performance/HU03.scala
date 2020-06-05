@@ -44,5 +44,12 @@ class HU03 extends Simulation {
 	val showJamResources = scenario("ShowJamResources")
 		.exec(Home.home, ListJams.listJams, ShowJamResources.showJamResources)
 
-	setUp(showJamResources.inject(atOnceUsers(1))).protocols(httpProtocol)
+	setUp(
+		showJamResources.inject(rampUsers(10000) during (100 seconds))
+		).protocols(httpProtocol)
+		.assertions(
+			global.responseTime.max.lt(5000),    
+			global.responseTime.mean.lt(1000),
+			global.successfulRequests.percent.gt(95)
+		)
 }

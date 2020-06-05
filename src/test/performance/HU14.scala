@@ -67,7 +67,7 @@ class HU14 extends Simulation {
 
 	object RateTeam {
 		var rateTeam = exec(http("RateTeamForm")
-			.get("/jams/4/teams/7/marks")
+			.get("/jams/4/teams/6/marks")
 			.headers(headers_0)
         	.check(css("input[name=_csrf]", "value").saveAs("stoken")))
 		.pause(10)
@@ -82,5 +82,10 @@ class HU14 extends Simulation {
 
 	val rateTeam = scenario("RateTeam").exec(Home.home, Login.login, ListJams.listJams, ShowJam.showJam, RateTeam.rateTeam)
 
-	setUp(rateTeam.inject(atOnceUsers(1))).protocols(httpProtocol)
+	setUp(rateTeam.inject(rampUsers(7000) during (100 seconds))).protocols(httpProtocol)
+	.assertions(
+			global.responseTime.max.lt(5000),    
+			global.responseTime.mean.lt(1000),
+			global.successfulRequests.percent.gt(95)
+		)
 }

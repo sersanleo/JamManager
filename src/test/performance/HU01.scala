@@ -149,8 +149,8 @@ class HU01 extends Simulation {
 		DeleteJam.deleteJam) // solo se usarán los dos primeros, que son los más significativos
 
 	setUp(
-		createJamScenario.inject(rampUsers(1800) during (100 seconds)),
-		editJamScenario.inject(rampUsers(1800) during (100 seconds))
+		createJamScenario.inject(rampUsers(1700) during (100 seconds)),
+		editJamScenario.inject(rampUsers(1700) during (100 seconds))
 		).protocols(httpProtocol)
 		.assertions(
 			global.responseTime.max.lt(5000),    
