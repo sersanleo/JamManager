@@ -95,4 +95,7 @@ class HU09Test extends Simulation {
 
 	val invitationErrorScn = scenario("HU09Test").exec(Home.home, Login.login, Logged.logged, ShowJams.showJams, ListJam.listJam, ViewTeam.viewTeam, SendInvitation.sendInvitation, SendingError.sendingError)
 	setUp(invitationErrorScn.inject(rampUsers(5000) during (100 seconds))).protocols(httpProtocol)
+        .assertions(global.responseTime.max.lt(5000),
+			global.responseTime.mean.lt(1000),
+			global.successfulRequests.percent.gt(95))
 }
