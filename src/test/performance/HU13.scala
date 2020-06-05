@@ -50,19 +50,14 @@ class HU13 extends Simulation {
 		val loginAsMember = exec(http("LoginAsMember")
 			.get("/login")
 			.headers(headers_0)
-			.resources(http("request_2")
-			.get("/login")
-			.headers(headers_2)))
-		.pause(18)
-	}
-
-	object LoggedAsMember{
-		val loggedAsMember = exec(http("LoggedAsMember")
+			.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+		).pause(18)
+		.exec(http("LoggedAsMember")
 			.post("/login")
 			.headers(headers_3)
 			.formParam("username", "member1")
 			.formParam("password", "member1")
-			.formParam("_csrf", "2bc019ec-6ace-4e0f-a5dc-9c85a80bfffc"))
+			.formParam("_csrf", "${stoken}"))
 		.pause(11)
 	}
 
@@ -104,17 +99,15 @@ class HU13 extends Simulation {
 	object NewDeliveryForm{
 		val newDeliveryForm = exec(http("NewDeliveryForm")
 			.get("/jams/3/teams/4/deliveries/new")
-			.headers(headers_0))
-		.pause(34)
-	}
-
-	object DeliveryCreated{
-		val deliveryCreated = exec(http("DeliveryCreated")
+			.headers(headers_0)
+			.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+		).pause(34)
+		.exec(http("DeliveryCreated")
 			.post("/jams/3/teams/4/deliveries/new")
 			.headers(headers_3)
 			.formParam("downloadURL", "https://maps.google.com/")
 			.formParam("description", "Una gran descripcion")
-			.formParam("_csrf", "b956e63b-8fc4-484f-882d-a41dcac42860"))
+			.formParam("_csrf", "${stoken}"))
 		.pause(19)
 	}
 
@@ -135,17 +128,14 @@ class HU13 extends Simulation {
 	val createDeliveryScenario = scenario("CreateDelivery").exec(
 		Home.home, 
 		LoginAsMember.loginAsMember,
-		LoggedAsMember.loggedAsMember,
 		ListJams.listJams,
 		ShowInProgressJam.showInProgressJam,
 		ShowTeamDetails.showTeamDetails,
-		NewDeliveryForm.newDeliveryForm,
-		DeliveryCreated.deliveryCreated)
+		NewDeliveryForm.newDeliveryForm)
 
 	val deleteDeliveryScenario = scenario("DeleteDelivery").exec(
 		Home.home, 
 		LoginAsMember.loginAsMember,
-		LoggedAsMember.loggedAsMember,
 		ListJams.listJams,
 		ShowInProgressJam.showInProgressJam,
 		ShowTeamDetails.showTeamDetails,
@@ -154,7 +144,6 @@ class HU13 extends Simulation {
 	val errorNotInProgressJamScenario = scenario("ErrorNotInProgressJam").exec(
 		Home.home, 
 		LoginAsMember.loginAsMember,
-		LoggedAsMember.loggedAsMember,
 		ListJams.listJams,
 		ShowRatingJam.showRatingJam,
 		ShowRatingTeamDetails.showRatingTeamDetails,
@@ -162,9 +151,9 @@ class HU13 extends Simulation {
 	)
 
 	setUp(
-		createDeliveryScenario.inject(rampUsers(500) during (100 seconds)),
-		deleteDeliveryScenario.inject(rampUsers(500) during (100 seconds)),
-		errorNotInProgressJamScenario.inject(rampUsers(500) during (100 seconds))
+		createDeliveryScenario.inject(rampUsers(600) during (200 seconds)),
+		deleteDeliveryScenario.inject(rampUsers(600) during (200 seconds)),
+		errorNotInProgressJamScenario.inject(rampUsers(600) during (200 seconds))
 		).protocols(httpProtocol)
 		.assertions(
 		global.responseTime.max.lt(5000),

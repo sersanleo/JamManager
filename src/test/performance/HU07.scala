@@ -40,19 +40,14 @@ class HU07 extends Simulation {
 		val login = exec(http("Login")
 			.get("/login")
 			.headers(headers_0)
-			.resources(http("request_2")
-			.get("/login")
-			.headers(headers_2)))
-		.pause(16)
-	}
-
-	object LoggedAsMember{
-		val loggedAsMember = exec(http("LoggedAsMember")
+			.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+		).pause(24)
+		.exec(http("LoggedAsMember")
 			.post("/login")
 			.headers(headers_3)
 			.formParam("username", "member2")
 			.formParam("password", "member2")
-			.formParam("_csrf", "ed9c118a-8295-464b-bd8c-009066a388c8"))
+			.formParam("_csrf", "${stoken}"))
 		.pause(11)
 	}
 
@@ -84,55 +79,59 @@ class HU07 extends Simulation {
 		.pause(13)
 	}
 
-	object SendInvitationForm{
-		val sendInvitationForm = exec(http("SendInvitationForm")
+	object SendInvitationCreate{
+		val sendInvitationCreate = exec(http("SendInvitationForm")
 			.get("/jams/1/teams/1/invitations/new")
-			.headers(headers_0))
-		.pause(26)
-	}
-
-	object InvitationCreated{
-		val invitationCreated = exec(http("InvitationCreated")
+			.headers(headers_0)
+			.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+		).pause(26)
+		.exec(http("InvitationCreated")
 			.post("/jams/1/teams/1/invitations/new")
 			.headers(headers_3)
 			.formParam("to.username", "member4")
-			.formParam("_csrf", "03206ed9-1cc3-47f3-823a-ae97253bbf1f"))
+			.formParam("_csrf", "${stoken}"))
 		.pause(17)
 	}
 
-	object ErrorExistingInvitation{
-		val errorExistingInvitation = exec(http("ErrorUserInOtherTeam")
+	object SendInvitationErrorExistingInvitation{
+		val sendInvitationErrorExistingInvitation = exec(http("SendInvitationForm")
+			.get("/jams/1/teams/1/invitations/new")
+			.headers(headers_0)
+			.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+		).pause(26)
+		.exec(http("ErrorUserInOtherTeam")
 			.post("/jams/1/teams/1/invitations/new")
 			.headers(headers_3)
 			.formParam("to.username", "member1")
-			.formParam("_csrf", "03206ed9-1cc3-47f3-823a-ae97253bbf1f"))
+				.formParam("_csrf", "${stoken}"))
 		.pause(37)
 	}
 
-	object ErrorUserInOtherTeam{
-		val errorUserInOtherTeam = exec(http("ErrorUserInOtherTeam")
+object SendInvitationErrorUserInOtherTeam{
+		val sendInvitationErrorUserInOtherTeam = exec(http("SendInvitationForm")
+			.get("/jams/1/teams/1/invitations/new")
+			.headers(headers_0)
+			.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+		).pause(26)
+		.exec(http("ErrorUserInOtherTeam")
 			.post("/jams/1/teams/1/invitations/new")
 			.headers(headers_3)
 			.formParam("to.username", "member3")
-			.formParam("_csrf", "03206ed9-1cc3-47f3-823a-ae97253bbf1f"))
+				.formParam("_csrf", "${stoken}"))
 		.pause(12)
-	}
-
+}
 
 val createInvitationScenario = scenario("CreateInvitation").exec(
 		Home.home, 
 		Login.login,
-		LoggedAsMember.loggedAsMember,
 		ListJams.listJams,
 		ShowInscriptionJam.showInscriptionJam,
 		ShowTeamDetails.showTeamDetails,
-		SendInvitationForm.sendInvitationForm,
-		InvitationCreated.invitationCreated)
+		SendInvitationCreate.sendInvitationCreate)
 
 val deleteInvitationScenario = scenario("DeleteInvitation").exec(
 		Home.home, 
 		Login.login,
-		LoggedAsMember.loggedAsMember,
 		ListJams.listJams,
 		ShowInscriptionJam.showInscriptionJam,
 		ShowTeamDetails.showTeamDetails,
@@ -141,28 +140,24 @@ val deleteInvitationScenario = scenario("DeleteInvitation").exec(
 val errorExistingInvitationScenario = scenario("ErrorExistingInvitation").exec(
 		Home.home, 
 		Login.login,
-		LoggedAsMember.loggedAsMember,
 		ListJams.listJams,
 		ShowInscriptionJam.showInscriptionJam,
 		ShowTeamDetails.showTeamDetails,
-		SendInvitationForm.sendInvitationForm,
-		ErrorExistingInvitation.errorExistingInvitation)
+		SendInvitationErrorExistingInvitation.sendInvitationErrorExistingInvitation)
 
 val errorUserInOtherTeamScenario = scenario("ErrorUserInOtherTeam").exec(
 		Home.home, 
 		Login.login,
-		LoggedAsMember.loggedAsMember,
 		ListJams.listJams,
 		ShowInscriptionJam.showInscriptionJam,
 		ShowTeamDetails.showTeamDetails,
-		SendInvitationForm.sendInvitationForm,
-		ErrorUserInOtherTeam.errorUserInOtherTeam)
+		SendInvitationErrorUserInOtherTeam.sendInvitationErrorUserInOtherTeam)
 	
 	setUp(
-		createInvitationScenario.inject(rampUsers(1000) during (100 seconds)),
-		deleteInvitationScenario.inject(rampUsers(1000) during (100 seconds)),
-		errorExistingInvitationScenario.inject(rampUsers(1000) during (100 seconds)),
-		errorUserInOtherTeamScenario.inject(rampUsers(1000) during (100 seconds))
+		createInvitationScenario.inject(rampUsers(600) during (100 seconds)),
+		deleteInvitationScenario.inject(rampUsers(600) during (100 seconds)),
+		errorExistingInvitationScenario.inject(rampUsers(600) during (100 seconds)),
+		errorUserInOtherTeamScenario.inject(rampUsers(600) during (100 seconds))
 		).protocols(httpProtocol)
 		.assertions(
 		global.responseTime.max.lt(5000),

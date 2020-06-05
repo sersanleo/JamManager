@@ -125,9 +125,9 @@ class HU02 extends Simulation {
 		JamResourceDeleted.jamResourceDeleted)
 	
 	setUp(
-		createJamResourceScenario.inject(rampUsers(2000) during (100 seconds)),
-		editJamResourceScenario.inject(rampUsers(2000) during (100 seconds)),
-		deleteJamResourceScenario.inject(rampUsers(2000) during (100 seconds))
+		createJamResourceScenario.inject(rampUsers(600) during (100 seconds)),
+		editJamResourceScenario.inject(rampUsers(600) during (100 seconds)),
+		deleteJamResourceScenario.inject(rampUsers(600) during (100 seconds))
 		).protocols(httpProtocol)
 		.assertions(
 		global.responseTime.max.lt(5000),
