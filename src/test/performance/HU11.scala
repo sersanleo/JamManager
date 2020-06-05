@@ -6,11 +6,11 @@ import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
 
-class HU09Test extends Simulation {
+class HU11Test extends Simulation {
 
 	val httpProtocol = http
 		.baseUrl("http://www.dp2.com")
-		.inferHtmlResources(BlackList(""".*.js""", """.*.css""", """.*.png""", """.*.ico"""), WhiteList())
+		.inferHtmlResources(BlackList(""".*.png""", """.*.js""", """.*.ico""", """.*.css"""), WhiteList())
 		.acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
 		.acceptEncodingHeader("gzip, deflate")
 		.acceptLanguageHeader("es-ES,es;q=0.9,en;q=0.8")
@@ -33,7 +33,7 @@ class HU09Test extends Simulation {
 		val home = exec(http("Home")
 			.get("/")
 			.headers(headers_0))
-		.pause(11)
+		.pause(6)
 	}
 
 	object Login {
@@ -43,56 +43,43 @@ class HU09Test extends Simulation {
 			.resources(http("request_2")
 			.get("/login")
 			.headers(headers_2)))
-		.pause(11)
+		.pause(9)
 	}
 
 	object Logged {
 		val logged = exec(http("Logged")
 			.post("/login")
 			.headers(headers_3)
-			.formParam("username", "member2")
-			.formParam("password", "member2")
-			.formParam("_csrf", "ff1d1871-616a-43ee-aaa5-2d248a2d097d"))
-		.pause(10)
+			.formParam("username", "member1")
+			.formParam("password", "member1")
+			.formParam("_csrf", "e6bd9cbd-f692-4a1d-baa5-e12ffcd20b41"))
+		.pause(6)
 	}
 
-	object ShowJams {
-		val showJams = exec(http("ShowJams")
+	object JamList {
+		val jamList = exec(http("JamList")
 			.get("/jams")
 			.headers(headers_0))
-		.pause(8)
+		.pause(7)
 	}
 
-	object ListJam {
-		val listJam = exec(http("ListJam")
-			.get("/jams/1")
+	object ShowFullJam {
+		val showFullJam = exec(http("ShowFullJam")
+			.get("/jams/7")
 			.headers(headers_0))
-		.pause(17)
+		.pause(16)
 	}
 
-	object ViewTeam {
-		val viewTeam = exec(http("ViewTeam")
-			.get("/jams/1/teams/1")
+	object ErrorCreationTeam {
+		val errorCreationTeam = exec(http("ErrorCreationTeam")
+			.get("/jams/7/teams/new")
 			.headers(headers_0))
-		.pause(13)
+		.pause(12)
 	}
 
-	object SendInvitation {
-		val sendInvitation = exec(http("SendInvitation")
-			.get("/jams/1/teams/1/invitations/new")
-			.headers(headers_0))
-		.pause(22)
-	}
-
-	object SendingError {
-		val sendingError = exec(http("SendingError")
-			.post("/jams/1/teams/1/invitations/new")
-			.headers(headers_3)
-			.formParam("to.username", "NoExistMember")
-			.formParam("_csrf", "58520cd7-fc3c-4184-986b-f5ae8d1fc2ca"))
-		.pause(8)
-	}
-
-	val invitationErrorScn = scenario("HU09Test").exec(Home.home, Login.login, Logged.logged, ShowJams.showJams, ListJam.listJam, ViewTeam.viewTeam, SendInvitation.sendInvitation, SendingError.sendingError)
-	setUp(invitationErrorScn.inject(rampUsers(5000) during (100 seconds))).protocols(httpProtocol)
+	val errorScn = scenario("HU11Test").exec(Home.home, Login.login, Logged.logged, JamList.jamList, ShowFullJam.showFullJam, ErrorCreationTeam.errorCreationTeam)
+	setUp(errorScn.inject(rampUsers(3000) during (100 seconds))).protocols(httpProtocol)
+.assertions(global.responseTime.max.lt(5000),
+			global.responseTime.mean.lt(1000),
+			global.successfulRequests.percent.gt(95))
 }
