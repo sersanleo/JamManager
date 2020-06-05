@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.JamStatus;
 import org.springframework.samples.petclinic.model.Mark;
@@ -15,7 +16,9 @@ import org.springframework.samples.petclinic.util.UserUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +34,11 @@ public class MarkController {
 	private MarkService markService;
 	@Autowired
 	private TeamService teamService;
+
+	@InitBinder("mark")
+	public void setMarkBinder(final WebDataBinder dataBinder) {
+		dataBinder.setDisallowedFields("id");
+	}
 
 	@ModelAttribute("team")
 	public Team cargarTeam(@PathVariable("teamId") final int teamId) {
@@ -70,7 +78,6 @@ public class MarkController {
 			User judge = new User();
 			judge.setUsername(UserUtils.getCurrentUsername());
 			mark.setJudge(judge);
-
 			mark.setTeam(team);
 
 			this.markService.saveMark(mark);

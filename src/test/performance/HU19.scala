@@ -6,7 +6,7 @@ import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
 
-class HU16 extends Simulation {
+class HU19 extends Simulation {
 
 	val httpProtocol = http
 		.baseUrl("http://www.dp2.com")
@@ -29,19 +29,18 @@ class HU16 extends Simulation {
 		"Proxy-Connection" -> "keep-alive",
 		"Upgrade-Insecure-Requests" -> "1")
 
-
 	object Home {
 		val home = exec(http("Home")
 			.get("/")
 			.headers(headers_0))
-		.pause(3)
+		.pause(7)
 	}
 
 	object Login {
 		val login = exec(http("Login")
 			.get("/login")
 			.headers(headers_0)
-			.check(css("input[name=_csrf]", "value").saveAs("stoken"))
+        	.check(css("input[name=_csrf]", "value").saveAs("stoken"))
 		).pause(3)
 		.exec(http("LoggedAsJudge")
 			.post("/login")
@@ -49,44 +48,52 @@ class HU16 extends Simulation {
 			.formParam("username", "judge1")
 			.formParam("password", "judge1")
         	.formParam("_csrf", "${stoken}")
-		).pause(3)
+		).pause(5)
 	}
 
 	object ListJams {
 		val listJams = exec(http("ListJams")
 			.get("/jams")
 			.headers(headers_0))
-		.pause(5)
+		.pause(1)
 	}
 
 	object ShowJam {
 		var showJam = exec(http("ShowJam")
 			.get("/jams/4")
 			.headers(headers_0))
-		.pause(5)
+		.pause(1)
 	}
 
-	object PublishJamResults {
-		var publishJamResults = exec(http("PublishJamResultsForm")
-			.get("/jams/4/publish")
-			.headers(headers_0)
-			.check(css("input[name=_csrf]", "value").saveAs("stoken"))
-		).pause(8)
-		.exec(http("PublishJamResults")
-			.post("/jams/4/publish")
-			.headers(headers_3)
-			.formParam("winner.id", "7")
-        	.formParam("_csrf", "${stoken}")
-		).pause(5)
+	object ShowTeam1 {
+		var showTeam1 = exec(http("ShowTeam1")
+			.get("/jams/4/teams/6")
+			.headers(headers_0))
+		.pause(1)
 	}
 
-	val publishResults = scenario("PublishResults").exec(
-		Home.home,
-		Login.login,
-		ListJams.listJams,
-		ShowJam.showJam,
-		PublishJamResults.publishJamResults
+	object ShowTeam2 {
+		var showTeam2 = exec(http("ShowTeam2")
+			.get("/jams/4/teams/7")
+			.headers(headers_0))
+		.pause(1)
+	}
+
+	val showTeam1 = scenario("ShowTeam1").exec(
+		Home.home, Login.login, ListJams.listJams, ShowJam.showJam, ShowTeam1.showTeam1
 	)
 
-	setUp(publishResults.inject(atOnceUsers(1))).protocols(httpProtocol)
+	val showTeam2 = scenario("ShowTeam2").exec(
+		Home.home, Login.login, ListJams.listJams, ShowJam.showJam, ShowTeam2.showTeam2
+	)
+
+	setUp(
+		showTeam1.inject(rampUsers(3500) during (100 seconds)),
+		showTeam2.inject(rampUsers(3500) during (100 seconds))
+		).protocols(httpProtocol)
+		.assertions(
+			global.responseTime.max.lt(5000),    
+			global.responseTime.mean.lt(1000),
+			global.successfulRequests.percent.gt(95)
+		)
 }
